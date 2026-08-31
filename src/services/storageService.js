@@ -13,7 +13,7 @@ const STORAGE_KEYS = {
 };
 
 // Initial Seed Data based on Gina Salma Sabilla's Latest CV
-const INITIAL_SETTINGS = {
+export const INITIAL_SETTINGS = {
   name: "Gina",
   fullName: "Gina Salma Sabilla, S.Kom.",
   heroTitle: "UI/UX Designer & Operational Specialist",
@@ -29,13 +29,13 @@ const INITIAL_SETTINGS = {
   github: "https://github.com",
   behance: "https://behance.net",
   dribbble: "https://dribbble.com",
-  cvUrl: "mailto:gina.s.sabilla18@gmail.com",
+  cvUrl: "https://drive.google.com/file/d/1ru1HI4NE_A2IfCPaChafOKUfkFUqPvKy/view?usp=drive_link",
   profileImage: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80",
   heroImage: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80",
   themeAccent: "#C59B4E",
 };
 
-const INITIAL_PROJECTS = [
+export const INITIAL_PROJECTS = [
   {
     id: "rutan-depok-web",
     title: "Sistem Tiket & Profil Web Rutan Kelas 1 Depok",
@@ -160,7 +160,7 @@ const INITIAL_PROJECTS = [
   }
 ];
 
-const INITIAL_BLOG = [
+export const INITIAL_BLOG = [
   {
     id: "efisiensi-layanan-teknologi",
     title: "Mengintegrasikan Logika Informatika dalam Pengelolaan Administrasi & Desain Produk Digital",
@@ -186,7 +186,7 @@ Sebagai lulusan Teknik Informatika yang memiliki pengalaman di bidang administra
   }
 ];
 
-const INITIAL_CERTIFICATES = [
+export const INITIAL_CERTIFICATES = [
   {
     id: "cert-1",
     name: "Certificate in Agile Scrum Fundamentals",
@@ -299,7 +299,7 @@ const INITIAL_CERTIFICATES = [
   }
 ];
 
-const INITIAL_ACHIEVEMENTS = [
+export const INITIAL_ACHIEVEMENTS = [
   {
     id: "ach-1",
     title: "Top 33 Hipster (Designer Talent) — IndonesiaNEXT",
@@ -320,7 +320,7 @@ const INITIAL_ACHIEVEMENTS = [
   }
 ];
 
-const INITIAL_WRITINGS = [
+export const INITIAL_WRITINGS = [
   {
     id: "training-1",
     title: "Pelatihan IndonesiaNEXT – Telkomsel",
@@ -368,7 +368,7 @@ const INITIAL_WRITINGS = [
   }
 ];
 
-const INITIAL_EXPERIENCES = [
+export const INITIAL_EXPERIENCES = [
   {
     id: "exp-bkd-depok",
     company: "Badan Keuangan Daerah Pemerintah Kota Depok",
@@ -437,7 +437,7 @@ const INITIAL_EXPERIENCES = [
   }
 ];
 
-const INITIAL_SKILLS = [
+export const INITIAL_SKILLS = [
   {
     category: "Desain & UI/UX",
     items: ["Perancangan Antarmuka (UI)", "Pengalaman Pengguna (UX)", "Riset Pengguna", "Usability Testing", "Wireframing", "Prototyping", "Desain Grafis", "Desain Web", "Desain Aplikasi Seluler", "Design Thinking", "Arsitektur Informasi"]

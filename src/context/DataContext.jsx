@@ -1,74 +1,97 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { StorageService } from '../services/storageService';
+import { StorageService, INITIAL_SETTINGS, INITIAL_PROJECTS, INITIAL_BLOG, INITIAL_CERTIFICATES, INITIAL_ACHIEVEMENTS, INITIAL_WRITINGS, INITIAL_EXPERIENCES, INITIAL_SKILLS } from '../services/storageService';
 
 const DataContext = createContext();
-const DATA_VERSION = 'v3_gina_sabilla_2026_templates';
+const DATA_VERSION = 'v4_gina_sabilla_2026_postgres';
 
 export const DataProvider = ({ children }) => {
+  const [loading, setLoading] = useState(true);
+  const [settings, setSettings] = useState(INITIAL_SETTINGS);
+  const [projects, setProjects] = useState(INITIAL_PROJECTS);
+  const [blogPosts, setBlogPosts] = useState(INITIAL_BLOG);
+  const [certificates, setCertificates] = useState(INITIAL_CERTIFICATES);
+  const [achievements, setAchievements] = useState(INITIAL_ACHIEVEMENTS);
+  const [writings, setWritings] = useState(INITIAL_WRITINGS);
+  const [experiences, setExperiences] = useState(INITIAL_EXPERIENCES);
+  const [skills, setSkills] = useState(INITIAL_SKILLS);
+
   // Sync seed data if version updated
   useEffect(() => {
-    const currentVersion = localStorage.getItem('gina_portfolio_version');
-    if (currentVersion !== DATA_VERSION) {
-      StorageService.resetAllData();
-      localStorage.setItem('gina_portfolio_version', DATA_VERSION);
-      refreshData();
-    }
+    const initApp = async () => {
+      const currentVersion = localStorage.getItem('gina_portfolio_version');
+      if (currentVersion !== DATA_VERSION) {
+        // await StorageService.resetAllData();
+        localStorage.setItem('gina_portfolio_version', DATA_VERSION);
+      }
+      await refreshData();
+    };
+    initApp();
   }, []);
 
-  const [settings, setSettings] = useState(StorageService.getSettings());
-  const [projects, setProjects] = useState(StorageService.getProjects());
-  const [blogPosts, setBlogPosts] = useState(StorageService.getBlogPosts());
-  const [certificates, setCertificates] = useState(StorageService.getCertificates());
-  const [achievements, setAchievements] = useState(StorageService.getAchievements());
-  const [writings, setWritings] = useState(StorageService.getWritings());
-  const [experiences, setExperiences] = useState(StorageService.getExperiences());
-  const [skills, setSkills] = useState(StorageService.getSkills());
+  // Reload data from API
+  const refreshData = async () => {
+    setLoading(true);
+    try {
+      const [
+        sSettings, sProjects, sBlogPosts, sCertificates, sAchievements, sWritings, sExperiences, sSkills
+      ] = await Promise.all([
+        StorageService.getSettings(),
+        StorageService.getProjects(),
+        StorageService.getBlogPosts(),
+        StorageService.getCertificates(),
+        StorageService.getAchievements(),
+        StorageService.getWritings(),
+        StorageService.getExperiences(),
+        StorageService.getSkills()
+      ]);
 
-  // Reload data from storage
-  const refreshData = () => {
-    setSettings(StorageService.getSettings());
-    setProjects(StorageService.getProjects());
-    setBlogPosts(StorageService.getBlogPosts());
-    setCertificates(StorageService.getCertificates());
-    setAchievements(StorageService.getAchievements());
-    setWritings(StorageService.getWritings());
-    setExperiences(StorageService.getExperiences());
-    setSkills(StorageService.getSkills());
+      if (sSettings) setSettings(sSettings);
+      if (sProjects) setProjects(sProjects);
+      if (sBlogPosts) setBlogPosts(sBlogPosts);
+      if (sCertificates) setCertificates(sCertificates);
+      if (sAchievements) setAchievements(sAchievements);
+      if (sWritings) setWritings(sWritings);
+      if (sExperiences) setExperiences(sExperiences);
+      if (sSkills) setSkills(sSkills);
+    } catch (error) {
+      console.error("Failed to fetch data:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-
   // Settings Actions
-  const updateSettings = (newSettings) => {
-    const updated = StorageService.saveSettings(newSettings);
+  const updateSettings = async (newSettings) => {
+    const updated = await StorageService.saveSettings(newSettings);
     setSettings(updated);
   };
 
   // Projects Actions
-  const addProject = (project) => {
+  const addProject = async (project) => {
     const newProject = {
       ...project,
       id: project.id || `project-${Date.now()}`,
       status: project.status || 'published'
     };
     const updated = [newProject, ...projects];
-    StorageService.saveProjects(updated);
+    await StorageService.saveProjects(updated);
     setProjects(updated);
   };
 
-  const updateProject = (id, updatedProject) => {
+  const updateProject = async (id, updatedProject) => {
     const updated = projects.map(p => p.id === id ? { ...p, ...updatedProject } : p);
-    StorageService.saveProjects(updated);
+    await StorageService.saveProjects(updated);
     setProjects(updated);
   };
 
-  const deleteProject = (id) => {
+  const deleteProject = async (id) => {
     const updated = projects.filter(p => p.id !== id);
-    StorageService.saveProjects(updated);
+    await StorageService.saveProjects(updated);
     setProjects(updated);
   };
 
   // Blog Actions
-  const addBlogPost = (post) => {
+  const addBlogPost = async (post) => {
     const newPost = {
       ...post,
       id: post.id || `post-${Date.now()}`,
@@ -76,116 +99,117 @@ export const DataProvider = ({ children }) => {
       status: post.status || 'published'
     };
     const updated = [newPost, ...blogPosts];
-    StorageService.saveBlogPosts(updated);
+    await StorageService.saveBlogPosts(updated);
     setBlogPosts(updated);
   };
 
-  const updateBlogPost = (id, updatedPost) => {
+  const updateBlogPost = async (id, updatedPost) => {
     const updated = blogPosts.map(p => p.id === id ? { ...p, ...updatedPost } : p);
-    StorageService.saveBlogPosts(updated);
+    await StorageService.saveBlogPosts(updated);
     setBlogPosts(updated);
   };
 
-  const deleteBlogPost = (id) => {
+  const deleteBlogPost = async (id) => {
     const updated = blogPosts.filter(p => p.id !== id);
-    StorageService.saveBlogPosts(updated);
+    await StorageService.saveBlogPosts(updated);
     setBlogPosts(updated);
   };
 
   // Certificate Actions
-  const addCertificate = (cert) => {
+  const addCertificate = async (cert) => {
     const newCert = { ...cert, id: cert.id || `cert-${Date.now()}` };
     const updated = [newCert, ...certificates];
-    StorageService.saveCertificates(updated);
+    await StorageService.saveCertificates(updated);
     setCertificates(updated);
   };
 
-  const updateCertificate = (id, updatedCert) => {
+  const updateCertificate = async (id, updatedCert) => {
     const updated = certificates.map(c => c.id === id ? { ...c, ...updatedCert } : c);
-    StorageService.saveCertificates(updated);
+    await StorageService.saveCertificates(updated);
     setCertificates(updated);
   };
 
-  const deleteCertificate = (id) => {
+  const deleteCertificate = async (id) => {
     const updated = certificates.filter(c => c.id !== id);
-    StorageService.saveCertificates(updated);
+    await StorageService.saveCertificates(updated);
     setCertificates(updated);
   };
 
   // Achievements Actions
-  const addAchievement = (ach) => {
+  const addAchievement = async (ach) => {
     const newAch = { ...ach, id: ach.id || `ach-${Date.now()}` };
     const updated = [newAch, ...achievements];
-    StorageService.saveAchievements(updated);
+    await StorageService.saveAchievements(updated);
     setAchievements(updated);
   };
 
-  const updateAchievement = (id, updatedAch) => {
+  const updateAchievement = async (id, updatedAch) => {
     const updated = achievements.map(a => a.id === id ? { ...a, ...updatedAch } : a);
-    StorageService.saveAchievements(updated);
+    await StorageService.saveAchievements(updated);
     setAchievements(updated);
   };
 
-  const deleteAchievement = (id) => {
+  const deleteAchievement = async (id) => {
     const updated = achievements.filter(a => a.id !== id);
-    StorageService.saveAchievements(updated);
+    await StorageService.saveAchievements(updated);
     setAchievements(updated);
   };
 
   // Writings Actions
-  const addWriting = (w) => {
+  const addWriting = async (w) => {
     const newW = { ...w, id: w.id || `writing-${Date.now()}` };
     const updated = [newW, ...writings];
-    StorageService.saveWritings(updated);
+    await StorageService.saveWritings(updated);
     setWritings(updated);
   };
 
-  const updateWriting = (id, updatedW) => {
+  const updateWriting = async (id, updatedW) => {
     const updated = writings.map(w => w.id === id ? { ...w, ...updatedW } : w);
-    StorageService.saveWritings(updated);
+    await StorageService.saveWritings(updated);
     setWritings(updated);
   };
 
-  const deleteWriting = (id) => {
+  const deleteWriting = async (id) => {
     const updated = writings.filter(w => w.id !== id);
-    StorageService.saveWritings(updated);
+    await StorageService.saveWritings(updated);
     setWritings(updated);
   };
 
   // Experience Actions
-  const addExperience = (exp) => {
+  const addExperience = async (exp) => {
     const newExp = { ...exp, id: exp.id || `exp-${Date.now()}` };
     const updated = [newExp, ...experiences];
-    StorageService.saveExperiences(updated);
+    await StorageService.saveExperiences(updated);
     setExperiences(updated);
   };
 
-  const updateExperience = (id, updatedExp) => {
+  const updateExperience = async (id, updatedExp) => {
     const updated = experiences.map(e => e.id === id ? { ...e, ...updatedExp } : e);
-    StorageService.saveExperiences(updated);
+    await StorageService.saveExperiences(updated);
     setExperiences(updated);
   };
 
-  const deleteExperience = (id) => {
+  const deleteExperience = async (id) => {
     const updated = experiences.filter(e => e.id !== id);
-    StorageService.saveExperiences(updated);
+    await StorageService.saveExperiences(updated);
     setExperiences(updated);
   };
 
   // Skills Actions
-  const updateSkills = (newSkills) => {
-    StorageService.saveSkills(newSkills);
+  const updateSkills = async (newSkills) => {
+    await StorageService.saveSkills(newSkills);
     setSkills(newSkills);
   };
 
   // Reset Data
-  const resetData = () => {
-    StorageService.resetAllData();
-    refreshData();
+  const resetData = async () => {
+    await StorageService.resetAllData();
+    await refreshData();
   };
 
   return (
     <DataContext.Provider value={{
+      loading,
       settings,
       updateSettings,
       projects,

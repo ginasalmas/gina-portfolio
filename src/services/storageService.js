@@ -460,84 +460,88 @@ const INITIAL_SKILLS = [
   }
 ];
 
-// Helper to get item from localStorage or seed initial
-export const getStorageData = (key, defaultData) => {
+export const getApiData = async (type, defaultData) => {
   try {
-    const item = localStorage.getItem(key);
-    return item ? JSON.parse(item) : defaultData;
+    const res = await fetch(`/api/data?type=${type}`);
+    if (res.ok) return await res.json();
+    return defaultData;
   } catch (e) {
-    console.error(`Error reading ${key} from storage:`, e);
+    console.error(`Error reading ${type} from API:`, e);
     return defaultData;
   }
 };
 
-export const setStorageData = (key, data) => {
+export const setApiData = async (type, data) => {
   try {
-    localStorage.setItem(key, JSON.stringify(data));
+    await fetch(`/api/data?type=${type}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
   } catch (e) {
-    console.error(`Error writing ${key} to storage:`, e);
+    console.error(`Error writing ${type} to API:`, e);
   }
 };
 
-// Storage Service API
+// Storage Service API (Async)
 export const StorageService = {
-  getSettings: () => getStorageData(STORAGE_KEYS.SETTINGS, INITIAL_SETTINGS),
-  saveSettings: (settings) => {
-    setStorageData(STORAGE_KEYS.SETTINGS, settings);
+  getSettings: () => getApiData('settings', INITIAL_SETTINGS),
+  saveSettings: async (settings) => {
+    await setApiData('settings', settings);
     return settings;
   },
 
-  getProjects: () => getStorageData(STORAGE_KEYS.PROJECTS, INITIAL_PROJECTS),
-  saveProjects: (projects) => {
-    setStorageData(STORAGE_KEYS.PROJECTS, projects);
+  getProjects: () => getApiData('projects', INITIAL_PROJECTS),
+  saveProjects: async (projects) => {
+    await setApiData('projects', projects);
     return projects;
   },
 
-  getBlogPosts: () => getStorageData(STORAGE_KEYS.BLOG, INITIAL_BLOG),
-  saveBlogPosts: (posts) => {
-    setStorageData(STORAGE_KEYS.BLOG, posts);
+  getBlogPosts: () => getApiData('blog', INITIAL_BLOG),
+  saveBlogPosts: async (posts) => {
+    await setApiData('blog', posts);
     return posts;
   },
 
-  getCertificates: () => getStorageData(STORAGE_KEYS.CERTIFICATES, INITIAL_CERTIFICATES),
-  saveCertificates: (certs) => {
-    setStorageData(STORAGE_KEYS.CERTIFICATES, certs);
+  getCertificates: () => getApiData('certificates', INITIAL_CERTIFICATES),
+  saveCertificates: async (certs) => {
+    await setApiData('certificates', certs);
     return certs;
   },
 
-  getAchievements: () => getStorageData(STORAGE_KEYS.ACHIEVEMENTS, INITIAL_ACHIEVEMENTS),
-  saveAchievements: (achievements) => {
-    setStorageData(STORAGE_KEYS.ACHIEVEMENTS, achievements);
+  getAchievements: () => getApiData('achievements', INITIAL_ACHIEVEMENTS),
+  saveAchievements: async (achievements) => {
+    await setApiData('achievements', achievements);
     return achievements;
   },
 
-  getWritings: () => getStorageData(STORAGE_KEYS.WRITINGS, INITIAL_WRITINGS),
-  saveWritings: (writings) => {
-    setStorageData(STORAGE_KEYS.WRITINGS, writings);
+  getWritings: () => getApiData('writings', INITIAL_WRITINGS),
+  saveWritings: async (writings) => {
+    await setApiData('writings', writings);
     return writings;
   },
 
-  getExperiences: () => getStorageData(STORAGE_KEYS.EXPERIENCES, INITIAL_EXPERIENCES),
-  saveExperiences: (exps) => {
-    setStorageData(STORAGE_KEYS.EXPERIENCES, exps);
+  getExperiences: () => getApiData('experiences', INITIAL_EXPERIENCES),
+  saveExperiences: async (exps) => {
+    await setApiData('experiences', exps);
     return exps;
   },
 
-  getSkills: () => getStorageData(STORAGE_KEYS.SKILLS, INITIAL_SKILLS),
-  saveSkills: (skills) => {
-    setStorageData(STORAGE_KEYS.SKILLS, skills);
+  getSkills: () => getApiData('skills', INITIAL_SKILLS),
+  saveSkills: async (skills) => {
+    await setApiData('skills', skills);
     return skills;
   },
 
-  resetAllData: () => {
-    setStorageData(STORAGE_KEYS.SETTINGS, INITIAL_SETTINGS);
-    setStorageData(STORAGE_KEYS.PROJECTS, INITIAL_PROJECTS);
-    setStorageData(STORAGE_KEYS.BLOG, INITIAL_BLOG);
-    setStorageData(STORAGE_KEYS.CERTIFICATES, INITIAL_CERTIFICATES);
-    setStorageData(STORAGE_KEYS.ACHIEVEMENTS, INITIAL_ACHIEVEMENTS);
-    setStorageData(STORAGE_KEYS.WRITINGS, INITIAL_WRITINGS);
-    setStorageData(STORAGE_KEYS.EXPERIENCES, INITIAL_EXPERIENCES);
-    setStorageData(STORAGE_KEYS.SKILLS, INITIAL_SKILLS);
+  resetAllData: async () => {
+    await setApiData('settings', INITIAL_SETTINGS);
+    await setApiData('projects', INITIAL_PROJECTS);
+    await setApiData('blog', INITIAL_BLOG);
+    await setApiData('certificates', INITIAL_CERTIFICATES);
+    await setApiData('achievements', INITIAL_ACHIEVEMENTS);
+    await setApiData('writings', INITIAL_WRITINGS);
+    await setApiData('experiences', INITIAL_EXPERIENCES);
+    await setApiData('skills', INITIAL_SKILLS);
     return true;
   }
 };

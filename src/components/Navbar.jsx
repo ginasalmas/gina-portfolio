@@ -116,13 +116,6 @@ const Navbar = () => {
               </div>
               Let's Talk
             </motion.a>
-            <Link
-              to="/admin/login"
-              className="p-2.5 rounded-full text-deep-navy/35 hover:text-deep-navy hover:bg-soft-gold/12 transition-colors"
-              title="Admin"
-            >
-              <Lock className="w-3.5 h-3.5" />
-            </Link>
           </div>
 
           {/* ── Mobile Hamburger ── */}
@@ -179,12 +172,6 @@ const Navbar = () => {
                 >
                   Let's Talk
                 </a>
-                <Link
-                  to="/admin/login"
-                  className="w-full text-center py-2 text-xs text-deep-navy/50 flex items-center justify-center gap-1.5"
-                >
-                  <Lock className="w-3 h-3" /> Admin
-                </Link>
               </div>
             </motion.div>
           )}

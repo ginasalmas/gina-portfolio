@@ -74,7 +74,7 @@ const HeroOrbitPhoto = ({ profileImage, heroImage }) => {
   const imageSrc = heroImage || profileImage || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80";
 
   return (
-    <div className="relative w-full max-w-[420px] sm:max-w-[480px] aspect-square mx-auto flex items-center justify-center select-none">
+    <div className="relative w-full max-w-[480px] sm:max-w-[580px] aspect-square mx-auto flex items-center justify-center select-none">
       
       {/* Outer Glow & Ambient Pulsing Rings */}
       <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-soft-gold/20 via-botanical-sage/20 to-muted-rose/20 blur-3xl animate-pulse-slow pointer-events-none" />
@@ -128,16 +128,16 @@ const HeroOrbitPhoto = ({ profileImage, heroImage }) => {
                 className="relative group cursor-pointer"
               >
                 <div
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-paper-cream/95 border shadow-editorial backdrop-blur-md transition-all duration-300 ${
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full bg-white/90 border shadow-lg backdrop-blur-xl transition-all duration-300 ${
                     isHovered
-                      ? 'scale-110 shadow-xl border-soft-gold ring-2 ring-soft-gold/40 bg-white'
-                      : 'border-warm-beige-300 hover:border-soft-gold/60'
+                      ? 'scale-115 shadow-[0_0_20px_rgba(212,175,55,0.4)] border-soft-gold ring-2 ring-soft-gold/40 bg-white'
+                      : 'border-warm-beige-300 hover:border-soft-gold/60 hover:shadow-[0_0_15px_rgba(212,175,55,0.2)] hover:scale-105 hover:bg-white'
                   }`}
                 >
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center bg-gradient-to-tr ${role.color} text-white shadow-sm flex-shrink-0`}>
-                    <Icon className="w-3.5 h-3.5" />
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center bg-gradient-to-tr ${role.color} text-white shadow-sm flex-shrink-0`}>
+                    <Icon className="w-4 h-4" />
                   </div>
-                  <span className="text-[11px] sm:text-xs font-bold text-deep-navy whitespace-nowrap">
+                  <span className="text-[12px] sm:text-sm font-bold text-deep-navy whitespace-nowrap">
                     {role.title}
                   </span>
                 </div>
@@ -161,7 +161,7 @@ const HeroOrbitPhoto = ({ profileImage, heroImage }) => {
       </motion.div>
 
       {/* Central Photo Container */}
-      <div className="relative z-20 w-44 h-44 sm:w-56 sm:h-56 rounded-full p-2 bg-paper-cream border-2 border-warm-beige-300 shadow-editorial group">
+      <div className="relative z-20 w-52 h-52 sm:w-72 sm:h-72 rounded-full p-2 sm:p-3 bg-paper-cream border-2 border-warm-beige-300 shadow-editorial group">
         
         {/* Animated Rotating Gradient Border */}
         <div className="absolute inset-0 rounded-full bg-gradient-to-r from-soft-gold via-botanical-sage to-muted-rose opacity-60 group-hover:opacity-100 transition-opacity duration-500 animate-spin-slow" style={{ animationDuration: '8s' }} />

@@ -71,7 +71,7 @@ const Home = () => {
     <div className="space-y-32 pb-24 relative overflow-hidden">
 
       {/* ═══════════════════ HERO SECTION ═══════════════════ */}
-      <section className="relative pt-28 pb-16 md:pt-36 md:pb-24 px-5 md:px-10 max-w-7xl mx-auto">
+      <section className="relative min-h-screen flex flex-col justify-center pt-28 pb-16 md:pt-36 md:pb-24 px-5 md:px-10 max-w-7xl mx-auto">
 
         {/* Decorative background blobs */}
         <div className="absolute -top-20 -left-20 w-96 h-96 rounded-full bg-soft-gold/10 blur-3xl pointer-events-none" />

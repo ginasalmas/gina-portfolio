@@ -139,10 +139,6 @@ const Footer = () => {
         {/* Copyright */}
         <div className="pt-8 border-t border-warm-beige/15 text-center md:flex md:justify-between items-center text-xs text-warm-beige/60 font-light">
           <p>© {new Date().getFullYear()} {settings.fullName || 'Gina Rahma'}. All rights reserved.</p>
-          <p className="mt-2 md:mt-0 flex items-center justify-center gap-1">
-            <span>Designed with Warm Beige & Editorial Botanical Elegance</span>
-            <TinyFlower className="w-3.5 h-3.5 text-soft-gold" />
-          </p>
         </div>
 
       </div>

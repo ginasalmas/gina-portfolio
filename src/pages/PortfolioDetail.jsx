@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import { 
   ArrowLeft, Calendar, User, Layout, 
   MapPin, Clock, PenTool, ExternalLink,
   ChevronRight, Sparkles, Layers, Target,
-  Image as ImageIcon
+  Image as ImageIcon, List
 } from 'lucide-react';
 import { motion, useScroll, useSpring } from 'framer-motion';
 
@@ -62,29 +62,20 @@ const HighlightCard = ({ title, children, icon: Icon, color = 'gold' }) => {
   );
 };
 
-const InfoPill = ({ icon: Icon, label, value }) => (
-  <div className="flex items-start gap-4">
-    <div className="w-10 h-10 rounded-xl bg-warm-beige-100 flex items-center justify-center flex-shrink-0 text-deep-navy">
-      <Icon className="w-5 h-5" />
-    </div>
-    <div>
-      <p className="text-[10px] font-black uppercase tracking-widest text-deep-navy/50 mb-1">{label}</p>
-      <p className="font-bold text-deep-navy text-sm">{value}</p>
-    </div>
-  </div>
-);
-
 const FullImage = ({ src, alt, caption }) => {
   if (!src) return null;
+  // Handle caption whether it's a string or array
+  const displayCaption = Array.isArray(caption) ? caption[0] : caption;
+  
   return (
     <figure className="my-16 group">
       <div className="rounded-[2.5rem] overflow-hidden bg-warm-beige-100 shadow-2xl border border-warm-beige-200 relative">
-        <img src={src} alt={alt} className="w-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
+        <img src={src} alt={alt || "Project Image"} className="w-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
         <div className="absolute inset-0 bg-deep-navy/0 group-hover:bg-deep-navy/5 transition-colors duration-500"></div>
       </div>
-      {caption && (
+      {displayCaption && (
         <figcaption className="text-center text-sm font-light text-deep-navy/60 mt-6 max-w-2xl mx-auto italic">
-          {caption}
+          {displayCaption}
         </figcaption>
       )}
     </figure>
@@ -92,18 +83,19 @@ const FullImage = ({ src, alt, caption }) => {
 };
 
 const ImageGrid = ({ images = [], captions, cols = 2 }) => {
-  const imgArray = Array.isArray(images) ? images : (images ? images.split('\n') : []);
+  const imgArray = Array.isArray(images) ? images : (images ? String(images).split('\n') : []);
   if (!imgArray || imgArray.length === 0) return null;
-  const captionArray = captions ? captions.split('\n') : [];
+  
+  const captionArray = Array.isArray(captions) ? captions : (captions ? String(captions).split('\n') : []);
   
   return (
     <div className={`grid grid-cols-1 md:grid-cols-${cols} gap-6 md:gap-8 my-16`}>
       {imgArray.map((url, i) => {
-        if (!url.trim()) return null;
+        if (!url || typeof url !== 'string' || !url.trim()) return null;
         return (
           <figure key={i} className="group">
             <div className="rounded-3xl overflow-hidden bg-warm-beige-100 shadow-lg border border-warm-beige-200 h-full relative">
-              <img src={url.trim()} alt={`Gallery ${i}`} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
+              <img src={url.trim()} alt={`Gallery ${i + 1}`} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
             </div>
             {captionArray[i] && (
               <figcaption className="text-sm font-light text-deep-navy/60 mt-4 px-2">
@@ -116,6 +108,46 @@ const ImageGrid = ({ images = [], captions, cols = 2 }) => {
     </div>
   );
 };
+
+// ─── Section Navigation Hook ───
+const useSectionNavigation = (sectionIds) => {
+  const [activeSection, setActiveSection] = useState('');
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      { rootMargin: '-20% 0px -60% 0px', threshold: 0 }
+    );
+
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, [sectionIds]);
+
+  return activeSection;
+};
+
+// ─── Sidebar Info Item ───
+const SidebarInfoItem = ({ icon: Icon, label, value }) => (
+  <div className="flex items-start gap-3">
+    <div className="w-8 h-8 rounded-lg bg-warm-beige-100 flex items-center justify-center flex-shrink-0 text-deep-navy/70">
+      <Icon className="w-4 h-4" />
+    </div>
+    <div className="min-w-0">
+      <p className="text-[10px] font-black uppercase tracking-widest text-deep-navy/40 mb-0.5">{label}</p>
+      <p className="font-semibold text-deep-navy text-sm leading-snug">{value}</p>
+    </div>
+  </div>
+);
 
 // ─── Main Component ───
 const PortfolioDetail = () => {
@@ -133,6 +165,86 @@ const PortfolioDetail = () => {
     if (found) setProject(found);
   }, [id, projects]);
 
+  // Build sections list for navigation and rendering (auto-migrating legacy formats)
+  const normalizedSections = useMemo(() => {
+    if (!project) return [];
+    
+    // If it's a dynamic template (saved from the new CMS), strictly use its sections array, even if empty.
+    if (project.templateType === 'dynamic') {
+      return Array.isArray(project.sections) ? project.sections : [];
+    }
+    
+    // For legacy templates, if they somehow already have sections, prioritize them
+    if (project.sections && Array.isArray(project.sections) && project.sections.length > 0) {
+      return project.sections;
+    }
+
+    const s = [];
+    const pushSection = (id, title, content, images, highlight = false, color = 'white') => {
+      const validImages = (images || []).filter(Boolean);
+      if (!content && validImages.length === 0) return;
+      s.push({
+        id, title, content, images: validImages, useHighlight: highlight, highlightColor: color
+      });
+    };
+
+    if (project.templateType === 'graphic-design' || (!project.templateType && project.category === 'Graphic Design')) {
+      pushSection('sec-overview', 'Overview', project.overview, [project.overviewImageGD]);
+      pushSection('sec-brief', 'Creative Brief', project.creativeBrief, [project.briefImage], true, 'white');
+      pushSection('sec-direction', 'Design Direction', project.designDirection, [project.moodboardImage]);
+      pushSection('sec-exploration', 'Visual Exploration', project.visualExploration, project.explorationImages);
+      pushSection('sec-dev', 'Design Development', project.designDevelopment, [project.devBeforeImage, project.devAfterImage]);
+      pushSection('sec-final', 'Final Design', project.finalDesign, [project.finalHeroImage, ...(project.finalGalleryImages || [])]);
+      pushSection('sec-context', 'Design in Context', project.mockups, project.mockupImages);
+      pushSection('sec-assets', 'Assets & System', project.designAssets, [project.assetsImage], true, 'navy');
+      pushSection('sec-deliverables', 'Deliverables', project.deliverables, project.deliverablesImages);
+      pushSection('sec-outcome', 'Outcome', project.outcome, [project.outcomeImageGD], true, 'gold');
+      pushSection('sec-reflection', 'Reflection', project.reflection, [project.reflectionImageGD], true, 'white');
+    } else if (project.templateType === 'ui-ux' || (!project.templateType && project.category !== 'Graphic Design' && project.templateType !== 'gallery')) {
+      pushSection('sec-overview', 'Overview', project.overview, [project.overviewImage]);
+      pushSection('sec-problem', 'The Problem', project.problem, [project.problemImage], true, 'navy');
+      pushSection('sec-goals', 'Design Goals', project.designGoals, [project.goalsImage], true, 'gold');
+      pushSection('sec-research', 'User Research', project.userResearch, [project.researchImage]);
+      pushSection('sec-findings', 'Research Findings', project.researchFindings, [project.findingsImage], true, 'white');
+      pushSection('sec-persona', 'User Persona', project.userPersona, [project.personaImage]);
+      pushSection('sec-define', 'Define (HMW)', project.defineProblem, [project.defineImage], true, 'gold');
+      pushSection('sec-architecture', 'Architecture & Flow', project.infoArchitecture || project.userFlow, [project.sitemapImage, project.userFlowImage]);
+      pushSection('sec-wireframes', 'Wireframes', project.wireframes, [project.wireframeLowImage, project.wireframeHighImage]);
+      pushSection('sec-designsystem', 'Design System', project.designSystem, [project.designSystemImage], true, 'white');
+      pushSection('sec-hifi', 'High Fidelity', project.highFidelity, [project.hifiHeroImage, ...(project.hifiScreenImages || [])]);
+      pushSection('sec-testing', 'Usability Testing', project.usabilityTesting, [project.testingImage]);
+      pushSection('sec-iteration', 'Design Iteration', project.designIteration, [project.iterationBeforeImage, project.iterationAfterImage], true, 'navy');
+      pushSection('sec-finalsolution', 'Final Solution', project.finalSolution, [project.finalSolutionImage, ...(project.showcaseImages || [])]);
+      pushSection('sec-outcome', 'Outcome', project.outcome, [project.outcomeImage], true, 'gold');
+      pushSection('sec-reflection', 'Reflection', project.reflection, [project.reflectionImage], true, 'white');
+    }
+    
+    return s;
+  }, [project]);
+
+  const sections = useMemo(() => {
+    if (project?.templateType === 'gallery') {
+      const s = [];
+      if (project.overview) s.push({ id: 'sec-overview', label: 'Overview' });
+      if (project.gallery?.length) s.push({ id: 'sec-gallery', label: 'Gallery' });
+      return s;
+    }
+    return normalizedSections.map((sec, i) => ({
+      id: sec.id || `sec-${i}`,
+      label: sec.title
+    }));
+  }, [project, normalizedSections]);
+
+  const sectionIds = useMemo(() => sections.map(s => s.id), [sections]);
+  const activeSection = useSectionNavigation(sectionIds);
+
+  const scrollToSection = useCallback((sectionId) => {
+    const el = document.getElementById(sectionId);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, []);
+
   if (!project) {
     return (
       <div className="min-h-screen bg-paper-cream flex items-center justify-center flex-col">
@@ -142,9 +254,7 @@ const PortfolioDetail = () => {
     );
   }
 
-  const isDesign = project.templateType === 'graphic-design' || (project.category === 'Graphic Design' && !project.templateType);
   const isGallery = project.templateType === 'gallery';
-  const isUIUX = project.templateType === 'ui-ux' || (!isDesign && !isGallery);
 
   const renderText = (text) => {
     if (!text) return null;
@@ -155,13 +265,135 @@ const PortfolioDetail = () => {
     ));
   };
 
-  // Current project index (for recommendation filtering)
-  const currentIndex = projects.findIndex(p => p.id === id);
+  // ─── Sidebar Component ───
+  const Sidebar = () => (
+    <aside className="hidden lg:block w-64 flex-shrink-0">
+      <div className="sticky top-28 space-y-8">
+        {/* Project Info */}
+        <div className="bg-white rounded-2xl border border-warm-beige-200 p-6 shadow-sm space-y-5">
+          <h4 className="text-[10px] font-black uppercase tracking-widest text-deep-navy/40 flex items-center gap-2">
+            <div className="w-1.5 h-1.5 rounded-full bg-soft-gold"></div>
+            Project Info
+          </h4>
+          <div className="space-y-4">
+            <SidebarInfoItem icon={User} label="Role" value={project.role || 'Designer'} />
+            <SidebarInfoItem icon={Calendar} label="Timeline" value={project.timeline || project.date} />
+            {project.platform && (
+              <SidebarInfoItem icon={Layout} label="Platform" value={project.platform} />
+            )}
+            {project.team && (
+              <SidebarInfoItem icon={Target} label="Team" value={project.team} />
+            )}
+          </div>
+          {project.tools && project.tools.length > 0 && (
+            <div className="pt-4 border-t border-warm-beige-200">
+              <p className="text-[10px] font-black uppercase tracking-widest text-deep-navy/40 mb-3 flex items-center gap-2">
+                <PenTool className="w-3 h-3" /> Tools
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {Array.isArray(project.tools) ? project.tools.map(tool => (
+                  <span key={tool} className="px-2.5 py-1 bg-warm-beige-100 rounded-lg text-[11px] font-semibold text-deep-navy/80 border border-warm-beige-200">
+                    {tool}
+                  </span>
+                )) : (
+                  <span className="px-2.5 py-1 bg-warm-beige-100 rounded-lg text-[11px] font-semibold text-deep-navy/80 border border-warm-beige-200">
+                    {project.tools}
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
+          {project.liveUrl && (
+            <div className="pt-4 border-t border-warm-beige-200">
+              <a href={project.liveUrl} target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-2 text-xs font-bold text-deep-navy hover:text-soft-gold-600 transition-colors">
+                <ExternalLink className="w-3.5 h-3.5 text-soft-gold" /> View Live Project
+              </a>
+            </div>
+          )}
+        </div>
+
+        {/* Section Navigation */}
+        {sections.length > 0 && (
+          <div className="bg-white rounded-2xl border border-warm-beige-200 p-6 shadow-sm">
+            <h4 className="text-[10px] font-black uppercase tracking-widest text-deep-navy/40 mb-4 flex items-center gap-2">
+              <List className="w-3 h-3" /> On This Page
+            </h4>
+            <nav className="space-y-1">
+              {sections.map((section, i) => (
+                <button
+                  key={section.id}
+                  onClick={() => scrollToSection(section.id)}
+                  className={`w-full text-left px-3 py-2 rounded-lg text-xs font-medium transition-all duration-200 flex items-center gap-2 group ${
+                    activeSection === section.id
+                      ? 'bg-soft-gold/15 text-deep-navy font-bold border-l-2 border-soft-gold'
+                      : 'text-deep-navy/55 hover:text-deep-navy hover:bg-warm-beige-100'
+                  }`}
+                >
+                  <span className={`text-[9px] font-black w-5 ${activeSection === section.id ? 'text-soft-gold-600' : 'text-deep-navy/30'}`}>
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  {section.label}
+                </button>
+              ))}
+            </nav>
+          </div>
+        )}
+      </div>
+    </aside>
+  );
+
+  // ─── Mobile Section Nav (sticky horizontal) ───
+  const MobileSectionNav = () => {
+    if (sections.length === 0) return null;
+    return (
+      <div className="lg:hidden sticky top-[60px] z-30 bg-paper-cream/95 backdrop-blur-md border-b border-warm-beige-200 -mx-6 px-4 py-2.5 mb-8 overflow-x-auto scrollbar-hide">
+        <div className="flex gap-2 min-w-max">
+          {sections.map((section) => (
+            <button
+              key={section.id}
+              onClick={() => scrollToSection(section.id)}
+              className={`px-3.5 py-1.5 rounded-full text-[11px] font-semibold whitespace-nowrap transition-all ${
+                activeSection === section.id
+                  ? 'bg-deep-navy text-warm-beige shadow-sm'
+                  : 'text-deep-navy/50 bg-warm-beige-100 hover:bg-warm-beige-200'
+              }`}
+            >
+              {section.label}
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  // ─── Mobile Info Panel ───
+  const MobileInfoPanel = () => (
+    <div className="lg:hidden bg-white rounded-2xl border border-warm-beige-200 p-5 shadow-sm mb-10">
+      <div className="grid grid-cols-2 gap-4">
+        <SidebarInfoItem icon={User} label="Role" value={project.role || 'Designer'} />
+        <SidebarInfoItem icon={Calendar} label="Timeline" value={project.timeline || project.date} />
+        {project.platform && <SidebarInfoItem icon={Layout} label="Platform" value={project.platform} />}
+        {project.team && <SidebarInfoItem icon={Target} label="Team" value={project.team} />}
+      </div>
+      {project.tools && project.tools.length > 0 && (
+        <div className="mt-4 pt-4 border-t border-warm-beige-200">
+          <div className="flex flex-wrap gap-1.5">
+            {project.tools.map(tool => (
+              <span key={tool} className="px-2.5 py-1 bg-warm-beige-100 rounded-lg text-[11px] font-semibold text-deep-navy/80 border border-warm-beige-200">
+                {tool}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 
   return (
     <main className="bg-paper-cream min-h-screen selection:bg-soft-gold selection:text-deep-navy">
       {/* Scroll Progress Bar */}
-      <motion.div style={{ scaleX, transformOrigin: "0%" }} className="fixed top-0 left-0 right-0 h-1.5 bg-soft-gold z-50 rounded-r-full" />
+      <motion.div style={{ scaleX, transformOrigin: "0%" }} className="fixed top-0 left-0 right-0 h-1 bg-soft-gold z-50 rounded-r-full" />
 
       {/* Floating Back Button */}
       <div className="fixed top-6 left-6 md:top-10 md:left-10 z-40">
@@ -171,10 +403,8 @@ const PortfolioDetail = () => {
         </button>
       </div>
 
-      {/* ─────────────────────────────────────────────────────────────
-          SECTION 01: HERO & META (IMMERSIVE IMAGE BACKGROUND)
-      ────────────────────────────────────────────────────────────── */}
-      <header className="relative pt-40 pb-20 md:pt-56 md:pb-32 px-6 min-h-[80vh] flex flex-col justify-end overflow-hidden mb-20">
+      {/* ═══════ CLEAN HERO SECTION ═══════ */}
+      <header className="relative pt-32 pb-16 md:pt-44 md:pb-24 px-6 min-h-[60vh] flex flex-col justify-end overflow-hidden">
         {(() => {
           const heroSrc = project.heroImage || project.thumbnail || (project.gallery && project.gallery[0]);
           return heroSrc ? (
@@ -182,7 +412,7 @@ const PortfolioDetail = () => {
               <div className="absolute inset-0">
                 <img src={heroSrc} alt={`${project.title} Hero`} className="w-full h-full object-cover" />
               </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-deep-navy via-deep-navy/80 to-deep-navy/30" />
+              <div className="absolute inset-0 bg-gradient-to-t from-deep-navy via-deep-navy/70 to-deep-navy/20" />
             </>
           ) : (
             <div className="absolute inset-0 bg-deep-navy" />
@@ -191,539 +421,107 @@ const PortfolioDetail = () => {
         
         <div className="relative z-10 max-w-5xl mx-auto w-full">
           <FadeIn>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 shadow-sm mb-8">
-              <span className="w-2 h-2 rounded-full bg-soft-gold animate-pulse"></span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 shadow-sm mb-6 flex-wrap max-w-full">
+              <span className="w-2 h-2 rounded-full bg-soft-gold animate-pulse flex-shrink-0"></span>
               <span className="text-xs font-black uppercase tracking-[0.2em] text-white/90">
-                {project.category} {project.subcategory ? `— ${project.subcategory}` : ''}
+                {Array.isArray(project.tags) ? project.tags.join(' • ') : (project.tags || 'Portfolio Project')}
               </span>
             </div>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-white leading-[1.1] tracking-tight mb-8 max-w-4xl">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-white leading-[1.1] tracking-tight mb-6 max-w-4xl">
               {project.title}
             </h1>
             {project.shortDescription && (
-              <p className="text-xl md:text-2xl text-white/70 font-light max-w-3xl leading-relaxed">
+              <p className="text-lg md:text-xl text-white/70 font-light max-w-3xl leading-relaxed">
                 {project.shortDescription}
               </p>
             )}
           </FadeIn>
-
-          <FadeIn delay={0.2} className="mt-12 md:mt-16">
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 p-6 md:p-8 rounded-[2rem] bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none"></div>
-              
-              {/* Custom Info Pills for Dark Background */}
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-2 text-white/50 mb-1">
-                  <User className="w-4 h-4" />
-                  <span className="text-[10px] font-black uppercase tracking-widest">Role</span>
-                </div>
-                <span className="text-sm font-bold text-white">{project.role || 'Designer'}</span>
-              </div>
-              
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-2 text-white/50 mb-1">
-                  <Calendar className="w-4 h-4" />
-                  <span className="text-[10px] font-black uppercase tracking-widest">Timeline</span>
-                </div>
-                <span className="text-sm font-bold text-white">{project.timeline || project.date}</span>
-              </div>
-              
-              {project.platform && (
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center gap-2 text-white/50 mb-1">
-                    <Layout className="w-4 h-4" />
-                    <span className="text-[10px] font-black uppercase tracking-widest">Platform</span>
-                  </div>
-                  <span className="text-sm font-bold text-white">{project.platform}</span>
-                </div>
-              )}
-              
-              {project.team && (
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center gap-2 text-white/50 mb-1">
-                    <Target className="w-4 h-4" />
-                    <span className="text-[10px] font-black uppercase tracking-widest">Team</span>
-                  </div>
-                  <span className="text-sm font-bold text-white">{project.team}</span>
-                </div>
-              )}
-
-              {project.tools && project.tools.length > 0 && (
-                <div className="col-span-2 lg:col-span-1 flex flex-col gap-2">
-                  <div className="flex items-center gap-2 text-white/50 mb-1">
-                    <PenTool className="w-4 h-4" />
-                    <span className="text-[10px] font-black uppercase tracking-widest">Tools</span>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {project.tools.map(tool => (
-                      <span key={tool} className="px-2 py-1 bg-white/10 rounded-md text-[10px] font-bold text-white">
-                        {tool}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </FadeIn>
         </div>
       </header>
 
-      {/* ─────────────────────────────────────────────────────────────
-          TEMPLATE 1: SIMPLE GALLERY
-      ────────────────────────────────────────────────────────────── */}
-      {isGallery && (
-        <article className="max-w-4xl mx-auto px-6 pb-40">
-           {project.overview && (
-             <FadeIn className="max-w-4xl mx-auto mb-20 text-center">
-                <p className="text-xl md:text-3xl text-deep-navy font-light leading-relaxed">
-                  {project.overview}
-                </p>
-             </FadeIn>
-           )}
+      {/* ═══════ CONTENT WITH SIDEBAR ═══════ */}
+      <div className="max-w-7xl mx-auto px-6 py-12 md:py-20 flex gap-12">
+        {/* Sticky Sidebar (Desktop) */}
+        <Sidebar />
 
-           {project.gallery && project.gallery.length > 0 && (
-             <FadeIn>
-               {/* Masonry-like grid using columns */}
-               <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
-                 {project.gallery.map((url, i) => {
-                   if (!url.trim()) return null;
-                   return (
-                     <div key={i} className="break-inside-avoid group rounded-3xl overflow-hidden bg-warm-beige-100 shadow-lg border border-warm-beige-200 relative">
-                       <img src={url.trim()} alt={`Gallery ${i}`} className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
-                       <div className="absolute inset-0 bg-deep-navy/0 group-hover:bg-deep-navy/10 transition-colors duration-500"></div>
-                     </div>
-                   );
-                 })}
-               </div>
-             </FadeIn>
-           )}
-        </article>
-      )}
-
-
-      {/* ─────────────────────────────────────────────────────────────
-          TEMPLATE 2: GRAPHIC DESIGN
-      ────────────────────────────────────────────────────────────── */}
-      {isDesign && !isGallery && (
-        <article className="max-w-4xl mx-auto px-6 pb-40 space-y-32 md:space-y-48">
+        {/* Main Content */}
+        <div className="flex-1 min-w-0">
+          {/* Mobile Info Panel */}
+          <MobileInfoPanel />
           
-          {project.overview && (
-            <FadeIn>
-              <SectionLabel number="01" title="Overview" />
-              <SectionTitle>Project Overview</SectionTitle>
-              <div className="text-lg md:text-2xl text-deep-navy/80 font-light leading-relaxed mb-12">
-                {renderText(project.overview)}
-              </div>
-              <FullImage src={project.overviewImageGD} />
-            </FadeIn>
-          )}
+          {/* Mobile Section Nav */}
+          <MobileSectionNav />
 
-          {project.creativeBrief && (
-            <FadeIn>
-              <SectionLabel number="02" title="Brief" />
-              <HighlightCard title="The Creative Brief" color="white">
-                {renderText(project.creativeBrief)}
-              </HighlightCard>
-              <FullImage src={project.briefImage} />
-            </FadeIn>
-          )}
-
-          {(project.designDirection || project.moodboardImage) && (
-            <FadeIn>
-              <SectionLabel number="03" title="Direction" />
-              <SectionTitle>Design Direction</SectionTitle>
-              {project.designDirection && (
-                <div className="text-lg md:text-xl text-deep-navy/80 font-light leading-relaxed mb-12">
-                  {renderText(project.designDirection)}
-                </div>
-              )}
-              <FullImage src={project.moodboardImage} caption="Moodboard & Visual Reference" />
-            </FadeIn>
-          )}
-
-          {(project.visualExploration || project.explorationImages) && (
-            <FadeIn>
-              <SectionLabel number="04" title="Exploration" />
-              <SectionTitle>Visual Exploration</SectionTitle>
-              {project.visualExploration && (
-                <div className="text-lg md:text-xl text-deep-navy/80 font-light leading-relaxed mb-12">
-                  {renderText(project.visualExploration)}
-                </div>
-              )}
-              <ImageGrid images={project.explorationImages} captions={project.explorationCaptions} cols={2} />
-            </FadeIn>
-          )}
-
-          {(project.designDevelopment || project.devBeforeImage) && (
-            <FadeIn>
-              <SectionLabel number="05" title="Development" />
-              <SectionTitle>Design Development</SectionTitle>
-              {project.designDevelopment && (
-                <div className="text-lg md:text-xl text-deep-navy/80 font-light leading-relaxed mb-12">
-                  {renderText(project.designDevelopment)}
-                </div>
-              )}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 my-16">
-                {project.devBeforeImage && (
-                  <div>
-                    <h4 className="text-sm font-bold uppercase tracking-widest text-deep-navy/50 mb-4">Initial Draft</h4>
-                    <img src={project.devBeforeImage} alt="Draft" className="w-full rounded-[2rem] shadow-lg border border-warm-beige-200" />
-                  </div>
-                )}
-                {project.devAfterImage && (
-                  <div>
-                    <h4 className="text-sm font-bold uppercase tracking-widest text-deep-navy/50 mb-4">Refinement</h4>
-                    <img src={project.devAfterImage} alt="Refined" className="w-full rounded-[2rem] shadow-lg border border-warm-beige-200" />
-                  </div>
-                )}
-              </div>
-            </FadeIn>
-          )}
-
-          {(project.finalDesign || project.finalHeroImage) && (
-            <FadeIn>
-              <SectionLabel number="06" title="Final" />
-              <SectionTitle>The Final Design</SectionTitle>
-              {project.finalDesign && (
-                <div className="text-lg md:text-xl text-deep-navy/80 font-light leading-relaxed mb-12">
-                  {renderText(project.finalDesign)}
-                </div>
-              )}
-              <FullImage src={project.finalHeroImage} />
-              <ImageGrid images={project.finalGalleryImages} captions={project.finalGalleryCaptions} cols={2} />
-            </FadeIn>
-          )}
-
-          {(project.mockups || project.mockupImages) && (
-            <FadeIn>
-              <SectionLabel number="07" title="Context" />
-              <SectionTitle>Design in Context</SectionTitle>
-              {project.mockups && (
-                <div className="text-lg md:text-xl text-deep-navy/80 font-light leading-relaxed mb-12">
-                  {renderText(project.mockups)}
-                </div>
-              )}
-              <ImageGrid images={project.mockupImages} captions={project.mockupCaptions} cols={1} />
-            </FadeIn>
-          )}
-
-          {(project.designAssets || project.assetsImage) && (
-            <FadeIn>
-              <SectionLabel number="08" title="Assets" />
-              <HighlightCard title="Design System & Assets" color="navy">
-                {renderText(project.designAssets)}
-              </HighlightCard>
-              <FullImage src={project.assetsImage} />
-            </FadeIn>
-          )}
-
-          {(project.deliverables || project.deliverablesImages) && (
-            <FadeIn>
-              <SectionLabel number="09" title="Deliverables" />
-              <SectionTitle>Final Deliverables</SectionTitle>
-              {project.deliverables && (
-                <div className="text-lg md:text-xl text-deep-navy/80 font-light leading-relaxed mb-12">
-                  {renderText(project.deliverables)}
-                </div>
-              )}
-              <ImageGrid images={project.deliverablesImages} captions={project.deliverablesCaptions} cols={2} />
-            </FadeIn>
-          )}
-
-          {(project.outcome || project.reflection) && (
-            <FadeIn>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {project.outcome && (
-                  <HighlightCard title="Outcome & Impact" color="gold">
-                    {renderText(project.outcome)}
-                  </HighlightCard>
-                )}
-                {project.reflection && (
-                  <HighlightCard title="Reflection" color="white">
-                    {renderText(project.reflection)}
-                  </HighlightCard>
-                )}
-              </div>
-              <FullImage src={project.outcomeImageGD || project.reflectionImageGD} />
-            </FadeIn>
-          )}
-
-        </article>
-      )}
-
-      {/* ─────────────────────────────────────────────────────────────
-          TEMPLATE 3: UI/UX
-      ────────────────────────────────────────────────────────────── */}
-      {isUIUX && !isGallery && (
-        <article className="max-w-4xl mx-auto px-6 pb-40 space-y-32 md:space-y-48">
-          
-          {/* Phase 1: Discover */}
-          <section className="space-y-32">
-            <FadeIn>
-              <div className="mb-20 inline-flex items-center gap-3 px-6 py-3 rounded-full bg-deep-navy text-warm-beige">
-                <Sparkles className="w-5 h-5 text-soft-gold" />
-                <span className="font-bold tracking-widest uppercase text-sm">Phase 1: Discover & Empathize</span>
-              </div>
-              
+          {/* ═══════ GALLERY TEMPLATE ═══════ */}
+          {isGallery && (
+            <article className="pb-20 space-y-20">
               {project.overview && (
-                <div className="mb-32">
-                  <SectionLabel number="01" title="Overview" />
-                  <SectionTitle>Project Overview</SectionTitle>
-                  <div className="text-lg md:text-2xl text-deep-navy/80 font-light leading-relaxed">
-                    {renderText(project.overview)}
+                <FadeIn>
+                  <div id="sec-overview" className="scroll-mt-28">
+                    <p className="text-xl md:text-3xl text-deep-navy font-light leading-relaxed text-center">
+                      {project.overview}
+                    </p>
                   </div>
-                  <FullImage src={project.overviewImage} />
-                </div>
+                </FadeIn>
               )}
 
-              {(project.problem || project.designGoals) && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-32">
-                  {project.problem && (
-                    <HighlightCard title="The Problem" color="navy">
-                      {renderText(project.problem)}
-                    </HighlightCard>
-                  )}
-                  {project.designGoals && (
-                    <HighlightCard title="Design Goals" color="gold">
-                      {renderText(project.designGoals)}
-                    </HighlightCard>
-                  )}
-                </div>
-              )}
-              <FullImage src={project.problemImage || project.goalsImage} />
-            </FadeIn>
-
-            {(project.userResearch || project.researchFindings) && (
-              <FadeIn>
-                <SectionLabel number="02" title="Research" />
-                <SectionTitle>User Research</SectionTitle>
-                <div className="text-lg md:text-xl text-deep-navy/80 font-light leading-relaxed mb-12">
-                  {renderText(project.userResearch)}
-                </div>
-                <FullImage src={project.researchImage} />
-                
-                {project.researchFindings && (
-                  <div className="mt-20">
-                    <HighlightCard title="Key Findings & Insights" color="white">
-                      {renderText(project.researchFindings)}
-                    </HighlightCard>
-                    <FullImage src={project.findingsImage} />
+              {project.gallery && project.gallery.length > 0 && (
+                <FadeIn>
+                  <div id="sec-gallery" className="scroll-mt-28">
+                    <div className="columns-1 md:columns-2 gap-6 space-y-6">
+                      {(Array.isArray(project.gallery) ? project.gallery : [project.gallery]).map((url, i) => {
+                        if (!url || typeof url !== 'string' || !url.trim()) return null;
+                        return (
+                          <div key={i} className="break-inside-avoid group rounded-3xl overflow-hidden bg-warm-beige-100 shadow-lg border border-warm-beige-200 relative">
+                            <img src={url.trim()} alt={`Gallery ${i}`} className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
+                            <div className="absolute inset-0 bg-deep-navy/0 group-hover:bg-deep-navy/10 transition-colors duration-500"></div>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
-                )}
-              </FadeIn>
-            )}
-
-            {(project.userPersona) && (
-              <FadeIn>
-                <SectionLabel number="03" title="Persona" />
-                <SectionTitle>User Persona</SectionTitle>
-                <div className="text-lg md:text-xl text-deep-navy/80 font-light leading-relaxed mb-12">
-                  {renderText(project.userPersona)}
-                </div>
-                <FullImage src={project.personaImage} />
-              </FadeIn>
-            )}
-          </section>
-
-          {/* Phase 2: Define & Ideate */}
-          <section className="space-y-32">
-            <FadeIn>
-              <div className="mb-20 inline-flex items-center gap-3 px-6 py-3 rounded-full bg-deep-navy text-warm-beige">
-                <Layers className="w-5 h-5 text-soft-gold" />
-                <span className="font-bold tracking-widest uppercase text-sm">Phase 2: Define & Ideate</span>
-              </div>
-
-              {project.defineProblem && (
-                <div className="mb-32">
-                  <SectionLabel number="04" title="Define" />
-                  <HighlightCard title="How Might We...?" color="gold">
-                    {renderText(project.defineProblem)}
-                  </HighlightCard>
-                  <FullImage src={project.defineImage} />
-                </div>
+                </FadeIn>
               )}
+            </article>
+          )}
 
-              {(project.infoArchitecture || project.userFlow) && (
-                <div className="mb-32">
-                  <SectionLabel number="05" title="Architecture" />
-                  <SectionTitle>Information Architecture & User Flow</SectionTitle>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-                    {project.infoArchitecture && (
-                      <div className="text-lg text-deep-navy/80 font-light">
-                        <h4 className="font-bold text-deep-navy mb-4">Sitemap</h4>
-                        {renderText(project.infoArchitecture)}
-                      </div>
-                    )}
-                    {project.userFlow && (
-                      <div className="text-lg text-deep-navy/80 font-light">
-                        <h4 className="font-bold text-deep-navy mb-4">User Flow</h4>
-                        {renderText(project.userFlow)}
-                      </div>
-                    )}
-                  </div>
-                  <FullImage src={project.sitemapImage} caption="Information Architecture" />
-                  <FullImage src={project.userFlowImage} caption="Key User Flows" />
-                </div>
-              )}
-            </FadeIn>
-          </section>
-
-          {/* Phase 3: Design & Prototype */}
-          <section className="space-y-32">
-            <FadeIn>
-              <div className="mb-20 inline-flex items-center gap-3 px-6 py-3 rounded-full bg-deep-navy text-warm-beige">
-                <PenTool className="w-5 h-5 text-soft-gold" />
-                <span className="font-bold tracking-widest uppercase text-sm">Phase 3: Design & Prototype</span>
-              </div>
-
-              {project.wireframes && (
-                <div className="mb-32">
-                  <SectionLabel number="06" title="Wireframing" />
-                  <SectionTitle>Wireframes</SectionTitle>
-                  <div className="text-lg md:text-xl text-deep-navy/80 font-light leading-relaxed mb-12">
-                    {renderText(project.wireframes)}
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 my-16">
-                    {project.wireframeLowImage && (
-                      <div>
-                        <h4 className="text-sm font-bold uppercase tracking-widest text-deep-navy/50 mb-4">Lo-Fi</h4>
-                        <img src={project.wireframeLowImage} className="w-full rounded-[2rem] shadow-lg border border-warm-beige-200" alt="Lo-Fi" />
-                      </div>
-                    )}
-                    {project.wireframeHighImage && (
-                      <div>
-                        <h4 className="text-sm font-bold uppercase tracking-widest text-deep-navy/50 mb-4">Mid/Hi-Fi</h4>
-                        <img src={project.wireframeHighImage} className="w-full rounded-[2rem] shadow-lg border border-warm-beige-200" alt="Hi-Fi" />
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {(project.designSystem || project.designSystemImage) && (
-                <div className="mb-32">
-                  <SectionLabel number="07" title="Design System" />
-                  <HighlightCard title="Design System" color="white">
-                    {renderText(project.designSystem)}
-                  </HighlightCard>
-                  <FullImage src={project.designSystemImage} />
-                </div>
-              )}
-
-              {(project.highFidelity || project.hifiHeroImage) && (
-                <div className="mb-32">
-                  <SectionLabel number="08" title="High Fidelity" />
-                  <SectionTitle>High-Fidelity Interface</SectionTitle>
-                  <div className="text-lg md:text-xl text-deep-navy/80 font-light leading-relaxed mb-12">
-                    {renderText(project.highFidelity)}
-                  </div>
-                  <FullImage src={project.hifiHeroImage} />
-                  <ImageGrid images={project.hifiScreenImages} captions={project.hifiScreenCaptions} cols={2} />
-                </div>
-              )}
-            </FadeIn>
-          </section>
-
-          {/* Phase 4: Test & Iterate */}
-          <section className="space-y-32">
-            <FadeIn>
-              <div className="mb-20 inline-flex items-center gap-3 px-6 py-3 rounded-full bg-deep-navy text-warm-beige">
-                <Target className="w-5 h-5 text-soft-gold" />
-                <span className="font-bold tracking-widest uppercase text-sm">Phase 4: Test & Iterate</span>
-              </div>
-
-              {(project.usabilityTesting || project.testingImage) && (
-                <div className="mb-32">
-                  <SectionLabel number="09" title="Testing" />
-                  <SectionTitle>Usability Testing</SectionTitle>
-                  <div className="text-lg md:text-xl text-deep-navy/80 font-light leading-relaxed mb-12">
-                    {renderText(project.usabilityTesting)}
-                  </div>
-                  <FullImage src={project.testingImage} />
-                </div>
-              )}
-
-              {(project.designIteration) && (
-                <div className="mb-32">
-                  <SectionLabel number="10" title="Iteration" />
-                  <HighlightCard title="Design Iteration" color="navy">
-                    {renderText(project.designIteration)}
-                  </HighlightCard>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 my-16">
-                    {project.iterationBeforeImage && (
-                      <div>
-                        <h4 className="text-sm font-bold uppercase tracking-widest text-deep-navy/50 mb-4 text-rose-500">Before</h4>
-                        <img src={project.iterationBeforeImage} className="w-full rounded-[2rem] shadow-lg border border-warm-beige-200" alt="Before" />
-                      </div>
-                    )}
-                    {project.iterationAfterImage && (
-                      <div>
-                        <h4 className="text-sm font-bold uppercase tracking-widest text-deep-navy/50 mb-4 text-emerald-500">After</h4>
-                        <img src={project.iterationAfterImage} className="w-full rounded-[2rem] shadow-lg border border-warm-beige-200" alt="After" />
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-            </FadeIn>
-          </section>
-
-          {/* Phase 5: Final & Outcome */}
-          <section className="space-y-32">
-            <FadeIn>
-              <div className="mb-20 inline-flex items-center gap-3 px-6 py-3 rounded-full bg-deep-navy text-warm-beige">
-                <Sparkles className="w-5 h-5 text-soft-gold" />
-                <span className="font-bold tracking-widest uppercase text-sm">Final Delivery</span>
-              </div>
-
-              {(project.finalSolution || project.finalSolutionImage || project.showcaseImages) && (
-                <div className="mb-32">
-                  <SectionLabel number="11" title="Final Solution" />
-                  <SectionTitle>The Final Product</SectionTitle>
-                  <div className="text-lg md:text-xl text-deep-navy/80 font-light leading-relaxed mb-12">
-                    {renderText(project.finalSolution)}
-                  </div>
-                  <FullImage src={project.finalSolutionImage} />
-                  <ImageGrid images={project.showcaseImages} captions={project.showcaseCaptions} cols={1} />
-                </div>
-              )}
-
-              {(project.outcome || project.keyLearnings || project.futureImprovements || project.reflection) && (
-                <div>
-                  <SectionLabel number="12" title="Conclusion" />
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {project.outcome && (
-                      <HighlightCard title="Impact & Outcome" color="gold">
-                        {renderText(project.outcome)}
+          {/* ═══════ DYNAMIC TEMPLATE ═══════ */}
+          {project.templateType !== 'gallery' && normalizedSections.length > 0 && (
+            <article className="pb-20 space-y-28 md:space-y-40">
+              {normalizedSections.map((section, idx) => (
+                <FadeIn key={section.id || idx}>
+                  <div id={section.id || `sec-${idx}`} className="scroll-mt-28">
+                    <SectionLabel number={String(idx + 1).padStart(2, '0')} title={section.title} />
+                    
+                    {section.useHighlight ? (
+                      <HighlightCard title={section.title} color={section.highlightColor || 'white'}>
+                        {renderText(section.content)}
                       </HighlightCard>
+                    ) : (
+                      <>
+                        <SectionTitle>{section.title}</SectionTitle>
+                        <div className="text-lg md:text-xl text-deep-navy/80 font-light leading-relaxed mb-12">
+                          {renderText(section.content)}
+                        </div>
+                      </>
                     )}
-                    {project.keyLearnings && (
-                      <HighlightCard title="Key Learnings" color="white">
-                        {renderText(project.keyLearnings)}
-                      </HighlightCard>
+
+                    {section.images && section.images.length === 1 && (
+                      <FullImage src={section.images[0]} caption={section.captions?.[0]} />
                     )}
-                    {project.futureImprovements && (
-                      <HighlightCard title="Future Improvements" color="navy">
-                        {renderText(project.futureImprovements)}
-                      </HighlightCard>
-                    )}
-                    {project.reflection && (
-                      <HighlightCard title="Final Reflection" color="white">
-                        {renderText(project.reflection)}
-                      </HighlightCard>
+                    
+                    {section.images && section.images.length > 1 && (
+                      <ImageGrid images={section.images} captions={section.captions} cols={section.images.length === 2 ? 2 : 2} />
                     )}
                   </div>
-                </div>
-              )}
-            </FadeIn>
-          </section>
+                </FadeIn>
+              ))}
+            </article>
+          )}
+        </div>
+      </div>
 
-        </article>
-      )}
-
-      {/* ─────────────────────────────────────────────────────────────
-          MORE PROJECTS — Recommendation Cards
-      ────────────────────────────────────────────────────────────── */}
+      {/* ═══════ MORE PROJECTS ═══════ */}
       <section className="bg-paper-cream py-24 md:py-32 px-6 border-t border-warm-beige-300">
         <FadeIn>
           <div className="max-w-5xl mx-auto">
@@ -749,9 +547,11 @@ const PortfolioDetail = () => {
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                       />
                       <div className="absolute top-3 left-3">
-                        <span className="px-3 py-1 rounded-full bg-deep-navy/80 backdrop-blur-sm text-warm-beige text-[10px] font-bold uppercase tracking-widest">
-                          {p.category}
-                        </span>
+                        {p.tags && p.tags.length > 0 && (
+                          <span className="px-3 py-1 rounded-full bg-deep-navy/80 backdrop-blur-sm text-warm-beige text-[10px] font-bold uppercase tracking-widest">
+                            {p.tags[0]}
+                          </span>
+                        )}
                       </div>
                     </div>
                     <div className="p-5 flex-grow flex flex-col justify-between gap-3">

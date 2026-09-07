@@ -39,9 +39,8 @@ export const INITIAL_PROJECTS = [
   {
     id: "rutan-depok-web",
     title: "Sistem Tiket & Profil Web Rutan Kelas 1 Depok",
-    templateType: "ui-ux",
-    category: "UI/UX",
-    subcategory: "Web Application",
+    templateType: "dynamic",
+    tags: ["UI/UX", "Web Application"],
     date: "2025-12",
     role: "UI/UX Designer & Web Architect",
     timeline: "Nov 2025 – Apr 2026",
@@ -50,32 +49,59 @@ export const INITIAL_PROJECTS = [
     tools: ["Figma", "Web Systems", "UX Research", "HTML/CSS"],
     thumbnail: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80",
     shortDescription: "Perancangan sistem tiket & antrean berbasis web untuk layanan kunjungan dan poliklinik serta struktur situs profil instansi guna efisiensi alur kerja & transparansi publik.",
-    
-    // UI/UX 24 Sections Structured Data
-    snapshot: "Role: Lead UI/UX Designer • Timeline: 5 Bulan • Platform: Responsive Web • Scope: Research, IA, Flow, Wireframes, Hi-Fi, Prototype, Testing",
-    overview: "Sistem ini dirancang untuk mendigitalkan antrean kunjungan dan pendaftaran poliklinik di Rutan Kelas 1 Depok, serta memperbarui struktur situs profil publik instansi agar transparan dan mudah diakses masyarakat.",
-    problem: "Antrean fisik kunjungan dan poliklinik sering menimbulkan penumpukan pengunjung di loket, waktu tunggu yang tidak pasti, serta ketidakjelasan syarat pengajuan berkas kunjungan bagi masyarakat umum.",
-    designGoals: "1) Mengurangi waktu tunggu antrean fisik hingga 50%. 2) Menyediakan transparansi kuota kunjungan harian secara real-time. 3) Memudahkan verifikasi dokumen pengajuan kunjungan.",
-    userResearch: "Riset dilakukan melalui observasi langsung di loket pelayanan kunjungan Rutan Kelas 1 Depok dan wawancara mendalam dengan 12 pengunjung serta petugas administrasi sarpras.",
-    researchFindings: "83% pengunjung mengeluhkan ketiadaan informasi pasti mengenai sisa kuota kunjungan harian sebelum tiba di lokasi, dan 65% bingung mengenai berkas administrasi yang wajib dibawa.",
-    userPersona: "Bapak Herman (45 thn) & Ibu Ratna (38 thn) — Pengunjung yang membutuhkan kepastian kuota antrean, informasi persyaratan yang jelas, serta alur pendaftaran digital yang sederhana.",
-    defineProblem: "Bagaimana kita bisa membantu pengunjung Rutan Depok mengetahui status antrean dan mendaftar jadwal kunjungan secara online tanpa harus mengantre sejak pagi di lokasi?",
-    infoArchitecture: "Sitemap terbagi menjadi 3 pilar utama: 1) Portal Layanan Publik (Tiket Kunjungan & Poliklinik), 2) Profil & Berita Instansi, 3) Transparansi Layanan & Kontak Pengaduan.",
-    userFlow: "Landing Page -> Pilih Jenis Kunjungan -> Cek Ketersediaan Tanggal & Kuota -> Isi Data Pengunjung & Upload Berkas -> Dapatkan Tiket QR Code Digital -> Verifikasi di Loket.",
-    wireframes: "Penyusunan low-fidelity layout dengan hierarki teks visual yang kontras, tombol CTA berukuran besar, serta langkah registrasi bertahap (stepper form).",
-    designSystem: "Primary Color: Deep Navy (#1E293B) & Gold Accent (#D97706), Typography: Inter & Plus Jakarta Sans, Component Library: Stepper Buttons, QR Ticket Cards, Alert Badges.",
-    highFidelity: "Interface bersih dengan kontras tinggi, navigasi yang intuitif untuk semua rentang usia, serta visualisasi indikator sisa kuota antrean yang responsif.",
-    prototypeUrl: "https://figma.com",
-    usabilityTesting: "Pengujian dilakukan kepada 8 pengguna sasaran dengan 3 skenario tugas utama: 1) Mengambil tiket kunjungan online, 2) Memeriksa status kuota hari ini, 3) Mengunduh bukti tiket.",
-    designIteration: "Iterasi berdasarkan UT: Menambahkan konfirmasi SMS/WhatsApp otomatis dan tombol cetak bukti fisik bagi pengunjung lansia.",
-    finalSolution: "Portal web pelayanan publik terpadu yang memadukan reservasi tiket online real-time, verifikasi berkas digital, dan portal transparansi publik Rutan Kelas 1 Depok.",
-    productShowcase: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1000&q=80",
-    outcome: "Meningkatkan efisiensi pelayanan kunjungan hingga 40%, menghilangkan penumpukan fisik di loket pendaftaran, serta meningkatkan skor kepuasan masyarakat.",
-    keyLearnings: "Desain antarmuka instansi publik harus mengedepankan prinsip inklusivitas, kemudahan akses bagi awam teknologi, serta kejelasan informasi hukum.",
-    futureImprovements: "Pengembangan fitur notifikasi WhatsApp gateway real-time dan integrasi pemindai QR Code otomatis di pintu masuk loket.",
-    reflection: "Proyek ini mengajarkan pentingnya empati mendalam terhadap masyarakat dan bagaimana logika sistem informatika dapat langsung menyelesaiakan masalah sosial nyata.",
-    gallery: [
-      "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1000&q=80"
+    heroImage: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1000&q=80",
+    sections: [
+      {
+        id: "sec-overview",
+        title: "Project Overview",
+        useHighlight: false,
+        content: "Sistem ini dirancang untuk mendigitalkan antrean kunjungan dan pendaftaran poliklinik di Rutan Kelas 1 Depok, serta memperbarui struktur situs profil publik instansi agar transparan dan mudah diakses masyarakat.",
+        images: ["https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1000&q=80"],
+        captions: []
+      },
+      {
+        id: "sec-problem",
+        title: "The Problem",
+        useHighlight: true,
+        highlightColor: "navy",
+        content: "Antrean fisik kunjungan dan poliklinik sering menimbulkan penumpukan pengunjung di loket, waktu tunggu yang tidak pasti, serta ketidakjelasan syarat pengajuan berkas kunjungan bagi masyarakat umum.",
+        images: [],
+        captions: []
+      },
+      {
+        id: "sec-goals",
+        title: "Design Goals",
+        useHighlight: true,
+        highlightColor: "gold",
+        content: "1) Mengurangi waktu tunggu antrean fisik hingga 50%.\n2) Menyediakan transparansi kuota kunjungan harian secara real-time.\n3) Memudahkan verifikasi dokumen pengajuan kunjungan.",
+        images: [],
+        captions: []
+      },
+      {
+        id: "sec-research",
+        title: "User Research",
+        useHighlight: false,
+        content: "Riset dilakukan melalui observasi langsung di loket pelayanan kunjungan Rutan Kelas 1 Depok dan wawancara mendalam dengan 12 pengunjung serta petugas administrasi sarpras.",
+        images: [],
+        captions: []
+      },
+      {
+        id: "sec-findings",
+        title: "Key Findings & Insights",
+        useHighlight: true,
+        highlightColor: "white",
+        content: "83% pengunjung mengeluhkan ketiadaan informasi pasti mengenai sisa kuota kunjungan harian sebelum tiba di lokasi, dan 65% bingung mengenai berkas administrasi yang wajib dibawa.",
+        images: [],
+        captions: []
+      },
+      {
+        id: "sec-solution",
+        title: "Final Solution",
+        useHighlight: false,
+        content: "Portal web pelayanan publik terpadu yang memadukan reservasi tiket online real-time, verifikasi berkas digital, dan portal transparansi publik Rutan Kelas 1 Depok.",
+        images: ["https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1000&q=80", "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1000&q=80"],
+        captions: ["Landing Page", "Sistem Tiket"]
+      }
     ],
     externalUrl: "",
     isFeatured: true,
@@ -84,9 +110,8 @@ export const INITIAL_PROJECTS = [
   {
     id: "hrd-bacot-ux-research",
     title: "Salary Survey & Platform UI/UX Research — PT Hikayat Rakyat Digital",
-    templateType: "ui-ux",
-    category: "UI/UX",
-    subcategory: "UX Research & Wireframing",
+    templateType: "dynamic",
+    tags: ["UI/UX", "UX Research", "Wireframing"],
     date: "2024-07",
     role: "Intern UI/UX Designer & Researcher",
     timeline: "Juni 2024 – Sep 2024",
@@ -95,31 +120,33 @@ export const INITIAL_PROJECTS = [
     tools: ["Figma", "UX Research", "Benchmark Analysis", "Survey Questionnaires"],
     thumbnail: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=800&q=80",
     shortDescription: "Riset pengguna berbasis data riil, analisis survey gaji industri, benchmark kompetitor, serta perancangan wireframe solutif untuk platform HRDBacot.",
-    
-    snapshot: "Role: UI/UX Researcher & Wireframer • Timeline: 3 Bulan • Scope: Competitive Benchmark, Questionnaire Survey, Persona, Wireframes",
-    overview: "Proyek riset UX komprehensif untuk memetakan kebutuhan persona pengguna berdasarkan laporan survey gaji industri dan kuesioner riset UX riil.",
-    problem: "Pengguna kesulitan membandingkan rentang gaji industri secara objektif akibat tampilan data yang kompleks dan kurang terstruktur.",
-    designGoals: "Merancang visualisasi data gaji yang interaktif, mudah disaring berdasarkan level & lokasi, serta aman menjaga kerahasiaan data.",
-    userResearch: "Menganalisis 500+ data tanggapan survey gaji industri, menyebarkan kuesioner kualitatif ke 45 profesional HR & pencari kerja.",
-    researchFindings: "78% responden mengharapkan kalkulator pembanding gaji yang interaktif dan filter industri yang spesifik.",
-    userPersona: "Rian (26 thn) — Software Engineer yang ingin mengevaluasi penawaran gaji berdasarkan benchmark pasar industri terkini.",
-    defineProblem: "How Might We menyajikan data gaji yang sensitif menjadi grafik yang interaktif, menyenangkan, dan mudah dipahami dalam 3 detik?",
-    infoArchitecture: "Struktur navigasi data: Filter Industri -> Pilihan Pengalaman -> Visualisasi Modus Gaji -> Detail Benchmarking.",
-    userFlow: "Pilih Industri -> Masukkan Role & Exp -> Lihat Grafik Sebaran Gaji -> Bandingkan dengan Rata-rata Industri.",
-    wireframes: "Eksplorasi tata letak widget grafik, kartu rangkuman statistik gaji, dan filter multi-select.",
-    designSystem: "Modern Data Theme: Slate Navy (#0F172A), Emerald Metric (#10B981), Card Shadow Depth UI.",
-    highFidelity: "Dashboard visualisasi data interaktif dengan statistik min/max/median gaji yang jelas dan estetik.",
-    prototypeUrl: "https://figma.com",
-    usabilityTesting: "Pengujian prototype wireframe pada 6 responden menunjukkan kepuasan tinggi dalam membaca grafik gaji.",
-    designIteration: "Penyempurnaan posisi toggle pembanding gaji bulanan vs tahunan berdasarkan feedback usability.",
-    finalSolution: "Wireframe solutif dan sistem visualisasi data salary survey yang siap diimplementasikan oleh tim developer.",
-    productShowcase: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1000&q=80",
-    outcome: "Hasil rekomendasi desain diterima 100% oleh tim produk untuk menjadi standar fitur baru platform.",
-    keyLearnings: "Riset berbasis data kuantitatif yang solid mempermudah pengambilan keputusan desain antarmuka.",
-    futureImprovements: "Integrasi fitur AI Salary Estimator berdasarkan skill & sertifikasi pengguna.",
-    reflection: "Pengalaman di HRDBacot memperkuat keahlian riset berbasis emosional dan analitis pengguna secara berimbang.",
-    gallery: [
-      "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1000&q=80"
+    heroImage: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1000&q=80",
+    sections: [
+      {
+        id: "sec-overview",
+        title: "Project Overview",
+        useHighlight: false,
+        content: "Proyek riset UX komprehensif untuk memetakan kebutuhan persona pengguna berdasarkan laporan survey gaji industri dan kuesioner riset UX riil.",
+        images: ["https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1000&q=80"],
+        captions: []
+      },
+      {
+        id: "sec-problem",
+        title: "The Problem",
+        useHighlight: true,
+        highlightColor: "navy",
+        content: "Pengguna kesulitan membandingkan rentang gaji industri secara objektif akibat tampilan data yang kompleks dan kurang terstruktur.",
+        images: [],
+        captions: []
+      },
+      {
+        id: "sec-solution",
+        title: "Final Solution",
+        useHighlight: false,
+        content: "Wireframe solutif dan sistem visualisasi data salary survey yang siap diimplementasikan oleh tim developer.",
+        images: [],
+        captions: []
+      }
     ],
     externalUrl: "",
     isFeatured: true,
@@ -128,9 +155,8 @@ export const INITIAL_PROJECTS = [
   {
     id: "rumah-teras-baca-branding",
     title: "Identitas Visual & Konten Digital — Rumah Teras Baca",
-    templateType: "graphic-design",
-    category: "Graphic Design",
-    subcategory: "Social Media & Print Branding",
+    templateType: "dynamic",
+    tags: ["Graphic Design", "Branding", "Social Media"],
     date: "2024-09",
     role: "Desainer Grafis & Branding Lead",
     timeline: "Agu 2024 – Nov 2024",
@@ -138,21 +164,25 @@ export const INITIAL_PROJECTS = [
     tools: ["Adobe Illustrator", "Photoshop", "Canva"],
     thumbnail: "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=800&q=80",
     shortDescription: "Pembuatan 23 konten carousel edukatif, 8 poster IG story, spanduk 3x2m outdoor, merchandise kaos/tote bag, & 4 sertifikat resmi.",
-    
-    // Graphic Design 13 Sections Structured Data
-    overview: "Perancangan kampanye visual lengkap untuk menguatkan branding dan engagement kegiatan literasi masyarakat di Rumah Teras Baca, mencakup aset media sosial digital hingga materi promosi cetak luar ruangan.",
-    creativeBrief: "Kebutuhan awal mencakup rebranding identitas visual kegiatan literasi, meningkatkan engagement pemuda melalui Instagram, serta menyediakan materi cetak luar ruangan yang menarik untuk acara offline.",
-    designDirection: "Konsep visual yang hangat, inklusif, dan mengedepankan nuansa edukatif yang ramah. Keywords: Friendly, Inspiring, Educational, Warm Earth Tone.",
-    visualExploration: "Moodboard berbasis estetika ilustrasi buku, warna-warna terakota dan botanical sage, serta eksplorasi sketsa tata letak postingan carousel Instagram.",
-    designDevelopment: "Pemilihan palet warna terracotta hangat (#C59B4E & #8B4513), tipografi serif klasik yang mudah dibaca, serta penyusunan grid sistem untuk 23 konten carousel.",
-    finalDesign: "Hasil desain final terdiri dari 23 slide carousel edukatif, 8 poster IG Story komunikatif, 3 spanduk outdoor 3x2 meter, merchandise eksklusif (kaos & tote bag), serta 4 template sertifikat penghargaan resmi.",
-    mockups: "Penerapan visual pada mockup kaos katun premium, tote bag kain kanvas, spanduk vinyl 3x2m di lokasi kegiatan, serta tampilan feed Instagram responsif.",
-    designAssets: "Asset System: Color Palette (Terracotta Gold, Earth Brown, Soft Cream), Serif & Sans-Serif Fonts, Icon Pack Literasi, Botanical Illustration Elements.",
-    deliverables: "1) 23 File Slide Carousel IG. 2) 8 File Story IG High-Res. 3) 3 Design Cetak Spanduk 3x2m Ready-Print. 4) Vector Mockup Kaos & Tote Bag. 5) 4 Printable Certificate Templates.",
-    outcome: "Meningkatkan engagement Instagram hingga 140%, memperkuat kehadiran brand visual komunitas, serta sukses menyelenggarakan kegiatan edukasi dengan 200+ peserta.",
-    reflection: "Desain grafis bukan hanya tentang estetika visual semata, namun bagaimana pesan komunikatif mampu menyentuh audiens dan menggerakkan partisipasi aktif komunitas.",
-    gallery: [
-      "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=1000&q=80"
+    heroImage: "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=1000&q=80",
+    sections: [
+      {
+        id: "sec-overview",
+        title: "Overview",
+        useHighlight: false,
+        content: "Perancangan kampanye visual lengkap untuk menguatkan branding dan engagement kegiatan literasi masyarakat di Rumah Teras Baca, mencakup aset media sosial digital hingga materi promosi cetak luar ruangan.",
+        images: ["https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=1000&q=80"],
+        captions: []
+      },
+      {
+        id: "sec-deliverables",
+        title: "Deliverables",
+        useHighlight: true,
+        highlightColor: "white",
+        content: "1) 23 File Slide Carousel IG.\n2) 8 File Story IG High-Res.\n3) 3 Design Cetak Spanduk 3x2m Ready-Print.\n4) Vector Mockup Kaos & Tote Bag.\n5) 4 Printable Certificate Templates.",
+        images: [],
+        captions: []
+      }
     ],
     externalUrl: "",
     isFeatured: true,
@@ -191,6 +221,7 @@ export const INITIAL_CERTIFICATES = [
     id: "cert-1",
     name: "Certificate in Agile Scrum Fundamentals",
     issuer: "MindMagine",
+    category: "Administrasi & Manajemen",
     date: "Mei 2025 – Mei 2028",
     credentialId: "AGILE-SCRUM-MM-2025",
     credentialUrl: "#",
@@ -201,6 +232,7 @@ export const INITIAL_CERTIFICATES = [
     id: "cert-2",
     name: "Junior Graphic Designer",
     issuer: "BNSP (Badan Nasional Sertifikasi Profesi)",
+    category: "Desain Grafis",
     date: "Oktober 2024 – Oktober 2027",
     credentialId: "BNSP-JGD-2024",
     credentialUrl: "#",
@@ -211,6 +243,7 @@ export const INITIAL_CERTIFICATES = [
     id: "cert-3",
     name: "Intro to UI/UX (Gold Distinction)",
     issuer: "Skilvul",
+    category: "UI/UX",
     date: "Juni 2024 – Juni 2026",
     credentialId: "SKILVUL-GOLD-2024",
     credentialUrl: "#",
@@ -221,6 +254,7 @@ export const INITIAL_CERTIFICATES = [
     id: "cert-4",
     name: "Belajar Dasar Data Science",
     issuer: "Dicoding Indonesia",
+    category: "Pemrograman & Data",
     date: "Januari 2024 – Januari 2027",
     credentialId: "DICODING-DS-2024",
     credentialUrl: "#",
@@ -231,6 +265,7 @@ export const INITIAL_CERTIFICATES = [
     id: "cert-5",
     name: "Memulai Pemrograman dengan Python",
     issuer: "Dicoding Indonesia",
+    category: "Pemrograman & Data",
     date: "Januari 2024 – Januari 2027",
     credentialId: "DICODING-PY-2024",
     credentialUrl: "#",
@@ -241,6 +276,7 @@ export const INITIAL_CERTIFICATES = [
     id: "cert-6",
     name: "Belajar Prinsip Pemrograman SOLID",
     issuer: "Dicoding Indonesia",
+    category: "Pemrograman & Data",
     date: "Januari 2024 – Januari 2027",
     credentialId: "DICODING-SOLID-2024",
     credentialUrl: "#",
@@ -251,6 +287,7 @@ export const INITIAL_CERTIFICATES = [
     id: "cert-7",
     name: "Belajar Pemrograman Prosedural dengan Python",
     issuer: "Dicoding Indonesia",
+    category: "Pemrograman & Data",
     date: "Januari 2024 – Januari 2027",
     credentialId: "DICODING-PYPROC-2024",
     credentialUrl: "#",
@@ -261,6 +298,7 @@ export const INITIAL_CERTIFICATES = [
     id: "cert-8",
     name: "Belajar Dasar Structured Query Language (SQL)",
     issuer: "Dicoding Indonesia",
+    category: "Pemrograman & Data",
     date: "Januari 2024 – Januari 2027",
     credentialId: "DICODING-SQL-2024",
     credentialUrl: "#",
@@ -271,6 +309,7 @@ export const INITIAL_CERTIFICATES = [
     id: "cert-9",
     name: "Belajar Membuat Aplikasi Android untuk Pemula",
     issuer: "Dicoding Indonesia",
+    category: "Pemrograman & Data",
     date: "Desember 2023 – Desember 2026",
     credentialId: "DICODING-AND-2023",
     credentialUrl: "#",
@@ -281,6 +320,7 @@ export const INITIAL_CERTIFICATES = [
     id: "cert-10",
     name: "Belajar Dasar Manajemen Proyek",
     issuer: "Dicoding Indonesia",
+    category: "Administrasi & Manajemen",
     date: "Desember 2023 – Desember 2026",
     credentialId: "DICODING-PM-2023",
     credentialUrl: "#",
@@ -291,6 +331,7 @@ export const INITIAL_CERTIFICATES = [
     id: "cert-11",
     name: "Memulai Pemrograman dengan Kotlin",
     issuer: "Dicoding Indonesia",
+    category: "Pemrograman & Data",
     date: "November 2023 – November 2026",
     credentialId: "DICODING-KT-2023",
     credentialUrl: "#",
@@ -461,25 +502,55 @@ export const INITIAL_SKILLS = [
 ];
 
 export const getApiData = async (type, defaultData) => {
+  const localKey = `gina_portfolio_${type}`;
+  
+  // Always try localStorage first — it's the source of truth for local dev
+  const localData = localStorage.getItem(localKey);
+  
   try {
     const res = await fetch(`/api/data?type=${type}`);
-    if (res.ok) return await res.json();
-    return defaultData;
+    const contentType = res.headers.get('content-type') || '';
+    
+    // CRITICAL: Vite dev server serves /api/data.js as text/javascript, NOT JSON.
+    // Only trust the response if it's actually JSON from a real serverless function.
+    if (res.ok && contentType.includes('application/json')) {
+      const data = await res.json();
+      // Sync API data to localStorage
+      localStorage.setItem(localKey, JSON.stringify(data));
+      return data;
+    }
+    
+    // API returned non-JSON (Vite dev) or failed — use localStorage
+    return localData ? JSON.parse(localData) : defaultData;
   } catch (e) {
-    console.error(`Error reading ${type} from API:`, e);
-    return defaultData;
+    // Network error — use localStorage
+    return localData ? JSON.parse(localData) : defaultData;
   }
 };
 
 export const setApiData = async (type, data) => {
+  const localKey = `gina_portfolio_${type}`;
+  
   try {
-    await fetch(`/api/data?type=${type}`, {
+    // Always save to localStorage immediately — this is the local dev source of truth
+    localStorage.setItem(localKey, JSON.stringify(data));
+  } catch (e) {
+    console.warn(`Failed to save ${type} to localStorage (possibly quota exceeded).`, e);
+    alert('GAGAL MENYIMPAN: Penyimpanan penuh! Pastikan Anda memasukkan URL/Link gambar (http...), BUKAN file gambar yang di-copy-paste langsung (Base64).');
+  }
+  
+  try {
+    // Attempt to sync to Vercel API (only works when deployed)
+    const res = await fetch(`/api/data?type=${type}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
+    // Silently ignore non-JSON responses (Vite dev)
+    const contentType = res.headers.get('content-type') || '';
+    if (!contentType.includes('application/json')) return;
   } catch (e) {
-    console.error(`Error writing ${type} to API:`, e);
+    // Silently ignore — localStorage already has the data
   }
 };
 

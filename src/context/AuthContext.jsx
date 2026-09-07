@@ -11,8 +11,8 @@ export const AuthProvider = ({ children }) => {
   });
 
   const login = (username, password) => {
-    // Default admin credentials check
-    if ((username === 'admin' || username === 'gina') && (password === 'password123' || password === 'admin123')) {
+    // Admin credentials check
+    if (username === 'kyumakuma' && password === '2003Ginaaa18%') {
       const userData = { username, role: 'admin', loginTime: new Date().toISOString() };
       localStorage.setItem(AUTH_KEY, JSON.stringify(userData));
       setUser(userData);

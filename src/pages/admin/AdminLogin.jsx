@@ -5,8 +5,8 @@ import { useAuth } from '../../context/AuthContext';
 import { SparkleStar, EditorialFlourish } from '../../components/common/BotanicalDecorations';
 
 const AdminLogin = () => {
-  const [username, setUsername] = useState('admin');
-  const [password, setPassword] = useState('password123');
+  const [username, setUsername] = useState('kyumakuma');
+  const [password, setPassword] = useState('2003Ginaaa18%');
   const [error, setError] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -87,11 +87,6 @@ const AdminLogin = () => {
               </div>
             </div>
 
-            <div className="p-3 rounded-xl bg-warm-beige-200/60 border border-warm-beige-300 text-[11px] text-deep-navy/70 space-y-0.5">
-              <p className="font-bold text-soft-gold-600">Demo Login Credentials:</p>
-              <p>Username: <code className="bg-white px-1.5 py-0.5 rounded text-deep-navy">admin</code></p>
-              <p>Password: <code className="bg-white px-1.5 py-0.5 rounded text-deep-navy">password123</code></p>
-            </div>
 
             <button
               type="submit"

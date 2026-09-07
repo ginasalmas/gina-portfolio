@@ -98,32 +98,30 @@ const PortfolioPage = () => {
   // State for gallery modal
   const [selectedGalleryProject, setSelectedGalleryProject] = useState(null);
 
-  const categories = [
-    'All',
-    'UI/UX',
-    'Graphic Design',
-    'Web Design',
-    'Mobile App',
-    'Branding',
-    'Illustration',
-    'Other'
-  ];
+  // Generate dynamic categories from tags
+  const tagsSet = new Set(['All']);
+  projects.forEach(p => {
+    if (p.tags && Array.isArray(p.tags)) {
+      p.tags.forEach(tag => tagsSet.add(tag));
+    }
+  });
+  const categories = Array.from(tagsSet);
 
   // Filter projects based on category and search query, and sort by date descending
   const filteredProjects = [...projects]
     .filter(project => {
       if (project.status === 'draft') return false;
       
-      const matchesCategory = selectedCategory === 'All' || 
-        project.category?.toLowerCase() === selectedCategory.toLowerCase() ||
-        project.subcategory?.toLowerCase() === selectedCategory.toLowerCase();
+      const hasSelectedTag = selectedCategory === 'All' || 
+        (project.tags && project.tags.some(tag => tag.toLowerCase() === selectedCategory.toLowerCase()));
 
       const matchesSearch = searchQuery === '' ||
         project.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         project.shortDescription?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (project.tags && project.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()))) ||
         project.tools?.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()));
 
-      return matchesCategory && matchesSearch;
+      return hasSelectedTag && matchesSearch;
     })
     .sort((a, b) => {
       // Sort by date (newest first)
@@ -188,19 +186,12 @@ const PortfolioPage = () => {
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`relative px-5 py-2 rounded-full text-xs font-semibold tracking-wider transition-colors duration-300 ${
+                className={`px-5 py-2 rounded-full text-xs font-semibold tracking-wider transition-all ${
                   active
-                    ? 'text-warm-beige'
-                    : 'bg-paper-cream/80 text-deep-navy/70 border border-warm-beige-300 hover:border-soft-gold hover:text-deep-navy'
+                    ? 'bg-deep-navy text-warm-beige shadow-md'
+                    : 'bg-white text-deep-navy/70 border border-warm-beige-300 hover:border-soft-gold hover:text-deep-navy'
                 }`}
               >
-                {active && (
-                  <motion.span
-                    layoutId="active-category-pill"
-                    className="absolute inset-0 bg-deep-navy rounded-full -z-10 shadow-md"
-                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                  />
-                )}
                 {cat}
               </button>
             );
@@ -215,9 +206,9 @@ const PortfolioPage = () => {
             initial={{ opacity: 0, scale: 0.95 }} 
             animate={{ opacity: 1, scale: 1 }} 
             exit={{ opacity: 0, scale: 0.95 }}
-            className="text-center py-20 bg-paper-cream/80 backdrop-blur-md rounded-3xl border border-warm-beige-300 space-y-3 shadow-editorial"
+            className="text-center py-20 bg-white rounded-3xl border border-warm-beige-300 space-y-3"
           >
-            <SparkleStar className="w-8 h-8 text-soft-gold mx-auto animate-pulse-subtle" />
+            <SparkleStar className="w-8 h-8 text-soft-gold mx-auto" />
             <p className="text-lg font-display font-bold text-deep-navy">No projects found</p>
             <p className="text-xs text-deep-navy/60">Try searching for a different keyword or switching categories.</p>
           </motion.div>
@@ -246,13 +237,15 @@ const PortfolioPage = () => {
                     alt={project.title}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
-                  <div className="absolute top-4 left-4 flex gap-2">
-                    <span className="px-3 py-1 rounded-full badge-navy text-xs font-semibold backdrop-blur-md">
-                      {project.category}
-                    </span>
-                    {project.subcategory && (
-                      <span className="px-3 py-1 rounded-full badge-gold text-xs font-semibold backdrop-blur-md">
-                        {project.subcategory}
+                  <div className="absolute top-4 left-4 flex gap-2 flex-wrap max-w-[80%]">
+                    {project.tags && project.tags.slice(0, 2).map((tag, idx) => (
+                      <span key={idx} className={`px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-md ${idx === 0 ? 'badge-navy' : 'badge-gold'}`}>
+                        {tag}
+                      </span>
+                    ))}
+                    {project.tags && project.tags.length > 2 && (
+                      <span className="px-3 py-1 rounded-full badge-white text-xs font-semibold backdrop-blur-md">
+                        +{project.tags.length - 2}
                       </span>
                     )}
                   </div>

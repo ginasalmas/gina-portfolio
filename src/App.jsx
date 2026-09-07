@@ -15,7 +15,6 @@ import JournalDetail from './pages/JournalDetail';
 import AboutPage from './pages/AboutPage';
 import CertificatesPage from './pages/CertificatesPage';
 import AchievementsPage from './pages/AchievementsPage';
-import WritingsPage from './pages/WritingsPage';
 
 // Admin CMS Components & Pages
 import AdminLogin from './pages/admin/AdminLogin';
@@ -26,7 +25,6 @@ import AdminPortfolio from './pages/admin/AdminPortfolio';
 import AdminBlog from './pages/admin/AdminBlog';
 import AdminCertificates from './pages/admin/AdminCertificates';
 import AdminAchievements from './pages/admin/AdminAchievements';
-import AdminWritings from './pages/admin/AdminWritings';
 import AdminExperience from './pages/admin/AdminExperience';
 import AdminSkills from './pages/admin/AdminSkills';
 import AdminSettings from './pages/admin/AdminSettings';
@@ -36,6 +34,11 @@ const ScrollToTop = () => {
   const { pathname } = useLocation();
   useEffect(() => {
     window.scrollTo(0, 0);
+    // Track site views
+    if (!pathname.startsWith('/admin')) {
+      const views = parseInt(localStorage.getItem('gina_portfolio_views') || '0', 10);
+      localStorage.setItem('gina_portfolio_views', (views + 1).toString());
+    }
   }, [pathname]);
   return null;
 };
@@ -57,7 +60,6 @@ function App() {
               <Route path="about" element={<AboutPage />} />
               <Route path="certificates" element={<CertificatesPage />} />
               <Route path="achievements" element={<AchievementsPage />} />
-              <Route path="writings" element={<WritingsPage />} />
             </Route>
 
             {/* Admin Authentication */}
@@ -71,7 +73,6 @@ function App() {
                 <Route path="blog" element={<AdminBlog />} />
                 <Route path="certificates" element={<AdminCertificates />} />
                 <Route path="achievements" element={<AdminAchievements />} />
-                <Route path="writings" element={<AdminWritings />} />
                 <Route path="experience" element={<AdminExperience />} />
                 <Route path="skills" element={<AdminSkills />} />
                 <Route path="settings" element={<AdminSettings />} />

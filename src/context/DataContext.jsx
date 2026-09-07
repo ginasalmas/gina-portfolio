@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { StorageService, INITIAL_SETTINGS, INITIAL_PROJECTS, INITIAL_BLOG, INITIAL_CERTIFICATES, INITIAL_ACHIEVEMENTS, INITIAL_WRITINGS, INITIAL_EXPERIENCES, INITIAL_SKILLS } from '../services/storageService';
 
 const DataContext = createContext();
-const DATA_VERSION = 'v4_gina_sabilla_2026_postgres';
+const DATA_VERSION = 'v6_no_reset';
 
 export const DataProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
@@ -20,12 +20,32 @@ export const DataProvider = ({ children }) => {
     const initApp = async () => {
       const currentVersion = localStorage.getItem('gina_portfolio_version');
       if (currentVersion !== DATA_VERSION) {
-        // await StorageService.resetAllData();
+        // ONLY update the version key - DO NOT reset/wipe user data
         localStorage.setItem('gina_portfolio_version', DATA_VERSION);
       }
       await refreshData();
     };
     initApp();
+
+    // Listen for storage changes from OTHER tabs (e.g., admin saves in one tab,
+    // portfolio page in another tab automatically updates)
+    const handleStorageChange = (event) => {
+      const portfolioKeys = [
+        'gina_portfolio_projects',
+        'gina_portfolio_blog',
+        'gina_portfolio_certificates',
+        'gina_portfolio_achievements',
+        'gina_portfolio_writings',
+        'gina_portfolio_experiences',
+        'gina_portfolio_skills',
+        'gina_portfolio_settings',
+      ];
+      if (event.key && portfolioKeys.includes(event.key)) {
+        refreshData();
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
   // Reload data from API

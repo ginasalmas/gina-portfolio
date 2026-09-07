@@ -30,7 +30,6 @@ const Navbar = () => {
     { name: 'Journal',      path: '/blog' },
     { name: 'Certificates', path: '/certificates' },
     { name: 'Achievements', path: '/achievements' },
-    { name: 'Writings',     path: '/writings' },
     { name: 'About',        path: '/about' },
   ];
 

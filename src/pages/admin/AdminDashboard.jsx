@@ -7,11 +7,19 @@ import { SparkleStar } from '../../components/common/BotanicalDecorations';
 const AdminDashboard = () => {
   const { projects, blogPosts, certificates, settings } = useData();
 
+  // Get real site views from local storage
+  const [siteViews, setSiteViews] = React.useState('0');
+  
+  React.useEffect(() => {
+    const views = localStorage.getItem('gina_portfolio_views') || '0';
+    setSiteViews(Number(views).toLocaleString('id-ID'));
+  }, []);
+
   const stats = [
     { title: 'Total Portfolio Case Studies', value: projects.length, icon: FolderKanban, color: 'bg-soft-gold/20 text-soft-gold-600', link: '/admin/portfolio' },
     { title: 'Total Blog Posts', value: blogPosts.length, icon: FileText, color: 'bg-deep-navy/10 text-deep-navy', link: '/admin/blog' },
     { title: 'Total Certificates', value: certificates.length, icon: Award, color: 'bg-muted-rose-100 text-muted-rose-500', link: '/admin/certificates' },
-    { title: 'Monthly Site Views', value: '1,420', icon: Eye, color: 'bg-warm-beige-300 text-deep-navy', link: '#' },
+    { title: 'Monthly Site Views', value: siteViews, icon: Eye, color: 'bg-warm-beige-300 text-deep-navy', link: '#' },
   ];
 
   const recentProjects = projects.slice(0, 3);

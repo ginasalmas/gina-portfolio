@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { 
   Plus, Edit2, Trash2, X, Check, Layout, Sparkles, 
-  Layers, Palette, ChevronRight, Image as ImageIcon,
-  Info, FileText, MonitorPlay, Save, Grid
+  Layers, ChevronRight, Image as ImageIcon,
+  Info, FileText, MonitorPlay, Save, Grid, PlusCircle, ArrowUp, ArrowDown, Palette
 } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 
-// ─── Helper: Input field component ───
+// ─── Helper Components ───
 const Field = ({ label, hint, children }) => (
   <div className="space-y-1.5 mb-5">
     <label className="font-bold text-xs uppercase tracking-widest text-deep-navy/80">{label}</label>
@@ -64,105 +64,34 @@ const Row2 = ({ children }) => (
 
 // ─── DEFAULT FORM DATA ───
 const DEFAULT_FORM_DATA = {
-  templateType: 'ui-ux',
+  templateType: 'dynamic',
   title: '',
-  category: 'UI/UX',
-  subcategory: '',
+  tagsString: '',
   date: '2025-12',
-  role: 'Lead UI/UX Designer',
-  timeline: '3 Months',
-  platform: 'Web & Mobile',
-  team: 'Solo Project',
+  role: 'Designer',
+  timeline: '',
+  platform: '',
+  team: '',
   client: '',
-  toolsString: 'Figma, Illustrator',
+  toolsString: '',
   thumbnail: '',
   shortDescription: '',
-  heroImage: '',        // Section 01 visual utama
-
-  // ─── UI/UX Section text fields ───
-  snapshotText: '',
-  overview: '',
-  problem: '',
-  designGoals: '',
-  userResearch: '',
-  researchFindings: '',
-  userPersona: '',
-  defineProblem: '',
-  infoArchitecture: '',
-  userFlow: '',
-  wireframes: '',
-  designSystem: '',
-  highFidelity: '',
-  prototypeUrl: '',
-  usabilityTesting: '',
-  designIteration: '',
-  finalSolution: '',
-  productShowcase: '',
-  outcome: '',
-  keyLearnings: '',
-  futureImprovements: '',
-  reflection: '',
-
-  // ─── UI/UX Section image fields ───
-  overviewImage: '',
-  problemImage: '',
-  goalsImage: '',
-  researchImage: '',
-  findingsImage: '',
-  personaImage: '',
-  defineImage: '',
-  sitemapImage: '',
-  userFlowImage: '',
-  wireframeLowImage: '',
-  wireframeHighImage: '',
-  designSystemImage: '',
-  hifiHeroImage: '',
-  hifiScreenImages: '',        // multi-line URLs
-  hifiScreenCaptions: '',
-  prototypeImage: '',
-  testingImage: '',
-  iterationBeforeImage: '',
-  iterationAfterImage: '',
-  finalSolutionImage: '',
-  showcaseImages: '',           // multi-line URLs
-  showcaseCaptions: '',
-  outcomeImage: '',
-  learningsImage: '',
-  futureImage: '',
-  reflectionImage: '',
-
-  // ─── Graphic Design Section text fields ───
-  creativeBrief: '',
-  designDirection: '',
-  visualExploration: '',
-  designDevelopment: '',
-  mockups: '',
-  designAssets: '',
-  deliverables: '',
-
-  // ─── Graphic Design Section image fields ───
-  overviewImageGD: '',
-  briefImage: '',
-  moodboardImage: '',
-  explorationImages: '',        // multi-line
-  explorationCaptions: '',
-  devBeforeImage: '',
-  devAfterImage: '',
-  finalHeroImage: '',
-  finalGalleryImages: '',       // multi-line
-  finalGalleryCaptions: '',
-  mockupImages: '',             // multi-line
-  mockupCaptions: '',
-  assetsImage: '',
-  deliverablesImages: '',       // multi-line
-  deliverablesCaptions: '',
-  outcomeImageGD: '',
-  reflectionImageGD: '',
-
-  galleryString: '',
+  heroImage: '',
+  sections: [],
+  galleryString: '', // fallback for gallery template
   externalUrl: '',
-  isFeatured: false,
+  isFeatured: true,
   status: 'published'
+};
+
+const DEFAULT_SECTION = {
+  id: '',
+  title: 'New Section',
+  useHighlight: false,
+  highlightColor: 'white',
+  content: '',
+  imagesString: '',
+  captionsString: ''
 };
 
 // ─────────────────────────────────────────────────────────────
@@ -174,80 +103,179 @@ const AdminPortfolio = () => {
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState(DEFAULT_FORM_DATA);
   const [activeTab, setActiveTab] = useState('meta');
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  
+  // Section Builder State
+  const [editingSectionIndex, setEditingSectionIndex] = useState(null);
 
   const set = (key) => (e) => setFormData(f => ({ ...f, [key]: e.target.value }));
   const setVal = (key, val) => setFormData(f => ({ ...f, [key]: val }));
 
   const handleOpenCreate = () => {
     setEditingId(null);
-    setFormData({ ...DEFAULT_FORM_DATA, thumbnail: 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=800&q=80' });
+    setFormData({ 
+      ...DEFAULT_FORM_DATA, 
+      thumbnail: 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=800&q=80',
+      sections: [
+        { ...DEFAULT_SECTION, id: 'sec-1', title: 'Project Overview' }
+      ]
+    });
     setActiveTab('meta');
+    setEditingSectionIndex(null);
     setIsModalOpen(true);
   };
 
   const handleOpenEdit = (project) => {
     setEditingId(project.id);
+    
+    let processedSections = [];
+    if (project.sections && Array.isArray(project.sections) && project.sections.length > 0) {
+      // Convert arrays back to strings for editing
+      processedSections = project.sections.map(sec => ({
+        ...sec,
+        imagesString: (sec.images || []).join('\n'),
+        captionsString: (sec.captions || []).join('\n')
+      }));
+    } else {
+      // Auto-migrate legacy fields to sections for the builder
+      let idx = 1;
+      const addSec = (title, content, images) => {
+        const validImages = (images || []).filter(Boolean);
+        if (!content && validImages.length === 0) return;
+        
+        processedSections.push({
+          ...DEFAULT_SECTION,
+          id: `sec-${Date.now()}-${idx++}`,
+          title,
+          content: content || '',
+          imagesString: validImages.join('\n')
+        });
+      };
+
+      if (project.templateType === 'graphic-design' || (!project.templateType && project.category === 'Graphic Design')) {
+        addSec('Overview', project.overview, [project.overviewImageGD]);
+        addSec('Problem & Goals', project.problem, [project.problemImageGD]);
+        addSec('Design Process', project.process, [project.processImageGD]);
+        addSec('Final Design', project.solution, [project.solutionImageGD, ...(Array.isArray(project.gallery) ? project.gallery : [])]);
+      } else if (project.templateType === 'ui-ux' || (!project.templateType && project.category === 'UI/UX Design')) {
+        addSec('Overview', project.overview, [project.overviewImage]);
+        addSec('Problem Statement', project.problemStatement, []);
+        addSec('Users & Audience', project.usersAndAudience, []);
+        addSec('Roles & Responsibilities', project.roles, []);
+        addSec('Scope & Constraints', project.scope, []);
+        addSec('Process', project.process, [project.processImage]);
+        addSec('Architecture & Flow', project.infoArchitecture || project.userFlow, [project.sitemapImage, project.userFlowImage]);
+        addSec('Wireframes', project.wireframes, [project.wireframeLowImage, project.wireframeHighImage]);
+        addSec('Visual Design', project.visualDesign, [project.styleGuideImage, project.hifiHeroImage]);
+        addSec('Final Solution', project.finalSolution, [project.finalSolutionImage, ...(Array.isArray(project.showcaseImages) ? project.showcaseImages : [])]);
+      }
+    }
+
     setFormData({
       ...DEFAULT_FORM_DATA,
       ...project,
-      templateType: project.templateType || (project.category === 'Graphic Design' ? 'graphic-design' : 'ui-ux'),
-      toolsString: project.tools ? project.tools.join(', ') : '',
-      galleryString: project.gallery ? project.gallery.join('\n') : '',
+      templateType: (project.templateType === 'graphic-design' || project.templateType === 'ui-ux') ? 'dynamic' : (project.templateType || 'dynamic'),
+      tagsString: Array.isArray(project.tags) ? project.tags.join(', ') : (project.tags || ''),
+      toolsString: Array.isArray(project.tools) ? project.tools.join(', ') : (project.tools || ''),
+      galleryString: Array.isArray(project.gallery) ? project.gallery.join('\n') : (project.gallery || ''),
+      sections: processedSections
     });
     setActiveTab('meta');
+    setEditingSectionIndex(null);
     setIsModalOpen(true);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSaving(true);
     const tools = formData.toolsString?.split(',').map(t => t.trim()).filter(Boolean) ?? [];
+    const tags = formData.tagsString?.split(',').map(t => t.trim()).filter(Boolean) ?? [];
     const gallery = formData.galleryString?.split('\n').map(g => g.trim()).filter(Boolean) ?? [];
-    const projectData = { ...formData, tools, gallery };
-    if (editingId) updateProject(editingId, projectData);
-    else addProject(projectData);
-    setIsModalOpen(false);
+    
+    // Convert section strings back to arrays
+    const sections = (formData.sections || []).map(sec => ({
+      ...sec,
+      images: sec.imagesString?.split('\n').map(s => s.trim()).filter(Boolean) ?? [],
+      captions: sec.captionsString?.split('\n').map(s => s.trim()).filter(Boolean) ?? []
+    }));
+
+    // Clean up form-only fields before saving
+    const { tagsString, toolsString, galleryString, ...cleanData } = formData;
+    const projectData = { ...cleanData, tools, tags, gallery, sections };
+
+    try {
+      if (editingId) await updateProject(editingId, projectData);
+      else await addProject(projectData);
+      setSaveSuccess(true);
+      setTimeout(() => {
+        setSaveSuccess(false);
+        setIsModalOpen(false);
+      }, 1200);
+    } catch (err) {
+      console.error('Failed to save project:', err);
+      alert('Gagal menyimpan project. Silakan coba lagi.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleDelete = (id) => {
     if (window.confirm('Hapus case study ini? Tindakan ini tidak dapat dibatalkan.')) deleteProject(id);
   };
 
-  const isDesign = formData.templateType === 'graphic-design';
-  const isGallery = formData.templateType === 'gallery';
-  const isUIUX = formData.templateType === 'ui-ux';
-
-  // For Gallery mode, we hide text and images tabs
-  const getTabs = () => {
-    const allTabs = [
-      { id: 'meta', label: 'Info Utama', icon: Info, desc: 'Judul, kategori, hero visual' },
-      { id: 'text', label: 'Teks Section', icon: FileText, desc: 'Deskripsi tiap tahapan' },
-      { id: 'images', label: 'Media Section', icon: ImageIcon, desc: 'URL gambar per bagian' },
-      { id: 'media', label: 'Gallery & Publish', icon: MonitorPlay, desc: 'Status dan ekstensi' },
-    ];
-    if (isGallery) {
-      return [
-        { id: 'meta', label: 'Info Utama', icon: Info, desc: 'Judul, kategori, hero visual' },
-        { id: 'media', label: 'Images & Publish', icon: MonitorPlay, desc: 'Gambar gallery & status' },
-      ];
-    }
-    return allTabs;
+  // Section Management
+  const addSection = () => {
+    const newSec = { ...DEFAULT_SECTION, id: `sec-${Date.now()}` };
+    setFormData(f => ({ ...f, sections: [...f.sections, newSec] }));
+    setEditingSectionIndex(formData.sections.length);
   };
 
-  const currentTabs = getTabs();
+  const updateSection = (idx, key, value) => {
+    const newSections = [...formData.sections];
+    newSections[idx] = { ...newSections[idx], [key]: value };
+    setFormData(f => ({ ...f, sections: newSections }));
+  };
 
-  // If a tab is selected but not available in current template (e.g. changing from UI to Gallery while on 'text' tab), reset to 'meta'
-  if (!currentTabs.find(t => t.id === activeTab)) {
-    setActiveTab('meta');
-  }
+  const removeSection = (idx) => {
+    if(window.confirm('Hapus section ini?')) {
+      const newSections = formData.sections.filter((_, i) => i !== idx);
+      setFormData(f => ({ ...f, sections: newSections }));
+      if (editingSectionIndex === idx) setEditingSectionIndex(null);
+    }
+  };
+
+  const moveSection = (idx, dir) => {
+    const newSections = [...formData.sections];
+    if (dir === 'up' && idx > 0) {
+      [newSections[idx - 1], newSections[idx]] = [newSections[idx], newSections[idx - 1]];
+    } else if (dir === 'down' && idx < newSections.length - 1) {
+      [newSections[idx + 1], newSections[idx]] = [newSections[idx], newSections[idx + 1]];
+    }
+    setFormData(f => ({ ...f, sections: newSections }));
+    setEditingSectionIndex(null);
+  };
+
+  const isGallery = formData.templateType === 'gallery';
+
+  const currentTabs = isGallery ? [
+    { id: 'meta', label: 'Info Utama', icon: Info, desc: 'Judul, tag, thumbnail' },
+    { id: 'media', label: 'Images & Publish', icon: MonitorPlay, desc: 'Gambar gallery & status' },
+  ] : [
+    { id: 'meta', label: 'Info Utama', icon: Info, desc: 'Judul, tag, thumbnail' },
+    { id: 'builder', label: 'Section Builder', icon: Layers, desc: 'Rancang bagian konten dinamis' },
+    { id: 'media', label: 'Publish & Status', icon: MonitorPlay, desc: 'Status publish project' },
+  ];
+
+  if (!currentTabs.find(t => t.id === activeTab)) setActiveTab('meta');
 
   return (
     <div className="space-y-8 pb-20">
-
       {/* ─── Header ─── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b border-deep-navy/10 pb-8 bg-paper-cream rounded-t-3xl p-6">
         <div>
           <h1 className="text-4xl font-display font-bold text-deep-navy">Portfolio CMS</h1>
-          <p className="text-sm text-deep-navy/60 mt-2 font-light">Kelola case study dengan template 🎨 Graphic Design, 🖥️ UI/UX, atau 🖼️ Simple Gallery.</p>
+          <p className="text-sm text-deep-navy/60 mt-2 font-light">Kelola case study dengan Dynamic Section Builder.</p>
         </div>
         <button onClick={handleOpenCreate}
           className="px-6 py-3.5 rounded-2xl bg-deep-navy text-warm-beige text-sm font-bold uppercase tracking-widest hover:bg-deep-navy-800 transition-all shadow-xl hover:shadow-deep-navy/30 flex items-center gap-2 self-start transform hover:-translate-y-1">
@@ -270,8 +298,7 @@ const AdminPortfolio = () => {
             </thead>
             <tbody className="divide-y divide-warm-beige-100">
               {projects.map((p) => {
-                const templ = p.templateType || (p.category === 'Graphic Design' ? 'graphic-design' : 'ui-ux');
-                
+                const templ = p.templateType || 'dynamic';
                 return (
                   <tr key={p.id} className="hover:bg-warm-beige-50/50 transition-colors group">
                     <td className="p-6 align-top">
@@ -290,20 +317,27 @@ const AdminPortfolio = () => {
                         <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-black tracking-widest uppercase border bg-sky-50 text-sky-700 border-sky-200">
                            <Grid className="w-3.5 h-3.5" /> Gallery
                         </span>
+                      ) : templ === 'ui-ux' ? (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-black tracking-widest uppercase border bg-amber-50 text-amber-800 border-amber-200">
+                           <Layers className="w-3.5 h-3.5" /> Legacy UI/UX
+                        </span>
                       ) : templ === 'graphic-design' ? (
                         <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-black tracking-widest uppercase border bg-purple-50 text-purple-700 border-purple-200">
-                           <Palette className="w-3.5 h-3.5" /> Design
+                           <Palette className="w-3.5 h-3.5" /> Legacy Graphic Design
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-black tracking-widest uppercase border bg-amber-50 text-amber-800 border-amber-200">
-                           <Layers className="w-3.5 h-3.5" /> UI/UX
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-black tracking-widest uppercase border bg-emerald-50 text-emerald-800 border-emerald-200">
+                           <Layers className="w-3.5 h-3.5" /> Dynamic
                         </span>
                       )}
                     </td>
-                    <td className="p-6 align-top text-deep-navy/80 space-y-1">
+                    <td className="p-6 align-top text-deep-navy/80 space-y-2">
                       <p className="font-bold text-sm">{p.role}</p>
-                      <p className="text-xs text-deep-navy/60">{p.date}</p>
-                      <p className="text-xs text-deep-navy/60">{p.category}</p>
+                      <div className="flex flex-wrap gap-1 max-w-[150px]">
+                        {p.tags?.slice(0, 2).map((t, i) => (
+                          <span key={i} className="text-[9px] px-1.5 py-0.5 bg-warm-beige-200 rounded font-bold uppercase text-deep-navy/70">{t}</span>
+                        ))}
+                      </div>
                     </td>
                     <td className="p-6 align-top space-y-2">
                       <div>
@@ -394,55 +428,36 @@ const AdminPortfolio = () => {
                         <span className="text-[10px] text-deep-navy/50">Hanya Judul & Gambar</span>
                       </button>
 
-                      <button type="button" onClick={() => setVal('templateType', 'graphic-design')}
-                        className={`w-full p-3 rounded-xl border transition-all flex flex-col gap-1 items-start ${isDesign ? 'bg-purple-50 border-purple-300 ring-2 ring-purple-500/20' : 'border-warm-beige-200 hover:border-purple-200'}`}>
+                      <button type="button" onClick={() => setVal('templateType', 'dynamic')}
+                        className={`w-full p-3 rounded-xl border transition-all flex flex-col gap-1 items-start ${!isGallery ? 'bg-emerald-50 border-emerald-300 ring-2 ring-emerald-500/20' : 'border-warm-beige-200 hover:border-emerald-200'}`}>
                         <div className="flex items-center gap-2">
-                          <Palette className={`w-4 h-4 ${isDesign ? 'text-purple-600' : 'text-deep-navy/40'}`} />
-                          <span className={`text-xs font-bold ${isDesign ? 'text-purple-900' : 'text-deep-navy/70'}`}>Graphic Design</span>
+                          <Layers className={`w-4 h-4 ${!isGallery ? 'text-emerald-600' : 'text-deep-navy/40'}`} />
+                          <span className={`text-xs font-bold ${!isGallery ? 'text-emerald-900' : 'text-deep-navy/70'}`}>Dynamic Sections</span>
                         </div>
-                        <span className="text-[10px] text-deep-navy/50">13 Sections</span>
-                      </button>
-
-                      <button type="button" onClick={() => setVal('templateType', 'ui-ux')}
-                        className={`w-full p-3 rounded-xl border transition-all flex flex-col gap-1 items-start ${isUIUX ? 'bg-amber-50 border-amber-300 ring-2 ring-amber-500/20' : 'border-warm-beige-200 hover:border-amber-200'}`}>
-                        <div className="flex items-center gap-2">
-                          <Layers className={`w-4 h-4 ${isUIUX ? 'text-amber-600' : 'text-deep-navy/40'}`} />
-                          <span className={`text-xs font-bold ${isUIUX ? 'text-amber-900' : 'text-deep-navy/70'}`}>UI/UX Product</span>
-                        </div>
-                        <span className="text-[10px] text-deep-navy/50">24 Sections</span>
+                        <span className="text-[10px] text-deep-navy/50">Custom Section Builder</span>
                       </button>
                    </div>
                 </div>
               </div>
 
               {/* Form Content Area */}
-              <div className="flex-1 overflow-y-auto bg-white p-6 md:p-10">
-                <form id="portfolio-form" onSubmit={handleSubmit} className="max-w-4xl mx-auto">
+              <div className="flex-1 overflow-y-auto bg-white p-6 md:p-10 relative">
+                <form id="portfolio-form" onSubmit={handleSubmit} className="max-w-4xl mx-auto pb-24">
 
                   {/* ═══════════ TAB 1: META & HERO ═══════════ */}
                   {activeTab === 'meta' && (
                     <div className="space-y-2 animate-in fade-in slide-in-from-bottom-4 duration-500">
                       <h3 className="text-xl font-display font-bold text-deep-navy mb-8 pb-4 border-b border-warm-beige-200">Informasi Dasar & Hero Section</h3>
+                      
+                      <Field label="Nama Project *">
+                        <TextInput value={formData.title} onChange={set('title')} placeholder="e.g. Redesign Mobile App Bank..." />
+                      </Field>
+                      
+                      <Field label="Tags / Keywords (Pisahkan dengan koma) *" hint="Dua tag pertama akan muncul sebagai chip di card portofolio.">
+                        <TextInput value={formData.tagsString} onChange={set('tagsString')} placeholder="e.g. UI/UX, Web App, Fintech" />
+                      </Field>
+
                       <Row2>
-                        <Field label="Nama Project *">
-                          <TextInput value={formData.title} onChange={set('title')} placeholder="e.g. Redesign Mobile App Bank..." />
-                        </Field>
-                        <Field label="Kategori Utama *">
-                          <select value={formData.category} onChange={set('category')}
-                            className="w-full p-3.5 rounded-xl bg-warm-beige-50 border border-warm-beige-300 text-sm font-bold focus:outline-none focus:border-soft-gold focus:ring-4 focus:ring-soft-gold/10 transition-all">
-                            <option value="UI/UX">UI/UX</option>
-                            <option value="Graphic Design">Graphic Design</option>
-                            <option value="Web Design">Web Design</option>
-                            <option value="Mobile App">Mobile App</option>
-                            <option value="Branding">Branding</option>
-                            <option value="Other">Other</option>
-                          </select>
-                        </Field>
-                      </Row2>
-                      <Row2>
-                        <Field label="Subkategori / Tag">
-                          <TextInput value={formData.subcategory} onChange={set('subcategory')} placeholder="e.g. Fintech App" />
-                        </Field>
                         <Field label="Tanggal Project (Bulan & Tahun) *">
                           <input 
                             type="month"
@@ -451,16 +466,14 @@ const AdminPortfolio = () => {
                             className="w-full p-3.5 rounded-xl bg-warm-beige-50 border border-warm-beige-300 text-sm font-bold focus:outline-none focus:border-soft-gold focus:ring-4 focus:ring-soft-gold/10 transition-all"
                           />
                         </Field>
-                      </Row2>
-                      <Row2>
                         <Field label="Role Kamu *">
                           <TextInput value={formData.role} onChange={set('role')} placeholder="e.g. Product Designer" />
                         </Field>
+                      </Row2>
+                      <Row2>
                         <Field label="Timeline">
                           <TextInput value={formData.timeline} onChange={set('timeline')} placeholder="e.g. 3 Bulan (Agu – Nov 2024)" />
                         </Field>
-                      </Row2>
-                      <Row2>
                         <Field label="Platform">
                           <TextInput value={formData.platform} onChange={set('platform')} placeholder="e.g. iOS & Android" />
                         </Field>
@@ -478,186 +491,132 @@ const AdminPortfolio = () => {
                       )}
                       
                       <Field label="Tools Digunakan (pisahkan koma)">
-                        <TextInput value={formData.toolsString} onChange={set('toolsString')} placeholder="Figma, Miro, FigJam" />
+                        <TextInput value={formData.toolsString} onChange={set('toolsString')} placeholder="Figma, Miro, Adobe Illustrator" />
                       </Field>
                       
-                      {isGallery ? (
-                        <Field label="Deskripsi / Keterangan Project">
-                          <Textarea rows={5} value={formData.overview} onChange={set('overview')} placeholder="Keterangan gambar atau project secara umum..." />
-                        </Field>
-                      ) : (
-                        <Field label="Deskripsi Singkat (Hero & Card)">
-                          <Textarea rows={3} value={formData.shortDescription} onChange={set('shortDescription')} placeholder="Ringkasan singkat project untuk kartu portofolio dan teks hero..." />
-                        </Field>
-                      )}
+                      <Field label="Deskripsi Singkat (Hero & Card)">
+                        <Textarea rows={3} value={formData.shortDescription} onChange={set('shortDescription')} placeholder="Ringkasan singkat project untuk kartu portofolio dan teks hero..." />
+                      </Field>
 
                       <ImageField label="Thumbnail URL *"
                         hint="Gambar kecil untuk card di halaman utama (rasio 4:3 atau 16:9)"
                         value={formData.thumbnail} onChange={set('thumbnail')} />
                       
                       {!isGallery && (
-                        <ImageField label="Hero Visual Utama (Section 01)"
+                        <ImageField label="Hero Visual Utama (Opsional)"
                           hint="Gambar besar beresolusi tinggi untuk header case study"
                           value={formData.heroImage} onChange={set('heroImage')} />
                       )}
                     </div>
                   )}
 
-                  {/* ═══════════ TAB 2: TEKS SECTIONS (Hidden in Gallery Mode) ═══════════ */}
-                  {activeTab === 'text' && !isGallery && (
-                    <div className="space-y-2 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  {/* ═══════════ TAB 2: SECTION BUILDER ═══════════ */}
+                  {activeTab === 'builder' && !isGallery && (
+                    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
                       <div className="flex items-center justify-between mb-8 pb-4 border-b border-warm-beige-200">
-                        <h3 className="text-xl font-display font-bold text-deep-navy">Konten Teks Section</h3>
-                        <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${isDesign ? 'bg-purple-100 text-purple-800' : 'bg-amber-100 text-amber-800'}`}>
-                          {isDesign ? 'Graphic Design Mode' : 'UI/UX Mode'}
-                        </span>
+                        <h3 className="text-xl font-display font-bold text-deep-navy">Dynamic Section Builder</h3>
+                        <button type="button" onClick={addSection} className="px-4 py-2 bg-soft-gold text-deep-navy text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-soft-gold-600 transition-colors flex items-center gap-2">
+                          <PlusCircle className="w-4 h-4" /> Add Section
+                        </button>
                       </div>
 
-                      {isDesign ? (
-                        /* GRAPHIC DESIGN TEXT FIELDS */
-                        <div className="space-y-6">
-                          <Field label="02. Project Overview"><Textarea rows={4} value={formData.overview} onChange={set('overview')} placeholder="Latar belakang, tujuan, client..." /></Field>
-                          <Field label="03. Creative Brief"><Textarea rows={4} value={formData.creativeBrief} onChange={set('creativeBrief')} placeholder="Background, objective, target audience..." /></Field>
-                          <Field label="04. Design Direction"><Textarea rows={3} value={formData.designDirection} onChange={set('designDirection')} placeholder="Konsep, mood, style..." /></Field>
-                          <Field label="05. Visual Exploration"><Textarea rows={3} value={formData.visualExploration} onChange={set('visualExploration')} placeholder="Eksplorasi warna, typography..." /></Field>
-                          <Field label="06. Design Development"><Textarea rows={3} value={formData.designDevelopment} onChange={set('designDevelopment')} placeholder="Proses pengembangan layout..." /></Field>
-                          <Field label="07. Final Design"><Textarea rows={3} value={formData.finalDesign} onChange={set('finalDesign')} placeholder="Penjelasan hasil akhir..." /></Field>
-                          <Field label="08. Mockups & Context"><Textarea rows={3} value={formData.mockups} onChange={set('mockups')} placeholder="Penerapan di media nyata..." /></Field>
-                          <Field label="09. Design Assets / System"><Textarea rows={3} value={formData.designAssets} onChange={set('designAssets')} placeholder="Color palette, fonts..." /></Field>
-                          <Field label="10. Deliverables"><Textarea rows={3} value={formData.deliverables} onChange={set('deliverables')} placeholder="Daftar output..." /></Field>
-                          <Field label="11. Outcome & Impact"><Textarea rows={3} value={formData.outcome} onChange={set('outcome')} placeholder="Hasil dan dampak..." /></Field>
-                          <Field label="12. Reflection"><Textarea rows={3} value={formData.reflection} onChange={set('reflection')} placeholder="Pembelajaran & tantangan..." /></Field>
+                      {formData.sections.length === 0 ? (
+                        <div className="text-center py-16 bg-warm-beige-50 rounded-3xl border border-warm-beige-200 border-dashed">
+                          <p className="text-deep-navy/60 font-light mb-4">Belum ada section yang dibuat.</p>
+                          <button type="button" onClick={addSection} className="px-6 py-3 bg-deep-navy text-warm-beige text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-deep-navy-800 transition-colors inline-flex items-center gap-2">
+                            <PlusCircle className="w-4 h-4" /> Buat Section Pertama
+                          </button>
                         </div>
                       ) : (
-                        /* UI/UX TEXT FIELDS */
-                        <div className="space-y-6">
-                          <Field label="02. Project Snapshot"><Textarea rows={2} value={formData.snapshotText} onChange={set('snapshotText')} placeholder="Ringkasan singkat role, timeline, scope..." /></Field>
-                          <Field label="03. Project Overview"><Textarea rows={4} value={formData.overview} onChange={set('overview')} placeholder="Latar belakang project, tujuan bisnis..." /></Field>
-                          <Row2>
-                            <Field label="04. The Problem"><Textarea rows={4} value={formData.problem} onChange={set('problem')} placeholder="Kondisi awal, masalah utama..." /></Field>
-                            <Field label="05. Design Goals"><Textarea rows={4} value={formData.designGoals} onChange={set('designGoals')} placeholder="Tujuan desain, metrik..." /></Field>
-                          </Row2>
-                          <Row2>
-                            <Field label="06. User Research"><Textarea rows={4} value={formData.userResearch} onChange={set('userResearch')} placeholder="Metode riset, kualitatif/kuantitatif..." /></Field>
-                            <Field label="07. Research Findings"><Textarea rows={4} value={formData.researchFindings} onChange={set('researchFindings')} placeholder="Insight, pain points..." /></Field>
-                          </Row2>
-                          <Row2>
-                            <Field label="08. User Persona"><Textarea rows={3} value={formData.userPersona} onChange={set('userPersona')} placeholder="Profil pengguna target..." /></Field>
-                            <Field label="09. Define (HMW)"><Textarea rows={3} value={formData.defineProblem} onChange={set('defineProblem')} placeholder="How Might We..." /></Field>
-                          </Row2>
-                          <Row2>
-                            <Field label="10. Info Architecture"><Textarea rows={3} value={formData.infoArchitecture} onChange={set('infoArchitecture')} placeholder="Struktur navigasi..." /></Field>
-                            <Field label="11. User Flow"><Textarea rows={3} value={formData.userFlow} onChange={set('userFlow')} placeholder="Step-by-step alur pengguna..." /></Field>
-                          </Row2>
-                          <Row2>
-                            <Field label="12. Wireframing"><Textarea rows={3} value={formData.wireframes} onChange={set('wireframes')} placeholder="Eksplorasi layout..." /></Field>
-                            <Field label="13. Design System"><Textarea rows={3} value={formData.designSystem} onChange={set('designSystem')} placeholder="Komponen, typography, warna..." /></Field>
-                          </Row2>
-                          <Field label="14. High-Fidelity Design"><Textarea rows={3} value={formData.highFidelity} onChange={set('highFidelity')} placeholder="Interface final..." /></Field>
-                          <Field label="15. Prototype URL (Figma dll)"><TextInput value={formData.prototypeUrl} onChange={set('prototypeUrl')} placeholder="https://figma.com/proto/..." /></Field>
-                          <Row2>
-                            <Field label="16. Usability Testing"><Textarea rows={3} value={formData.usabilityTesting} onChange={set('usabilityTesting')} placeholder="Proses testing dan task..." /></Field>
-                            <Field label="17. Design Iteration"><Textarea rows={3} value={formData.designIteration} onChange={set('designIteration')} placeholder="Perbaikan berdasarkan feedback..." /></Field>
-                          </Row2>
-                          <Field label="18. Final Solution"><Textarea rows={3} value={formData.finalSolution} onChange={set('finalSolution')} placeholder="Solusi akhir penyelesaian masalah..." /></Field>
-                          <Row2>
-                            <Field label="20. Outcome / Impact"><Textarea rows={3} value={formData.outcome} onChange={set('outcome')} placeholder="Hasil terhadap pengguna & bisnis..." /></Field>
-                            <Field label="21. Key Learnings"><Textarea rows={3} value={formData.keyLearnings} onChange={set('keyLearnings')} placeholder="Pelajaran penting yang didapat..." /></Field>
-                          </Row2>
-                          <Row2>
-                            <Field label="22. Future Improvements"><Textarea rows={3} value={formData.futureImprovements} onChange={set('futureImprovements')} placeholder="Fitur selanjutnya..." /></Field>
-                            <Field label="23. Reflection"><Textarea rows={3} value={formData.reflection} onChange={set('reflection')} placeholder="Kesimpulan pribadi..." /></Field>
-                          </Row2>
+                        <div className="space-y-4">
+                          {formData.sections.map((section, idx) => {
+                            const isEditing = editingSectionIndex === idx;
+                            return (
+                              <div key={idx} className={`bg-white rounded-2xl border transition-all ${isEditing ? 'border-soft-gold ring-4 ring-soft-gold/10 shadow-lg' : 'border-warm-beige-200 shadow-sm hover:border-warm-beige-300'}`}>
+                                
+                                {/* Section Header (Collapsible) */}
+                                <div className="flex items-center justify-between p-4 cursor-pointer" onClick={() => setEditingSectionIndex(isEditing ? null : idx)}>
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-8 h-8 rounded-full bg-warm-beige-100 flex items-center justify-center font-bold text-deep-navy text-sm">
+                                      {idx + 1}
+                                    </div>
+                                    <span className="font-bold text-deep-navy">{section.title || 'Untitled Section'}</span>
+                                    {section.useHighlight && (
+                                      <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest bg-emerald-100 text-emerald-800">Highlight Card</span>
+                                    )}
+                                  </div>
+                                  <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
+                                    <button type="button" onClick={() => moveSection(idx, 'up')} disabled={idx === 0} className="p-2 text-deep-navy/40 hover:text-deep-navy disabled:opacity-30"><ArrowUp className="w-4 h-4" /></button>
+                                    <button type="button" onClick={() => moveSection(idx, 'down')} disabled={idx === formData.sections.length - 1} className="p-2 text-deep-navy/40 hover:text-deep-navy disabled:opacity-30"><ArrowDown className="w-4 h-4" /></button>
+                                    <button type="button" onClick={() => removeSection(idx)} className="p-2 text-rose-400 hover:text-rose-600 ml-2"><Trash2 className="w-4 h-4" /></button>
+                                  </div>
+                                </div>
+
+                                {/* Section Editor */}
+                                {isEditing && (
+                                  <div className="p-6 border-t border-warm-beige-100 bg-warm-beige-50/50 rounded-b-2xl space-y-6">
+                                    <Row2>
+                                      <Field label="Section Title *">
+                                        <TextInput value={section.title} onChange={e => updateSection(idx, 'title', e.target.value)} placeholder="e.g. Project Overview" />
+                                      </Field>
+                                      <Field label="Highlight Card Style?">
+                                        <div className="flex items-center gap-4 mt-2">
+                                          <label className="flex items-center gap-2 cursor-pointer">
+                                            <input type="checkbox" checked={section.useHighlight} onChange={e => updateSection(idx, 'useHighlight', e.target.checked)} className="w-4 h-4" />
+                                            <span className="text-sm text-deep-navy/80">Use Highlight Card</span>
+                                          </label>
+                                          {section.useHighlight && (
+                                            <select value={section.highlightColor} onChange={e => updateSection(idx, 'highlightColor', e.target.value)}
+                                              className="p-2 rounded-lg bg-white border border-warm-beige-300 text-xs">
+                                              <option value="white">White</option>
+                                              <option value="gold">Gold</option>
+                                              <option value="navy">Navy</option>
+                                            </select>
+                                          )}
+                                        </div>
+                                      </Field>
+                                    </Row2>
+                                    
+                                    <Field label="Text Content">
+                                      <Textarea rows={4} value={section.content} onChange={e => updateSection(idx, 'content', e.target.value)} placeholder="Write the content for this section..." />
+                                    </Field>
+
+                                    <MultiImageField label="Images (1 per line)" hint="If 1 image, full width. If >1, renders as a grid."
+                                      value={section.imagesString} onChange={e => updateSection(idx, 'imagesString', e.target.value)} />
+                                    
+                                    <Field label="Image Captions (1 per line)">
+                                      <Textarea rows={2} value={section.captionsString} onChange={e => updateSection(idx, 'captionsString', e.target.value)} placeholder="Caption 1&#10;Caption 2" />
+                                    </Field>
+                                    
+                                    <div className="flex justify-end pt-2">
+                                      <button type="button" onClick={() => setEditingSectionIndex(null)} className="px-4 py-2 bg-deep-navy text-warm-beige text-xs font-bold uppercase tracking-widest rounded-lg">Done Editing</button>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
                         </div>
                       )}
                     </div>
                   )}
 
-                  {/* ═══════════ TAB 3: GAMBAR PER SECTION (Hidden in Gallery Mode) ═══════════ */}
-                  {activeTab === 'images' && !isGallery && (
-                    <div className="space-y-2 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                      <div className="flex items-center justify-between mb-8 pb-4 border-b border-warm-beige-200">
-                        <h3 className="text-xl font-display font-bold text-deep-navy">Media / Gambar Section</h3>
-                        <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${isDesign ? 'bg-purple-100 text-purple-800' : 'bg-amber-100 text-amber-800'}`}>
-                          {isDesign ? 'Graphic Design Mode' : 'UI/UX Mode'}
-                        </span>
-                      </div>
-
-                      {isDesign ? (
-                        /* GRAPHIC DESIGN IMAGE FIELDS */
-                        <>
-                          <ImageField label="02. Project Overview" value={formData.overviewImageGD} onChange={set('overviewImageGD')} />
-                          <ImageField label="03. Creative Brief" value={formData.briefImage} onChange={set('briefImage')} />
-                          <ImageField label="04. Moodboard" value={formData.moodboardImage} onChange={set('moodboardImage')} />
-                          <MultiImageField label="05. Visual Exploration (Sketsa/Draft)" value={formData.explorationImages} onChange={set('explorationImages')} />
-                          <Field label="📝 Captions untuk Exploration"><Textarea rows={2} value={formData.explorationCaptions} onChange={set('explorationCaptions')} placeholder="Satu baris per gambar..." /></Field>
-                          <Row2>
-                            <ImageField label="06. Design Dev (Before)" value={formData.devBeforeImage} onChange={set('devBeforeImage')} />
-                            <ImageField label="06. Design Dev (After)" value={formData.devAfterImage} onChange={set('devAfterImage')} />
-                          </Row2>
-                          <ImageField label="07. Final Design (Hero Image)" value={formData.finalHeroImage} onChange={set('finalHeroImage')} />
-                          <MultiImageField label="07. Final Gallery Breakdown" value={formData.finalGalleryImages} onChange={set('finalGalleryImages')} />
-                          <Field label="📝 Captions Final Gallery"><Textarea rows={2} value={formData.finalGalleryCaptions} onChange={set('finalGalleryCaptions')} /></Field>
-                          <MultiImageField label="08. Mockups" value={formData.mockupImages} onChange={set('mockupImages')} />
-                          <Field label="📝 Captions Mockups"><Textarea rows={2} value={formData.mockupCaptions} onChange={set('mockupCaptions')} /></Field>
-                          <ImageField label="09. Design Assets" value={formData.assetsImage} onChange={set('assetsImage')} />
-                          <MultiImageField label="10. Deliverables" value={formData.deliverablesImages} onChange={set('deliverablesImages')} />
-                          <Field label="📝 Captions Deliverables"><Textarea rows={2} value={formData.deliverablesCaptions} onChange={set('deliverablesCaptions')} /></Field>
-                          <ImageField label="11. Outcome" value={formData.outcomeImageGD} onChange={set('outcomeImageGD')} />
-                          <ImageField label="12. Reflection" value={formData.reflectionImageGD} onChange={set('reflectionImageGD')} />
-                        </>
-                      ) : (
-                        /* UI/UX IMAGE FIELDS */
-                        <>
-                          <ImageField label="03. Overview Visual" value={formData.overviewImage} onChange={set('overviewImage')} />
-                          <ImageField label="04. The Problem Visual" value={formData.problemImage} onChange={set('problemImage')} />
-                          <ImageField label="05. Design Goals Cards" value={formData.goalsImage} onChange={set('goalsImage')} />
-                          <ImageField label="06. Research Photos" value={formData.researchImage} onChange={set('researchImage')} />
-                          <ImageField label="07. Research Findings (Affinity)" value={formData.findingsImage} onChange={set('findingsImage')} />
-                          <ImageField label="08. User Persona" value={formData.personaImage} onChange={set('personaImage')} />
-                          <ImageField label="09. Define (HMW)" value={formData.defineImage} onChange={set('defineImage')} />
-                          <ImageField label="10. Sitemap / IA" value={formData.sitemapImage} onChange={set('sitemapImage')} />
-                          <ImageField label="11. User Flow Diagram" value={formData.userFlowImage} onChange={set('userFlowImage')} />
-                          <Row2>
-                            <ImageField label="12. Lo-Fi Wireframe" value={formData.wireframeLowImage} onChange={set('wireframeLowImage')} />
-                            <ImageField label="12. Hi-Fi Wireframe" value={formData.wireframeHighImage} onChange={set('wireframeHighImage')} />
-                          </Row2>
-                          <ImageField label="13. Design System" value={formData.designSystemImage} onChange={set('designSystemImage')} />
-                          <ImageField label="14. Hi-Fi Hero Screen" value={formData.hifiHeroImage} onChange={set('hifiHeroImage')} />
-                          <MultiImageField label="14. Hi-Fi Screens Gallery" value={formData.hifiScreenImages} onChange={set('hifiScreenImages')} />
-                          <Field label="📝 Captions Hi-Fi Gallery"><Textarea rows={2} value={formData.hifiScreenCaptions} onChange={set('hifiScreenCaptions')} /></Field>
-                          <ImageField label="15. Prototype Interaction" value={formData.prototypeImage} onChange={set('prototypeImage')} />
-                          <ImageField label="16. Usability Testing Photos" value={formData.testingImage} onChange={set('testingImage')} />
-                          <Row2>
-                            <ImageField label="17. Iteration BEFORE" value={formData.iterationBeforeImage} onChange={set('iterationBeforeImage')} />
-                            <ImageField label="17. Iteration AFTER" value={formData.iterationAfterImage} onChange={set('iterationAfterImage')} />
-                          </Row2>
-                          <ImageField label="18. Final Solution Hero" value={formData.finalSolutionImage} onChange={set('finalSolutionImage')} />
-                          <MultiImageField label="19. Product Showcase Screens" value={formData.showcaseImages} onChange={set('showcaseImages')} />
-                          <Field label="📝 Captions Showcase"><Textarea rows={2} value={formData.showcaseCaptions} onChange={set('showcaseCaptions')} /></Field>
-                          <ImageField label="20. Outcome Metrics / Chart" value={formData.outcomeImage} onChange={set('outcomeImage')} />
-                          <ImageField label="21. Key Learnings Cards" value={formData.learningsImage} onChange={set('learningsImage')} />
-                          <ImageField label="22. Future Concepts" value={formData.futureImage} onChange={set('futureImage')} />
-                          <ImageField label="23. Reflection Photo" value={formData.reflectionImage} onChange={set('reflectionImage')} />
-                        </>
-                      )}
-                    </div>
-                  )}
-
-                  {/* ═══════════ TAB 4: GALERI & PUBLISH ═══════════ */}
+                  {/* ═══════════ TAB 4: PUBLISH ═══════════ */}
                   {activeTab === 'media' && (
                     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
                       <h3 className="text-xl font-display font-bold text-deep-navy mb-8 pb-4 border-b border-warm-beige-200">
-                        {isGallery ? 'Gambar Gallery & Setting Publish' : 'Gallery Tambahan & Setting Publish'}
+                        {isGallery ? 'Gambar Gallery & Setting Publish' : 'Publish & Settings'}
                       </h3>
                       
-                      <div className="bg-white p-6 rounded-3xl border border-warm-beige-200 shadow-sm hover:shadow-md transition-shadow">
-                        <Field label="URL Gambar (1 per baris)" hint={isGallery ? "Masukkan semua link gambar untuk ditampilkan." : "Gambar-gambar ini akan digunakan jika section images tidak diisi. 1 baris 1 URL."}>
-                          <textarea rows={10} value={formData.galleryString} onChange={set('galleryString')}
-                            placeholder={'https://...\nhttps://...'}
-                            className="w-full p-4 rounded-2xl bg-warm-beige-50 border border-warm-beige-300 text-xs font-mono focus:outline-none focus:border-soft-gold focus:ring-4 focus:ring-soft-gold/10 transition-all leading-relaxed" />
-                        </Field>
-                      </div>
+                      {isGallery && (
+                        <div className="bg-white p-6 rounded-3xl border border-warm-beige-200 shadow-sm hover:shadow-md transition-shadow mb-6">
+                          <Field label="URL Gambar (1 per baris)" hint="Masukkan semua link gambar untuk ditampilkan.">
+                            <textarea rows={10} value={formData.galleryString} onChange={set('galleryString')}
+                              placeholder={'https://...\nhttps://...'}
+                              className="w-full p-4 rounded-2xl bg-warm-beige-50 border border-warm-beige-300 text-xs font-mono focus:outline-none focus:border-soft-gold focus:ring-4 focus:ring-soft-gold/10 transition-all leading-relaxed" />
+                          </Field>
+                        </div>
+                      )}
 
                       <div className="bg-white p-6 rounded-3xl border border-warm-beige-200 shadow-sm space-y-6 hover:shadow-md transition-shadow">
                         <Field label="External / Live Link (Opsional)">
@@ -672,20 +631,19 @@ const AdminPortfolio = () => {
                                 className="absolute opacity-0 w-full h-full cursor-pointer" />
                               {formData.isFeatured && <Check className="w-4 h-4 text-soft-gold-600" />}
                             </div>
-                            <span className="font-bold text-sm text-deep-navy/90 select-none group-hover:text-deep-navy transition-colors">Featured di Beranda</span>
+                            <span className="text-sm font-bold text-deep-navy group-hover:text-soft-gold-600 transition-colors">Tandai sebagai Featured</span>
                           </label>
-                          
-                          <div className="flex items-center gap-4 sm:ml-auto">
-                            <span className="text-sm font-bold text-deep-navy/60">Status Publikasi:</span>
+
+                          <div className="flex items-center gap-4 border-l border-warm-beige-200 pl-6">
+                            <label className="font-bold text-xs uppercase tracking-widest text-deep-navy/80">Status</label>
                             <select value={formData.status} onChange={set('status')}
-                              className="px-4 py-2.5 rounded-xl bg-warm-beige-50 border border-warm-beige-300 text-sm font-bold focus:outline-none focus:border-soft-gold text-deep-navy">
-                              <option value="published">🟢 Published</option>
-                              <option value="draft">🟡 Draft</option>
+                              className="px-4 py-2 rounded-xl bg-warm-beige-50 border border-warm-beige-300 text-sm font-bold focus:outline-none focus:border-soft-gold transition-all">
+                              <option value="draft">Draft (Sembunyikan)</option>
+                              <option value="published">Published (Tampilkan)</option>
                             </select>
                           </div>
                         </div>
                       </div>
-
                     </div>
                   )}
 
@@ -693,28 +651,30 @@ const AdminPortfolio = () => {
               </div>
             </div>
 
-            {/* Modal Footer with Actions */}
-            <div className="flex-shrink-0 px-8 py-5 bg-white border-t border-warm-beige-300 flex items-center justify-between">
-              <div className="flex gap-2">
-                 {/* Prev Next Buttons if needed, omitted for simplicity with sidebar */}
-              </div>
-              <div className="flex items-center gap-4">
-                <button type="button" onClick={() => setIsModalOpen(false)}
-                  className="px-6 py-3 rounded-full border border-warm-beige-300 text-deep-navy text-sm font-bold hover:bg-warm-beige-100 transition-colors">
-                  Batal
-                </button>
-                <button type="submit" form="portfolio-form"
-                  className="px-8 py-3 rounded-full bg-deep-navy text-warm-beige text-sm font-bold uppercase tracking-widest hover:bg-deep-navy-800 shadow-xl flex items-center gap-2 transform hover:-translate-y-0.5 transition-all">
-                  <Save className="w-5 h-5 text-soft-gold" />
-                  {editingId ? 'Simpan Perubahan' : 'Publish Case Study'}
-                </button>
-              </div>
+            {/* Modal Footer (Sticky) */}
+            <div className="flex-shrink-0 px-8 py-5 bg-white border-t border-warm-beige-300 flex items-center justify-end gap-4 relative z-10">
+              {saveSuccess && (
+                <span className="text-emerald-600 text-sm font-bold flex items-center gap-2 animate-pulse">
+                  <Check className="w-4 h-4" /> Tersimpan!
+                </span>
+              )}
+              <button type="button" onClick={() => setIsModalOpen(false)} disabled={isSaving} className="px-6 py-3 rounded-xl bg-warm-beige-100 text-deep-navy text-xs font-bold uppercase tracking-widest hover:bg-warm-beige-200 transition-all disabled:opacity-50">
+                Batal
+              </button>
+              <button type="submit" form="portfolio-form" disabled={isSaving || saveSuccess} className="px-8 py-3 rounded-xl bg-deep-navy text-warm-beige text-xs font-bold uppercase tracking-widest hover:bg-soft-gold hover:text-deep-navy transition-all shadow-lg hover:shadow-xl flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed">
+                {isSaving ? (
+                  <><span className="w-4 h-4 border-2 border-warm-beige border-t-transparent rounded-full animate-spin" /> Menyimpan...</>
+                ) : saveSuccess ? (
+                  <><Check className="w-4 h-4" /> Tersimpan!</>
+                ) : (
+                  <><Save className="w-4 h-4" /> Simpan Project</>
+                )}
+              </button>
             </div>
 
           </div>
         </div>
       )}
-
     </div>
   );
 };

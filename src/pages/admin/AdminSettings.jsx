@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Save, RefreshCw, Check, Settings, AlertTriangle } from 'lucide-react';
+import { Save, RefreshCw, Check, Settings, AlertTriangle, ImageIcon, User } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 
 const AdminSettings = () => {
@@ -107,6 +107,43 @@ const AdminSettings = () => {
               <label className="font-bold uppercase tracking-wider">Profile Photo URL</label>
               <input type="text" value={formData.profileImage} onChange={(e) => setFormData({ ...formData, profileImage: e.target.value })} className="w-full p-3 rounded-xl bg-warm-beige-100 border border-warm-beige-300" />
             </div>
+          </div>
+
+          {/* Hero Image */}
+          <div className="space-y-3 p-4 rounded-2xl bg-warm-beige-100 border border-warm-beige-300">
+            <div className="flex items-center gap-2">
+              <ImageIcon className="w-4 h-4 text-soft-gold" />
+              <label className="font-bold uppercase tracking-wider text-deep-navy/80 text-xs">Hero Section Photo (Home Page)</label>
+            </div>
+            <p className="text-deep-navy/50 text-xs">Foto ini tampil di bagian hero / landing utama website kamu.</p>
+            <input
+              type="text"
+              placeholder="Paste URL foto hero (https://...)  atau path relatif"
+              value={formData.heroImage || ''}
+              onChange={(e) => setFormData({ ...formData, heroImage: e.target.value })}
+              className="w-full p-3 rounded-xl bg-white border border-warm-beige-300 font-sans text-xs"
+            />
+            {formData.heroImage && (
+              <div className="flex items-start gap-4 pt-1">
+                <div className="relative flex-shrink-0">
+                  <img
+                    src={formData.heroImage}
+                    alt="Hero preview"
+                    className="w-24 h-28 object-cover rounded-xl border-2 border-warm-beige-300 shadow-sm"
+                    onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
+                  />
+                  <div style={{display:'none'}} className="w-24 h-28 rounded-xl border-2 border-dashed border-warm-beige-300 bg-white flex items-center justify-center flex-col gap-1">
+                    <User className="w-6 h-6 text-deep-navy/30" />
+                    <span className="text-deep-navy/30 text-xs">Error</span>
+                  </div>
+                </div>
+                <div className="text-xs text-deep-navy/60 pt-1">
+                  <p className="font-semibold text-deep-navy/80 mb-0.5">Preview</p>
+                  <p>Pastikan URL dapat diakses publik.</p>
+                  <p className="mt-1">Ukuran ideal: <strong>800×1000px</strong> (portrait).</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

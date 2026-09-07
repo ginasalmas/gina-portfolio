@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, X, Wrench, Save } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 
 const AdminSkills = () => {
   const { skills, updateSkills } = useData();
   const [skillGroups, setSkillGroups] = useState(skills);
+  // rawItems stores the textarea string per group index so user can freely type commas/spaces
+  const [rawItems, setRawItems] = useState(() => skills.map(g => g.items.join(', ')));
   const [isSaved, setIsSaved] = useState(false);
 
   const handleGroupChange = (index, field, value) => {
@@ -13,25 +15,42 @@ const AdminSkills = () => {
     setSkillGroups(updated);
   };
 
-  const handleItemsChange = (index, itemsString) => {
+  // Update raw string as user types — do NOT parse yet
+  const handleRawItemsChange = (index, value) => {
+    const updatedRaw = [...rawItems];
+    updatedRaw[index] = value;
+    setRawItems(updatedRaw);
+  };
+
+  // Parse raw string into items array only when textarea loses focus
+  const handleItemsBlur = (index) => {
     const updated = [...skillGroups];
-    updated[index].items = itemsString.split(',').map(s => s.trim()).filter(Boolean);
+    updated[index].items = rawItems[index].split(',').map(s => s.trim()).filter(Boolean);
     setSkillGroups(updated);
   };
 
   const handleAddGroup = () => {
     setSkillGroups([...skillGroups, { category: 'New Skill Category', items: ['Skill 1', 'Skill 2'] }]);
+    setRawItems([...rawItems, 'Skill 1, Skill 2']);
   };
 
   const handleDeleteGroup = (index) => {
     if (window.confirm('Delete this skill category?')) {
       const updated = skillGroups.filter((_, i) => i !== index);
+      const updatedRaw = rawItems.filter((_, i) => i !== index);
       setSkillGroups(updated);
+      setRawItems(updatedRaw);
     }
   };
 
   const handleSaveAll = () => {
-    updateSkills(skillGroups);
+    // Parse all raw strings before saving
+    const finalGroups = skillGroups.map((group, idx) => ({
+      ...group,
+      items: rawItems[idx].split(',').map(s => s.trim()).filter(Boolean),
+    }));
+    updateSkills(finalGroups);
+    setSkillGroups(finalGroups);
     setIsSaved(true);
     setTimeout(() => setIsSaved(false), 2000);
   };
@@ -69,11 +88,13 @@ const AdminSkills = () => {
             </div>
 
             <div className="space-y-1 text-xs">
-              <label className="font-bold uppercase tracking-wider text-deep-navy/70">Skill Items (comma separated)</label>
+              <label className="font-bold uppercase tracking-wider text-deep-navy/70">Skill Items (pisahkan dengan koma)</label>
               <textarea
                 rows="3"
-                value={group.items.join(', ')}
-                onChange={(e) => handleItemsChange(idx, e.target.value)}
+                value={rawItems[idx] ?? group.items.join(', ')}
+                onChange={(e) => handleRawItemsChange(idx, e.target.value)}
+                onBlur={() => handleItemsBlur(idx)}
+                placeholder="Contoh: Figma, Adobe XD, Sketch"
                 className="w-full p-3 rounded-xl bg-warm-beige-100 border border-warm-beige-300 font-sans"
               />
             </div>

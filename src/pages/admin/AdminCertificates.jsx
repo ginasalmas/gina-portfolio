@@ -10,6 +10,7 @@ const AdminCertificates = () => {
   const [formData, setFormData] = useState({
     name: '',
     issuer: '',
+    category: '',
     date: '2024-04',
     credentialId: '',
     credentialUrl: '',
@@ -22,6 +23,7 @@ const AdminCertificates = () => {
     setFormData({
       name: '',
       issuer: '',
+      category: '',
       date: '2024-04',
       credentialId: '',
       credentialUrl: '',
@@ -76,7 +78,12 @@ const AdminCertificates = () => {
               <div>
                 <span className="text-xs font-semibold text-soft-gold-600">{cert.issuer} • {cert.date}</span>
                 <h3 className="text-base font-display font-bold text-deep-navy">{cert.name}</h3>
-                <p className="text-xs text-deep-navy/70 font-light mt-1 line-clamp-2">{cert.description}</p>
+                {cert.category && (
+                  <span className="inline-block mt-1 px-2 py-0.5 rounded-md bg-warm-beige-200 text-deep-navy text-[10px] font-bold tracking-wider uppercase">
+                    {cert.category}
+                  </span>
+                )}
+                <p className="text-xs text-deep-navy/70 font-light mt-2 line-clamp-2">{cert.description}</p>
               </div>
             </div>
 
@@ -97,7 +104,7 @@ const AdminCertificates = () => {
 
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-deep-navy/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-xl w-full p-6 space-y-6 border border-warm-beige-400 shadow-2xl">
+          <div className="bg-white rounded-3xl max-w-xl w-full p-6 space-y-6 border border-warm-beige-400 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-deep-navy/10 pb-3">
               <h2 className="text-xl font-display font-bold text-deep-navy">{editingId ? 'Edit Certificate' : 'Add Certificate'}</h2>
               <button onClick={() => setIsModalOpen(false)}><X className="w-5 h-5 text-deep-navy/50" /></button>
@@ -115,9 +122,14 @@ const AdminCertificates = () => {
                   <input type="text" required value={formData.issuer} onChange={(e) => setFormData({ ...formData, issuer: e.target.value })} className="w-full p-3 rounded-xl bg-warm-beige-100 border border-warm-beige-300 mt-1" />
                 </div>
                 <div>
-                  <label className="font-bold uppercase tracking-wider">Date *</label>
-                  <input type="text" required value={formData.date} onChange={(e) => setFormData({ ...formData, date: e.target.value })} className="w-full p-3 rounded-xl bg-warm-beige-100 border border-warm-beige-300 mt-1" />
+                  <label className="font-bold uppercase tracking-wider">Category</label>
+                  <input type="text" placeholder="e.g. UI/UX, Programming" value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })} className="w-full p-3 rounded-xl bg-warm-beige-100 border border-warm-beige-300 mt-1" />
                 </div>
+              </div>
+              
+              <div>
+                <label className="font-bold uppercase tracking-wider">Date *</label>
+                <input type="text" required value={formData.date} onChange={(e) => setFormData({ ...formData, date: e.target.value })} className="w-full p-3 rounded-xl bg-warm-beige-100 border border-warm-beige-300 mt-1" />
               </div>
 
               <div className="grid grid-cols-2 gap-4">

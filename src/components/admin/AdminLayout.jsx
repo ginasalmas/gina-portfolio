@@ -38,7 +38,6 @@ const AdminLayout = () => {
     { name: 'Blog / Journal', path: '/admin/blog', icon: FileText },
     { name: 'Certificates', path: '/admin/certificates', icon: Award },
     { name: 'Achievements', path: '/admin/achievements', icon: Trophy },
-    { name: 'Writings', path: '/admin/writings', icon: BookOpen },
     { name: 'Experience', path: '/admin/experience', icon: Briefcase },
     { name: 'Skills & Tools', path: '/admin/skills', icon: Wrench },
     { name: 'Website Settings', path: '/admin/settings', icon: Settings },

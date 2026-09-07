@@ -89,22 +89,44 @@ const ImageGrid = ({ images = [], captions, cols = 2 }) => {
   const captionArray = Array.isArray(captions) ? captions : (captions ? String(captions).split('\n') : []);
   
   return (
-    <div className={`grid grid-cols-1 md:grid-cols-${cols} gap-6 md:gap-8 my-16`}>
-      {imgArray.map((url, i) => {
-        if (!url || typeof url !== 'string' || !url.trim()) return null;
-        return (
-          <figure key={i} className="group">
-            <div className="rounded-3xl overflow-hidden bg-warm-beige-100 shadow-lg border border-warm-beige-200 h-full relative">
-              <img src={url.trim()} alt={`Gallery ${i + 1}`} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
-            </div>
-            {captionArray[i] && (
-              <figcaption className="text-sm font-light text-deep-navy/60 mt-4 px-2">
-                {captionArray[i]}
-              </figcaption>
-            )}
-          </figure>
-        );
-      })}
+    <div className="my-16">
+      {imgArray.length <= 2 ? (
+        <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8">
+          {imgArray.map((url, i) => {
+            if (!url || typeof url !== 'string' || !url.trim()) return null;
+            return (
+              <figure key={i} className="group relative">
+                <div className="rounded-3xl overflow-hidden bg-warm-beige-100 shadow-lg border border-warm-beige-200">
+                  <img src={url.trim()} alt={`Gallery ${i + 1}`} className="max-w-full h-auto max-h-[700px] object-contain transition-transform duration-700 group-hover:scale-105" loading="lazy" />
+                </div>
+                {captionArray[i] && (
+                  <figcaption className="text-sm font-light text-deep-navy/60 mt-4 px-2 text-center">
+                    {captionArray[i]}
+                  </figcaption>
+                )}
+              </figure>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
+          {imgArray.map((url, i) => {
+            if (!url || typeof url !== 'string' || !url.trim()) return null;
+            return (
+              <figure key={i} className="break-inside-avoid group relative">
+                <div className="rounded-3xl overflow-hidden bg-warm-beige-100 shadow-lg border border-warm-beige-200">
+                  <img src={url.trim()} alt={`Gallery ${i + 1}`} className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
+                </div>
+                {captionArray[i] && (
+                  <figcaption className="text-sm font-light text-deep-navy/60 mt-4 px-2 text-center">
+                    {captionArray[i]}
+                  </figcaption>
+                )}
+              </figure>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };

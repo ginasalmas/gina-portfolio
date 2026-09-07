@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
-import { Plus, Edit2, Trash2, X, FileText, Check } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, PlusCircle, ArrowUp, ArrowDown } from 'lucide-react';
 import { useData } from '../../context/DataContext';
+
+const DEFAULT_SECTION = {
+  id: '',
+  content: '',
+  imagesString: ''
+};
 
 const AdminBlog = () => {
   const { blogPosts, addBlogPost, updateBlogPost, deleteBlogPost } = useData();
@@ -15,10 +21,12 @@ const AdminBlog = () => {
     publishedAt: new Date().toISOString().split('T')[0],
     readTime: '5 min read',
     excerpt: '',
-    content: '',
+    sections: [],
     isFeatured: false,
     status: 'published'
   });
+
+  const [editingSectionIndex, setEditingSectionIndex] = useState(null);
 
   const handleOpenCreate = () => {
     setEditingId(null);
@@ -30,15 +38,34 @@ const AdminBlog = () => {
       publishedAt: new Date().toISOString().split('T')[0],
       readTime: '5 min read',
       excerpt: '',
-      content: '',
+      sections: [{ ...DEFAULT_SECTION, id: `sec-${Date.now()}` }],
       isFeatured: false,
       status: 'published'
     });
+    setEditingSectionIndex(null);
     setIsModalOpen(true);
   };
 
   const handleOpenEdit = (post) => {
     setEditingId(post.id);
+    
+    let processedSections = [];
+    if (post.sections && Array.isArray(post.sections) && post.sections.length > 0) {
+      processedSections = post.sections.map(sec => ({
+        ...sec,
+        imagesString: (sec.images || []).join('\n')
+      }));
+    } else {
+      // Migrate legacy content
+      if (post.content) {
+        processedSections = [{
+          ...DEFAULT_SECTION,
+          id: `sec-${Date.now()}`,
+          content: post.content
+        }];
+      }
+    }
+
     setFormData({
       title: post.title || '',
       category: post.category || 'Design Articles',
@@ -47,10 +74,11 @@ const AdminBlog = () => {
       publishedAt: post.publishedAt || '',
       readTime: post.readTime || '5 min read',
       excerpt: post.excerpt || '',
-      content: post.content || '',
+      sections: processedSections,
       isFeatured: post.isFeatured || false,
       status: post.status || 'published'
     });
+    setEditingSectionIndex(null);
     setIsModalOpen(true);
   };
 
@@ -58,9 +86,17 @@ const AdminBlog = () => {
     e.preventDefault();
     const tags = formData.tagsString.split(',').map(t => t.trim()).filter(Boolean);
 
+    // Convert section strings back to arrays
+    const sections = (formData.sections || []).map(sec => ({
+      ...sec,
+      images: sec.imagesString?.split('\n').map(s => s.trim()).filter(Boolean) ?? []
+    }));
+
+    const { tagsString, ...cleanData } = formData;
     const postData = {
-      ...formData,
+      ...cleanData,
       tags,
+      sections
     };
 
     if (editingId) {
@@ -76,6 +112,38 @@ const AdminBlog = () => {
     if (window.confirm('Are you sure you want to delete this journal post?')) {
       deleteBlogPost(id);
     }
+  };
+
+  // Section Management
+  const addSection = () => {
+    const newSec = { ...DEFAULT_SECTION, id: `sec-${Date.now()}` };
+    setFormData(f => ({ ...f, sections: [...f.sections, newSec] }));
+    setEditingSectionIndex(formData.sections.length);
+  };
+
+  const updateSection = (idx, key, value) => {
+    const newSections = [...formData.sections];
+    newSections[idx] = { ...newSections[idx], [key]: value };
+    setFormData(f => ({ ...f, sections: newSections }));
+  };
+
+  const removeSection = (idx) => {
+    if(window.confirm('Hapus section ini?')) {
+      const newSections = formData.sections.filter((_, i) => i !== idx);
+      setFormData(f => ({ ...f, sections: newSections }));
+      if (editingSectionIndex === idx) setEditingSectionIndex(null);
+    }
+  };
+
+  const moveSection = (idx, dir) => {
+    const newSections = [...formData.sections];
+    if (dir === 'up' && idx > 0) {
+      [newSections[idx - 1], newSections[idx]] = [newSections[idx], newSections[idx - 1]];
+    } else if (dir === 'down' && idx < newSections.length - 1) {
+      [newSections[idx + 1], newSections[idx]] = [newSections[idx], newSections[idx + 1]];
+    }
+    setFormData(f => ({ ...f, sections: newSections }));
+    setEditingSectionIndex(null);
   };
 
   return (
@@ -166,7 +234,7 @@ const AdminBlog = () => {
       {/* Editor Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-deep-navy/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-3xl max-w-3xl w-full p-6 md:p-8 space-y-6 max-h-[90vh] overflow-y-auto border border-warm-beige-400 shadow-2xl">
+          <div className="bg-white rounded-3xl max-w-4xl w-full p-6 md:p-8 space-y-6 max-h-[90vh] overflow-y-auto border border-warm-beige-400 shadow-2xl relative">
             
             <div className="flex items-center justify-between border-b border-deep-navy/10 pb-4">
               <h2 className="text-2xl font-display font-bold text-deep-navy">
@@ -177,122 +245,183 @@ const AdminBlog = () => {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-5 text-xs text-deep-navy font-medium">
+            <form onSubmit={handleSubmit} className="space-y-8 text-xs text-deep-navy font-medium pb-20">
               
-              <div className="space-y-1">
-                <label className="font-bold uppercase tracking-wider text-deep-navy/80">Article Title *</label>
-                <input
-                  type="text"
-                  required
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full p-3 rounded-xl bg-warm-beige-100 border border-warm-beige-300 focus:outline-none focus:border-soft-gold"
-                  placeholder="e.g. Designing for Intentionality: How Whitespace Shapes Digital Emotion"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-5">
+                <h3 className="text-xl font-display font-bold text-deep-navy pb-2 border-b border-warm-beige-200">Article Info</h3>
                 <div className="space-y-1">
-                  <label className="font-bold uppercase tracking-wider text-deep-navy/80">Category *</label>
-                  <select
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full p-3 rounded-xl bg-warm-beige-100 border border-warm-beige-300 focus:outline-none focus:border-soft-gold"
-                  >
-                    <option value="Design Articles">Design Articles</option>
-                    <option value="UI/UX Case Studies">UI/UX Case Studies</option>
-                    <option value="Career Journey">Career Journey</option>
-                    <option value="Learning Notes">Learning Notes</option>
-                    <option value="Technology">Technology</option>
-                    <option value="Personal Reflections">Personal Reflections</option>
-                  </select>
-                </div>
-                <div className="space-y-1">
-                  <label className="font-bold uppercase tracking-wider text-deep-navy/80">Cover Image URL *</label>
+                  <label className="font-bold uppercase tracking-wider text-deep-navy/80">Article Title *</label>
                   <input
                     type="text"
                     required
-                    value={formData.coverImage}
-                    onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
+                    value={formData.title}
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    className="w-full p-3 rounded-xl bg-warm-beige-100 border border-warm-beige-300 focus:outline-none focus:border-soft-gold"
+                    placeholder="e.g. Designing for Intentionality: How Whitespace Shapes Digital Emotion"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="font-bold uppercase tracking-wider text-deep-navy/80">Category *</label>
+                    <select
+                      value={formData.category}
+                      onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                      className="w-full p-3 rounded-xl bg-warm-beige-100 border border-warm-beige-300 focus:outline-none focus:border-soft-gold"
+                    >
+                      <option value="Design Articles">Design Articles</option>
+                      <option value="UI/UX Case Studies">UI/UX Case Studies</option>
+                      <option value="Career Journey">Career Journey</option>
+                      <option value="Learning Notes">Learning Notes</option>
+                      <option value="Technology">Technology</option>
+                      <option value="Personal Reflections">Personal Reflections</option>
+                    </select>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="font-bold uppercase tracking-wider text-deep-navy/80">Cover Image URL *</label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.coverImage}
+                      onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
+                      className="w-full p-3 rounded-xl bg-warm-beige-100 border border-warm-beige-300"
+                      placeholder="https://images.unsplash.com/..."
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-1">
+                    <label className="font-bold uppercase tracking-wider text-deep-navy/80">Publication Date</label>
+                    <input
+                      type="text"
+                      value={formData.publishedAt}
+                      onChange={(e) => setFormData({ ...formData, publishedAt: e.target.value })}
+                      className="w-full p-3 rounded-xl bg-warm-beige-100 border border-warm-beige-300"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="font-bold uppercase tracking-wider text-deep-navy/80">Read Time Estimate</label>
+                    <input
+                      type="text"
+                      value={formData.readTime}
+                      onChange={(e) => setFormData({ ...formData, readTime: e.target.value })}
+                      className="w-full p-3 rounded-xl bg-warm-beige-100 border border-warm-beige-300"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="font-bold uppercase tracking-wider text-deep-navy/80">Tags (comma separated)</label>
+                    <input
+                      type="text"
+                      value={formData.tagsString}
+                      onChange={(e) => setFormData({ ...formData, tagsString: e.target.value })}
+                      className="w-full p-3 rounded-xl bg-warm-beige-100 border border-warm-beige-300"
+                      placeholder="UI/UX, Editorial, Career"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="font-bold uppercase tracking-wider text-deep-navy/80">Short Excerpt *</label>
+                  <textarea
+                    rows="2"
+                    required
+                    value={formData.excerpt}
+                    onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
                     className="w-full p-3 rounded-xl bg-warm-beige-100 border border-warm-beige-300"
-                    placeholder="https://images.unsplash.com/..."
+                    placeholder="Summary for article card preview..."
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="space-y-1">
-                  <label className="font-bold uppercase tracking-wider text-deep-navy/80">Publication Date</label>
-                  <input
-                    type="text"
-                    value={formData.publishedAt}
-                    onChange={(e) => setFormData({ ...formData, publishedAt: e.target.value })}
-                    className="w-full p-3 rounded-xl bg-warm-beige-100 border border-warm-beige-300"
-                  />
+              {/* Section Builder */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between pb-2 border-b border-warm-beige-200">
+                  <h3 className="text-xl font-display font-bold text-deep-navy">Content Sections (with Media)</h3>
+                  <button type="button" onClick={addSection} className="px-4 py-2 bg-soft-gold text-deep-navy text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-soft-gold-600 transition-colors flex items-center gap-2">
+                    <PlusCircle className="w-4 h-4" /> Add Section
+                  </button>
                 </div>
-                <div className="space-y-1">
-                  <label className="font-bold uppercase tracking-wider text-deep-navy/80">Read Time Estimate</label>
-                  <input
-                    type="text"
-                    value={formData.readTime}
-                    onChange={(e) => setFormData({ ...formData, readTime: e.target.value })}
-                    className="w-full p-3 rounded-xl bg-warm-beige-100 border border-warm-beige-300"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="font-bold uppercase tracking-wider text-deep-navy/80">Tags (comma separated)</label>
-                  <input
-                    type="text"
-                    value={formData.tagsString}
-                    onChange={(e) => setFormData({ ...formData, tagsString: e.target.value })}
-                    className="w-full p-3 rounded-xl bg-warm-beige-100 border border-warm-beige-300"
-                    placeholder="UI/UX, Editorial, Career"
-                  />
-                </div>
-              </div>
 
-              <div className="space-y-1">
-                <label className="font-bold uppercase tracking-wider text-deep-navy/80">Short Excerpt *</label>
-                <textarea
-                  rows="2"
-                  required
-                  value={formData.excerpt}
-                  onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
-                  className="w-full p-3 rounded-xl bg-warm-beige-100 border border-warm-beige-300"
-                  placeholder="Summary for article card preview..."
-                />
-              </div>
+                {formData.sections.length === 0 ? (
+                  <div className="text-center py-10 bg-warm-beige-50 rounded-2xl border border-warm-beige-200 border-dashed">
+                    <p className="text-deep-navy/60 font-light mb-4">No content sections yet.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {formData.sections.map((section, idx) => {
+                      const isEditing = editingSectionIndex === idx;
+                      return (
+                        <div key={idx} className={`bg-white rounded-2xl border transition-all ${isEditing ? 'border-soft-gold ring-4 ring-soft-gold/10 shadow-lg' : 'border-warm-beige-200 shadow-sm hover:border-warm-beige-300'}`}>
+                          <div className="flex items-center justify-between p-4 cursor-pointer" onClick={() => setEditingSectionIndex(isEditing ? null : idx)}>
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-full bg-warm-beige-100 flex items-center justify-center font-bold text-deep-navy text-sm">
+                                {idx + 1}
+                              </div>
+                              <span className="font-bold text-deep-navy">Section {idx + 1} {section.imagesString ? '(Includes Media)' : ''}</span>
+                            </div>
+                            <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
+                              <button type="button" onClick={() => moveSection(idx, 'up')} disabled={idx === 0} className="p-2 text-deep-navy/40 hover:text-deep-navy disabled:opacity-30"><ArrowUp className="w-4 h-4" /></button>
+                              <button type="button" onClick={() => moveSection(idx, 'down')} disabled={idx === formData.sections.length - 1} className="p-2 text-deep-navy/40 hover:text-deep-navy disabled:opacity-30"><ArrowDown className="w-4 h-4" /></button>
+                              <button type="button" onClick={() => removeSection(idx)} className="p-2 text-rose-400 hover:text-rose-600 ml-2"><Trash2 className="w-4 h-4" /></button>
+                            </div>
+                          </div>
 
-              <div className="space-y-1">
-                <label className="font-bold uppercase tracking-wider text-deep-navy/80">Article Content *</label>
-                <textarea
-                  rows="8"
-                  required
-                  value={formData.content}
-                  onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                  className="w-full p-4 rounded-xl bg-warm-beige-100 border border-warm-beige-300 font-sans leading-relaxed"
-                  placeholder="Write post content..."
-                />
+                          {isEditing && (
+                            <div className="p-6 border-t border-warm-beige-100 bg-warm-beige-50/50 rounded-b-2xl space-y-4">
+                              <div className="space-y-1">
+                                <label className="font-bold uppercase tracking-wider text-deep-navy/80">Text Content</label>
+                                <textarea
+                                  rows="6"
+                                  value={section.content}
+                                  onChange={e => updateSection(idx, 'content', e.target.value)}
+                                  className="w-full p-4 rounded-xl bg-white border border-warm-beige-300 font-sans leading-relaxed text-sm focus:outline-none focus:border-soft-gold"
+                                  placeholder="Write paragraph content..."
+                                />
+                              </div>
+                              
+                              <div className="space-y-1">
+                                <label className="font-bold uppercase tracking-wider text-deep-navy/80">Media URLs (1 per line, Max 3)</label>
+                                <p className="text-[10px] text-deep-navy/60">Photos inserted here will appear below the text content in a Masonry Grid layout.</p>
+                                <textarea
+                                  rows="3"
+                                  value={section.imagesString}
+                                  onChange={e => updateSection(idx, 'imagesString', e.target.value)}
+                                  className="w-full p-3 rounded-xl bg-white border border-warm-beige-300 font-mono text-xs focus:outline-none focus:border-soft-gold"
+                                  placeholder="https://..."
+                                />
+                              </div>
+                              
+                              <div className="flex justify-end pt-2">
+                                <button type="button" onClick={() => setEditingSectionIndex(null)} className="px-4 py-2 bg-deep-navy text-warm-beige text-xs font-bold uppercase tracking-widest rounded-lg">Done Editing</button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
 
               {/* Status & Options */}
-              <div className="flex items-center gap-6 pt-4 border-t border-deep-navy/10">
+              <div className="flex items-center justify-between pt-6 border-t border-deep-navy/10">
                 <label className="flex items-center gap-2 cursor-pointer font-bold">
                   <input
                     type="checkbox"
                     checked={formData.isFeatured}
                     onChange={(e) => setFormData({ ...formData, isFeatured: e.target.checked })}
-                    className="w-4 h-4 rounded text-soft-gold"
+                    className="w-5 h-5 rounded text-soft-gold"
                   />
                   <span>Feature on Journal Top Banner</span>
                 </label>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                   <label className="font-bold">Status:</label>
                   <select
                     value={formData.status}
                     onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                    className="p-2 rounded-lg bg-warm-beige-100 border border-warm-beige-300 font-bold"
+                    className="px-4 py-2 rounded-xl bg-warm-beige-100 border border-warm-beige-300 font-bold focus:outline-none focus:border-soft-gold"
                   >
                     <option value="published">Published</option>
                     <option value="draft">Draft</option>
@@ -300,23 +429,25 @@ const AdminBlog = () => {
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-deep-navy/10 flex justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-5 py-2.5 rounded-full border border-deep-navy/20 text-deep-navy font-semibold hover:bg-warm-beige-100"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-6 py-2.5 rounded-full bg-deep-navy text-warm-beige font-semibold uppercase tracking-wider hover:bg-deep-navy-800 shadow-md"
-                >
-                  {editingId ? 'Save Changes' : 'Publish Article'}
-                </button>
-              </div>
-
             </form>
+            
+            {/* Sticky Footer */}
+            <div className="absolute bottom-0 left-0 right-0 p-4 bg-white/95 backdrop-blur border-t border-warm-beige-300 shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.1)] flex justify-end gap-3 rounded-b-3xl">
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+                className="px-6 py-3 rounded-full border border-deep-navy/20 text-deep-navy font-semibold hover:bg-warm-beige-100"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleSubmit}
+                className="px-8 py-3 rounded-full bg-deep-navy text-warm-beige font-semibold uppercase tracking-wider hover:bg-deep-navy-800 shadow-md"
+              >
+                {editingId ? 'Save Changes' : 'Publish Article'}
+              </button>
+            </div>
 
           </div>
         </div>
@@ -327,3 +458,4 @@ const AdminBlog = () => {
 };
 
 export default AdminBlog;
+

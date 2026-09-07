@@ -72,9 +72,52 @@ const JournalDetail = () => {
           </p>
         )}
 
-        {/* Content body split by paragraphs or markdown headers */}
-        <div className="whitespace-pre-line text-base md:text-lg leading-relaxed font-sans space-y-4">
-          {post.content}
+        {/* Content sections */}
+        <div className="space-y-12">
+          {post.sections && post.sections.length > 0 ? (
+            post.sections.map((section, idx) => (
+              <div key={idx} className="space-y-8">
+                {section.content && (
+                  <div className="whitespace-pre-line text-base md:text-lg leading-relaxed font-sans">
+                    {section.content}
+                  </div>
+                )}
+                {section.images && section.images.length > 0 && (
+                  <div className="my-6">
+                    {section.images.length <= 2 ? (
+                      <div className="flex flex-col md:flex-row items-center justify-center gap-6">
+                        {section.images.slice(0, 2).map((img, i) => (
+                          <div key={i} className="rounded-2xl overflow-hidden shadow-sm">
+                            <img
+                              src={img}
+                              alt={`Section media ${i + 1}`}
+                              className="max-w-full h-auto max-h-[500px] object-contain hover:scale-105 transition-transform duration-500"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="columns-1 md:columns-2 lg:columns-3 gap-4 space-y-4">
+                        {section.images.slice(0, 3).map((img, i) => (
+                          <div key={i} className="break-inside-avoid rounded-2xl overflow-hidden shadow-sm relative group">
+                            <img
+                              src={img}
+                              alt={`Section media ${i + 1}`}
+                              className="w-full h-auto object-cover hover:scale-105 transition-transform duration-500"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            ))
+          ) : (
+            <div className="whitespace-pre-line text-base md:text-lg leading-relaxed font-sans space-y-4">
+              {post.content}
+            </div>
+          )}
         </div>
 
         {/* Tags */}

@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet-async';
 const SEO = ({ 
   title = "Gina — UI/UX Designer, Graphic Designer & Informatics Graduate", 
   description = "Personal Portfolio & Journal of Gina - UI/UX Designer, Graphic Designer, and Informatics Graduate crafting thoughtful digital experiences.", 
-  keywords = "Gina, UI/UX Designer, Graphic Designer, Informatics, Web Designer, Product Designer, Portfolio, Admin",
+  keywords = "Gina Salma Sabilla, Gina, UI/UX Designer, Graphic Designer, Informatics, Web Designer, Product Designer, Portfolio, Admin",
   image = "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?auto=format&fit=crop&w=1200&q=80",
   url = "https://gina-portfolio-delta.vercel.app/"
 }) => {

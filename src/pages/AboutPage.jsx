@@ -161,7 +161,7 @@ const AboutPage = () => {
                 <motion.img
                   whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.8, ease: "easeOut" }}
-                  src={settings.profileImage || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80"}
+                  src={settings.heroImage || "/gina-about.jpg"}
                   alt={settings.name}
                   className="w-full h-full object-cover filter contrast-[1.05] saturate-90"
                 />

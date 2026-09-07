@@ -30,8 +30,8 @@ export const INITIAL_SETTINGS = {
   behance: "https://behance.net",
   dribbble: "https://dribbble.com",
   cvUrl: "https://drive.google.com/file/d/1ru1HI4NE_A2IfCPaChafOKUfkFUqPvKy/view?usp=drive_link",
-  profileImage: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80",
-  heroImage: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80",
+  profileImage: "/gina-profile.jpg",
+  heroImage: "/gina-about.jpg",
   themeAccent: "#C59B4E",
 };
 

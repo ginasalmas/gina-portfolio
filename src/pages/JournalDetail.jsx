@@ -156,7 +156,7 @@ const JournalDetail = () => {
       {/* Author Bio Box */}
       <div className="max-w-2xl mx-auto p-6 md:p-8 rounded-2xl bg-white border border-warm-beige-300 shadow-editorial flex flex-col sm:flex-row items-center gap-6">
         <img
-          src={settings.profileImage || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80"}
+          src={settings.profileImage || "/gina-profile.jpg"}
           alt={settings.name}
           className="w-16 h-16 rounded-full object-cover border-2 border-soft-gold"
         />

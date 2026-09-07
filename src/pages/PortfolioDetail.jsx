@@ -8,6 +8,7 @@ import {
   Image as ImageIcon, List
 } from 'lucide-react';
 import { motion, useScroll, useSpring } from 'framer-motion';
+import SEO from '../components/SEO';
 
 // ─── Animation Wrappers ───
 const FadeIn = ({ children, delay = 0, className = "" }) => (
@@ -414,6 +415,11 @@ const PortfolioDetail = () => {
 
   return (
     <main className="bg-paper-cream min-h-screen selection:bg-soft-gold selection:text-deep-navy">
+      <SEO 
+        title={`${project.title} | Gina — UI/UX Designer`} 
+        description={project.shortDescription || project.overview} 
+        image={project.heroImage || project.thumbnail} 
+      />
       {/* Scroll Progress Bar */}
       <motion.div style={{ scaleX, transformOrigin: "0%" }} className="fixed top-0 left-0 right-0 h-1 bg-soft-gold z-50 rounded-r-full" />
 

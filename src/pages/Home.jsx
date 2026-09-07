@@ -13,6 +13,7 @@ import {
   FloatingPetal 
 } from '../components/common/BotanicalDecorations';
 import HeroOrbitPhoto from '../components/HeroOrbitPhoto';
+import SEO from '../components/SEO';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -69,7 +70,7 @@ const Home = () => {
 
   return (
     <div className="space-y-32 pb-24 relative overflow-hidden">
-
+      <SEO />
       {/* ═══════════════════ HERO SECTION ═══════════════════ */}
       <section className="relative min-h-screen flex flex-col justify-center pt-28 pb-16 md:pt-36 md:pb-24 px-5 md:px-10 max-w-7xl mx-auto">
 

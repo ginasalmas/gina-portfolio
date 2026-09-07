@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { SparkleStar, EditorialFlourish } from '../components/common/BotanicalDecorations';
+import SEO from '../components/SEO';
 
 const AboutPage = () => {
   const { settings, experiences, skills } = useData();
@@ -59,6 +60,7 @@ const AboutPage = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-6 md:px-12 py-12 space-y-32 overflow-hidden">
+      <SEO title="About Me | Gina — UI/UX Designer & Admin" description="With an Informatics degree and a designer's mindset, I thrive at the intersection of technology, administration, and human-centered visuals." />
       
       {/* 1. HERO SECTION (Redesigned V2 - Animated & Clean) */}
       <section className="relative min-h-[80vh] flex items-center pt-10 pb-20">

@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ArrowRight, X } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { SparkleStar, EditorialFlourish } from '../components/common/BotanicalDecorations';
+import SEO from '../components/SEO';
 
 // ─── Modal for Gallery Template ───
 const GalleryModal = ({ project, onClose }) => {
@@ -140,6 +141,7 @@ const PortfolioPage = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-6 md:px-12 py-12 space-y-12">
+      <SEO title="Portfolio | Gina — UI/UX Designer" description="Explore my selected case studies, UI/UX design, and graphic design projects." />
       
       {/* Header */}
       <motion.div 

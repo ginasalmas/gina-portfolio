@@ -1,12 +1,21 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Clock, Calendar, Tag, Share2, Sparkles } from 'lucide-react';
+import { motion, useScroll, useSpring } from 'framer-motion';
 import { useData } from '../context/DataContext';
 import { SparkleStar, EditorialFlourish } from '../components/common/BotanicalDecorations';
+import SEO from '../components/SEO';
 
 const JournalDetail = () => {
   const { id } = useParams();
   const { blogPosts, settings } = useData();
+
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
 
   const post = blogPosts.find(p => p.id === id);
 
@@ -23,8 +32,16 @@ const JournalDetail = () => {
   }
 
   return (
-    <article className="max-w-4xl mx-auto px-6 md:px-12 py-10 space-y-12">
-      
+    <article className="min-h-screen bg-paper-cream relative overflow-hidden pb-24">
+      <SEO 
+        title={`${post.title} | Journal | Gina — UI/UX Designer`} 
+        description={post.excerpt || post.title} 
+        image={post.coverImage} 
+      />
+      {/* Scroll Progress Bar */}
+      <motion.div style={{ scaleX, transformOrigin: "0%" }} className="fixed top-0 left-0 right-0 h-1 bg-soft-gold z-50 rounded-r-full" />
+
+      <div className="max-w-4xl mx-auto px-6 md:px-12 py-10 space-y-12">
       {/* Back Button */}
       <div>
         <Link
@@ -149,6 +166,7 @@ const JournalDetail = () => {
             {settings.subtitle || 'UI/UX Designer, Graphic Designer & Informatics Graduate crafting thoughtful digital experiences.'}
           </p>
         </div>
+      </div>
       </div>
 
     </article>

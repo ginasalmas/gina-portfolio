@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 // Context Providers
 import { DataProvider } from './context/DataContext';
 import { AuthProvider } from './context/AuthContext';
+import { Analytics } from '@vercel/analytics/react';
 
 // Public Layout & Pages
 import Layout from './components/Layout';
@@ -81,6 +82,7 @@ function App() {
           </Routes>
         </Router>
       </DataProvider>
+      <Analytics />
     </AuthProvider>
   );
 }

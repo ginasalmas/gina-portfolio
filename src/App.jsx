@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 
 // Context Providers
 import { DataProvider } from './context/DataContext';
@@ -81,6 +82,7 @@ function App() {
           </Routes>
         </Router>
       </DataProvider>
+      <Analytics />
     </AuthProvider>
   );
 }

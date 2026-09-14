@@ -291,7 +291,7 @@ const PortfolioDetail = () => {
   // ─── Sidebar Component ───
   const Sidebar = () => (
     <aside className="hidden lg:block w-64 flex-shrink-0">
-      <div className="sticky top-28 space-y-8">
+      <div className="sticky top-28 space-y-8 max-h-[calc(100vh-8rem)] overflow-y-auto scrollbar-hide pb-8">
         {/* Project Info */}
         <div className="bg-white rounded-2xl border border-warm-beige-200 p-6 shadow-sm space-y-5">
           <h4 className="text-[10px] font-black uppercase tracking-widest text-deep-navy/40 flex items-center gap-2">

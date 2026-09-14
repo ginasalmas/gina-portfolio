@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Plus, Edit2, Trash2, X, Briefcase } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, Briefcase, ChevronUp, ChevronDown } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 
 const AdminExperience = () => {
-  const { experiences, addExperience, updateExperience, deleteExperience } = useData();
+  const { experiences, addExperience, updateExperience, deleteExperience, reorderExperience } = useData();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
 
@@ -72,7 +72,7 @@ const AdminExperience = () => {
       </div>
 
       <div className="space-y-4">
-        {experiences.map((exp) => (
+        {experiences.map((exp, index) => (
           <div key={exp.id} className="editorial-card rounded-2xl p-6 space-y-3">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-deep-navy/10 pb-3">
               <div>
@@ -81,7 +81,11 @@ const AdminExperience = () => {
               </div>
               <div className="flex items-center gap-3">
                 <span className="text-xs font-semibold px-3 py-1 rounded-full badge-navy">{exp.startDate} — {exp.endDate}</span>
-                <button onClick={() => handleOpenEdit(exp)} className="p-1.5 rounded bg-warm-beige-200 text-deep-navy hover:bg-warm-beige-300"><Edit2 className="w-3.5 h-3.5" /></button>
+                <div className="flex items-center flex-col ml-2 border-l border-deep-navy/10 pl-3">
+                  <button onClick={() => reorderExperience(index, 'up')} disabled={index === 0} className={`p-0.5 rounded text-deep-navy/60 hover:text-deep-navy ${index === 0 ? 'opacity-30 cursor-not-allowed' : 'hover:bg-warm-beige-200'}`}><ChevronUp className="w-4 h-4" /></button>
+                  <button onClick={() => reorderExperience(index, 'down')} disabled={index === experiences.length - 1} className={`p-0.5 rounded text-deep-navy/60 hover:text-deep-navy ${index === experiences.length - 1 ? 'opacity-30 cursor-not-allowed' : 'hover:bg-warm-beige-200'}`}><ChevronDown className="w-4 h-4" /></button>
+                </div>
+                <button onClick={() => handleOpenEdit(exp)} className="p-1.5 rounded bg-warm-beige-200 text-deep-navy hover:bg-warm-beige-300 ml-1"><Edit2 className="w-3.5 h-3.5" /></button>
                 <button onClick={() => handleDelete(exp.id)} className="p-1.5 rounded bg-rose-100 text-rose-700 hover:bg-rose-200"><Trash2 className="w-3.5 h-3.5" /></button>
               </div>
             </div>

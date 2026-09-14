@@ -215,6 +215,18 @@ export const DataProvider = ({ children }) => {
     setExperiences(updated);
   };
 
+  const reorderExperience = async (index, direction) => {
+    const updated = [...experiences];
+    const newIndex = direction === 'up' ? index - 1 : index + 1;
+    if (newIndex >= 0 && newIndex < updated.length) {
+      const temp = updated[index];
+      updated[index] = updated[newIndex];
+      updated[newIndex] = temp;
+      await StorageService.saveExperiences(updated);
+      setExperiences(updated);
+    }
+  };
+
   // Skills Actions
   const updateSkills = async (newSkills) => {
     await StorageService.saveSkills(newSkills);
@@ -256,6 +268,7 @@ export const DataProvider = ({ children }) => {
       addExperience,
       updateExperience,
       deleteExperience,
+      reorderExperience,
       skills,
       updateSkills,
       resetData,

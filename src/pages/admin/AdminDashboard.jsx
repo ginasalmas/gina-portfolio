@@ -12,7 +12,7 @@ const AdminDashboard = () => {
   
   React.useEffect(() => {
     const views = localStorage.getItem('gina_portfolio_views') || '0';
-    setSiteViews(Number(views).toLocaleString('id-ID'));
+    setSiteViews(Number(views).toLocaleString('en-US'));
   }, []);
 
   const stats = [

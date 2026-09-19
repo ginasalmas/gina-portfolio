@@ -115,10 +115,10 @@ const AdminSettings = () => {
               <ImageIcon className="w-4 h-4 text-soft-gold" />
               <label className="font-bold uppercase tracking-wider text-deep-navy/80 text-xs">Hero Section Photo (Home Page)</label>
             </div>
-            <p className="text-deep-navy/50 text-xs">Foto ini tampil di bagian hero / landing utama website kamu.</p>
+            <p className="text-deep-navy/50 text-xs">This image appears in the hero / main landing section of your website.</p>
             <input
               type="text"
-              placeholder="Paste URL foto hero (https://...)  atau path relatif"
+              placeholder="Paste hero photo URL (https://...) or relative path"
               value={formData.heroImage || ''}
               onChange={(e) => setFormData({ ...formData, heroImage: e.target.value })}
               className="w-full p-3 rounded-xl bg-white border border-warm-beige-300 font-sans text-xs"
@@ -139,8 +139,8 @@ const AdminSettings = () => {
                 </div>
                 <div className="text-xs text-deep-navy/60 pt-1">
                   <p className="font-semibold text-deep-navy/80 mb-0.5">Preview</p>
-                  <p>Pastikan URL dapat diakses publik.</p>
-                  <p className="mt-1">Ukuran ideal: <strong>800×1000px</strong> (portrait).</p>
+                  <p>Make sure the URL is publicly accessible.</p>
+                  <p className="mt-1">Ideal size: <strong>800×1000px</strong> (portrait).</p>
                 </div>
               </div>
             )}

@@ -272,7 +272,7 @@ const PortfolioDetail = () => {
     return (
       <div className="min-h-screen bg-paper-cream flex items-center justify-center flex-col">
         <div className="w-16 h-16 border-4 border-soft-gold border-t-transparent rounded-full animate-spin mb-4"></div>
-        <p className="text-deep-navy/60 font-light tracking-widest uppercase">Memuat Case Study...</p>
+        <p className="text-deep-navy/60 font-light tracking-widest uppercase">Loading Case Study...</p>
       </div>
     );
   }
@@ -555,7 +555,7 @@ const PortfolioDetail = () => {
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-16">
               <p className="text-soft-gold font-bold tracking-[0.3em] uppercase text-xs mb-3">Explore More</p>
-              <h2 className="text-3xl md:text-4xl font-display font-bold text-deep-navy">Project Lainnya</h2>
+              <h2 className="text-3xl md:text-4xl font-display font-bold text-deep-navy">More Projects</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -592,7 +592,7 @@ const PortfolioDetail = () => {
                         </p>
                       </div>
                       <div className="flex items-center gap-2 text-soft-gold text-xs font-bold mt-2">
-                        <span>Lihat Project</span>
+                        <span>View Project</span>
                         <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                       </div>
                     </div>

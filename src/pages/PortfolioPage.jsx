@@ -81,7 +81,7 @@ const GalleryModal = ({ project, onClose }) => {
             </div>
           ) : (
             <div className="text-center py-20 text-deep-navy/40">
-              <p className="text-sm font-light">Belum ada gambar untuk project ini.</p>
+              <p className="text-sm font-light">No images available for this project yet.</p>
             </div>
           )}
         </div>

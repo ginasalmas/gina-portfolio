@@ -22,26 +22,26 @@ const AboutPage = () => {
   const education = [
     {
       institution: "Universitas Indraprasta PGRI",
-      degree: "S1 Teknik Informatika (S.Kom)",
-      gpa: "IPK: 3,64",
+      degree: "S1 Informatics Engineering (S.Kom)",
+      gpa: "GPA: 3.64",
       period: "Sep 2021 - Aug 2025",
-      details: "Fokus studi pada Pengembangan Perangkat Lunak, Interaksi Manusia & Komputer (HCI), Basis Data, dan Sistem Informasi."
+      details: "Focused studies in Software Development, Human–Computer Interaction (HCI), Database Systems, and Information Systems."
     },
     {
       institution: "SMK Negeri 24 Jakarta",
-      degree: "Tata Boga",
-      gpa: "Lulusan Kejuruan",
+      degree: "Culinary Arts",
+      gpa: "Vocational Graduate",
       period: "Jul 2018 - Jun 2021",
-      details: "Melatih kedisiplinan, ketelitian operasional, kerja sama tim, dan manajemen waktu berstandar profesional."
+      details: "Cultivated discipline, operational precision, teamwork, and professional-grade time management."
     }
   ];
 
   const trainings = [
     { title: "IndonesiaNEXT – Telkomsel", period: "Apr 2025 – Jul 2025", role: "Top 33 Hipster / Designer Talent" },
-    { title: "Belajar Bekerja Bootcamp UI/UX Designer – Luarsekolah", period: "Feb 2025 – Okt 2025", role: "UI/UX Intensive Bootcamp" },
-    { title: "Junior Graphic Designer – Politeknik Negeri Jakarta", period: "Jul 2024 – Agu 2024", role: "Vocational Graphic Design" },
-    { title: "MSIB Android Mobile App Dev – Infinite Learning", period: "Agu 2023 – Des 2023", role: "Best Merge Product Awardee" },
-    { title: "Women In Tech Python & Cybersecurity – DTS Kominfo", period: "Mei 2023 – Jun 2023", role: "Python & Cybersecurity Tech" }
+    { title: "UI/UX Designer Bootcamp – Luarsekolah", period: "Feb 2025 – Oct 2025", role: "UI/UX Intensive Bootcamp" },
+    { title: "Junior Graphic Designer – Politeknik Negeri Jakarta", period: "Jul 2024 – Aug 2024", role: "Vocational Graphic Design" },
+    { title: "MSIB Android Mobile App Dev – Infinite Learning", period: "Aug 2023 – Dec 2023", role: "Best Merge Product Awardee" },
+    { title: "Women In Tech Python & Cybersecurity – DTS Kominfo", period: "May 2023 – Jun 2023", role: "Python & Cybersecurity Tech" }
   ];
 
   // Animation variants
@@ -102,11 +102,11 @@ const AboutPage = () => {
                 transition={{ duration: 0.8, delay: 0.2 }}
                 className="text-5xl md:text-6xl lg:text-7xl font-display font-bold text-deep-navy leading-[1.1]"
               >
-                Memadukan <br/>
-                <span className="text-soft-gold italic font-serif">Teknologi</span>,<br/>
-                Administrasi & <br/>
+                Blending <br/>
+                <span className="text-soft-gold italic font-serif">Technology</span>,<br/>
+                Administration & <br/>
                 <span className="text-botanical-sage-dark relative inline-block">
-                  Desain.
+                  Design.
                   <motion.div 
                     initial={{ scaleX: 0 }}
                     animate={{ scaleX: 1 }}
@@ -123,7 +123,7 @@ const AboutPage = () => {
               transition={{ duration: 0.8, delay: 0.4 }}
               className="text-lg md:text-xl text-deep-navy/80 font-light leading-relaxed max-w-lg"
             >
-              Saya adalah {settings.fullName}, seorang profesional yang mengintegrasikan logika analitis, keindahan antarmuka, dan ketelitian manajerial operasional.
+              I am {settings.fullName}, a professional who integrates analytical logic, interface aesthetics, and operational management precision.
             </motion.p>
 
             <motion.div 
@@ -140,7 +140,7 @@ const AboutPage = () => {
                   className="group px-8 py-4 rounded-full bg-deep-navy text-warm-beige font-semibold text-xs uppercase tracking-widest hover:bg-deep-navy-800 transition-all flex items-center gap-3 overflow-hidden relative"
                 >
                   <span className="relative z-10 flex items-center gap-2">
-                    <Download className="w-4 h-4 text-soft-gold group-hover:-translate-y-1 transition-transform" /> Unduh CV Saya
+                    <Download className="w-4 h-4 text-soft-gold group-hover:-translate-y-1 transition-transform" /> Download My CV
                   </span>
                   <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
                 </a>
@@ -186,8 +186,8 @@ const AboutPage = () => {
                   <Award className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
                 <div>
-                  <p className="text-[9px] sm:text-[10px] uppercase tracking-widest text-deep-navy/60 font-bold mb-0.5">Lulusan Terbaik</p>
-                  <p className="text-sm sm:text-base font-display font-bold text-deep-navy">IPK 3,64</p>
+                  <p className="text-[9px] sm:text-[10px] uppercase tracking-widest text-deep-navy/60 font-bold mb-0.5">Top Graduate</p>
+                  <p className="text-sm sm:text-base font-display font-bold text-deep-navy">GPA 3.64</p>
                 </div>
               </motion.div>
 
@@ -203,16 +203,16 @@ const AboutPage = () => {
         className="relative"
       >
         <div className="text-center max-w-2xl mx-auto space-y-4 mb-16">
-          <p className="text-xs uppercase tracking-widest text-soft-gold font-semibold">Pendekatan Kerja</p>
-          <h2 className="text-3xl md:text-4xl font-display font-bold text-deep-navy">Filosofi & Prinsip Profesional</h2>
+          <p className="text-xs uppercase tracking-widest text-soft-gold font-semibold">Work Approach</p>
+          <h2 className="text-3xl md:text-4xl font-display font-bold text-deep-navy">Philosophy & Professional Principles</h2>
           <EditorialFlourish />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {[
-            { icon: Target, title: "Akurasi & Ketelitian", desc: "Berakar dari latar belakang operasional dan administrasi, saya memastikan setiap data, laporan, dan aset terkelola dengan presisi tinggi tanpa ada detail yang terlewat." },
-            { icon: Sparkles, title: "Estetika Fungsional", desc: "Sebagai desainer antarmuka, saya percaya bahwa desain yang baik bukan sekadar visual yang indah, melainkan sistem yang mempermudah manusia menyelesaikan masalahnya." },
-            { icon: HeartHandshake, title: "Kolaborasi & Adaptabilitas", desc: "Mampu bekerja mandiri dalam fokus tinggi, namun juga komunikatif saat mengoordinasikan kegiatan operasional dan memimpin tim lintas fungsi (Agile/Scrum)." }
+            { icon: Target, title: "Accuracy & Precision", desc: "Rooted in my operational and administrative background, I ensure every piece of data, report, and asset is managed with high precision — no detail goes unnoticed." },
+            { icon: Sparkles, title: "Functional Aesthetics", desc: "As an interface designer, I believe great design is not merely beautiful visuals, but a system that genuinely helps people solve their problems with ease." },
+            { icon: HeartHandshake, title: "Collaboration & Adaptability", desc: "Capable of deep independent focus while remaining communicative when coordinating operational activities and leading cross-functional teams (Agile/Scrum)." }
           ].map((principle, idx) => (
             <motion.div key={idx} variants={fadeUp} className="bg-white p-8 rounded-3xl border border-warm-beige-300 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
               <div className="w-14 h-14 rounded-2xl bg-warm-beige-200 flex items-center justify-center mb-6">
@@ -231,8 +231,8 @@ const AboutPage = () => {
       >
         <div className="max-w-4xl mx-auto">
           <div className="text-center space-y-4 mb-16">
-            <p className="text-xs uppercase tracking-widest text-soft-gold font-semibold">Jejak Karir</p>
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-deep-navy">Pengalaman Profesional</h2>
+            <p className="text-xs uppercase tracking-widest text-soft-gold font-semibold">Career Path</p>
+            <h2 className="text-3xl md:text-4xl font-display font-bold text-deep-navy">Professional Experience</h2>
             <EditorialFlourish />
           </div>
 
@@ -262,7 +262,7 @@ const AboutPage = () => {
 
                   {exp.responsibilities && exp.responsibilities.length > 0 && (
                     <div className="space-y-3 bg-paper-cream p-5 rounded-2xl border border-warm-beige-300/50">
-                      <h4 className="text-xs font-bold uppercase tracking-widest text-deep-navy/60 mb-3">Tanggung Jawab Utama:</h4>
+                      <h4 className="text-xs font-bold uppercase tracking-widest text-deep-navy/60 mb-3">Key Responsibilities:</h4>
                       <ul className="space-y-2.5">
                         {exp.responsibilities.map((resp, i) => (
                           <li key={i} className="text-xs text-deep-navy/85 flex items-start gap-3">
@@ -285,8 +285,8 @@ const AboutPage = () => {
         initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer}
       >
         <div className="text-center max-w-2xl mx-auto space-y-4 mb-16">
-          <p className="text-xs uppercase tracking-widest text-soft-gold font-semibold">Latar Belakang Akademis</p>
-          <h2 className="text-3xl md:text-4xl font-display font-bold text-deep-navy">Pendidikan & Pengembangan Diri</h2>
+          <p className="text-xs uppercase tracking-widest text-soft-gold font-semibold">Academic Background</p>
+          <h2 className="text-3xl md:text-4xl font-display font-bold text-deep-navy">Education & Professional Development</h2>
           <EditorialFlourish />
         </div>
 
@@ -295,7 +295,7 @@ const AboutPage = () => {
           {/* Education Column */}
           <div className="space-y-6">
             <h3 className="text-xl font-display font-bold text-deep-navy flex items-center gap-2 border-b border-deep-navy/10 pb-4">
-              <GraduationCap className="w-5 h-5 text-soft-gold" /> Pendidikan Formal
+              <GraduationCap className="w-5 h-5 text-soft-gold" /> Formal Education
             </h3>
             
             {education.map((edu, idx) => (
@@ -316,7 +316,7 @@ const AboutPage = () => {
           {/* Trainings Column */}
           <div className="space-y-6">
             <h3 className="text-xl font-display font-bold text-deep-navy flex items-center gap-2 border-b border-deep-navy/10 pb-4">
-              <Award className="w-5 h-5 text-soft-gold" /> Sertifikasi & Pelatihan
+              <Award className="w-5 h-5 text-soft-gold" /> Certifications & Training
             </h3>
             
             <div className="space-y-4">
@@ -350,8 +350,8 @@ const AboutPage = () => {
           </div>
           
           <div className="text-center max-w-2xl mx-auto space-y-4 mb-16 relative z-10">
-            <p className="text-xs uppercase tracking-widest text-soft-gold font-semibold">Kemampuan Inti</p>
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-warm-beige">Matriks Keahlian & Teknologi</h2>
+            <p className="text-xs uppercase tracking-widest text-soft-gold font-semibold">Core Capabilities</p>
+            <h2 className="text-3xl md:text-4xl font-display font-bold text-warm-beige">Skills & Technology Matrix</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
@@ -382,13 +382,13 @@ const AboutPage = () => {
         transition={{ duration: 0.6 }}
         className="text-center py-12"
       >
-        <h2 className="text-2xl md:text-3xl font-display font-bold text-deep-navy mb-6">Mencari talenta dengan kombinasi operasional dan desain?</h2>
+        <h2 className="text-2xl md:text-3xl font-display font-bold text-deep-navy mb-6">Looking for a talent who bridges operations and design?</h2>
         <div className="flex flex-wrap justify-center gap-4">
           <a href={`mailto:${settings.email}`} className="px-8 py-3 rounded-full bg-deep-navy text-warm-beige font-semibold text-xs uppercase tracking-wider hover:bg-deep-navy-800 transition-all shadow-lg flex items-center gap-2">
-            <Mail className="w-4 h-4" /> Hubungi via Email
+            <Mail className="w-4 h-4" /> Contact via Email
           </a>
           <a href={settings.linkedin} target="_blank" rel="noreferrer" className="px-8 py-3 rounded-full bg-white border border-warm-beige-300 text-deep-navy font-semibold text-xs uppercase tracking-wider hover:border-soft-gold transition-all flex items-center gap-2">
-            <Briefcase className="w-4 h-4" /> Kunjungi LinkedIn
+            <Briefcase className="w-4 h-4" /> Visit LinkedIn
           </a>
         </div>
       </motion.section>

@@ -207,7 +207,10 @@ const Home = () => {
               featuredProjects.map((project, idx) => (
                 <motion.div
                   key={project.id}
-                  variants={itemVariants}
+                  initial={{ opacity: 0, y: 28 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.65, delay: idx * 0.15 }}
                   whileHover={{ y: -10 }}
                   className="editorial-card card-shine rounded-2xl overflow-hidden flex flex-col group relative"
                 >
@@ -384,7 +387,10 @@ const Home = () => {
               return (
                 <motion.div
                   key={idx}
-                  variants={itemVariants}
+                  initial={{ opacity: 0, y: 28 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.65, delay: idx * 0.1 }}
                   whileHover={{ y: -6 }}
                   className="editorial-card card-shine rounded-2xl p-6 space-y-4 group cursor-default"
                 >
@@ -517,10 +523,13 @@ const Home = () => {
             <SectionHeader eyebrow="Notes & Thoughts" title="Latest Journal Articles" />
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-7">
-              {latestPosts.map((post) => (
+              {latestPosts.map((post, idx) => (
                 <motion.div
                   key={post.id}
-                  variants={itemVariants}
+                  initial={{ opacity: 0, y: 28 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.65, delay: idx * 0.15 }}
                   whileHover={{ y: -8 }}
                   className="editorial-card card-shine rounded-2xl overflow-hidden flex flex-col group"
                 >

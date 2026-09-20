@@ -5,15 +5,24 @@ const DataContext = createContext();
 const DATA_VERSION = 'v6_no_reset';
 
 export const DataProvider = ({ children }) => {
+  const getInitialState = (key, defaultData) => {
+    try {
+      const localData = localStorage.getItem(key);
+      return localData ? JSON.parse(localData) : defaultData;
+    } catch (e) {
+      return defaultData;
+    }
+  };
+
   const [loading, setLoading] = useState(true);
-  const [settings, setSettings] = useState(INITIAL_SETTINGS);
-  const [projects, setProjects] = useState(INITIAL_PROJECTS);
-  const [blogPosts, setBlogPosts] = useState(INITIAL_BLOG);
-  const [certificates, setCertificates] = useState(INITIAL_CERTIFICATES);
-  const [achievements, setAchievements] = useState(INITIAL_ACHIEVEMENTS);
-  const [writings, setWritings] = useState(INITIAL_WRITINGS);
-  const [experiences, setExperiences] = useState(INITIAL_EXPERIENCES);
-  const [skills, setSkills] = useState(INITIAL_SKILLS);
+  const [settings, setSettings] = useState(() => getInitialState('gina_portfolio_settings', INITIAL_SETTINGS));
+  const [projects, setProjects] = useState(() => getInitialState('gina_portfolio_projects', INITIAL_PROJECTS));
+  const [blogPosts, setBlogPosts] = useState(() => getInitialState('gina_portfolio_blog', INITIAL_BLOG));
+  const [certificates, setCertificates] = useState(() => getInitialState('gina_portfolio_certificates', INITIAL_CERTIFICATES));
+  const [achievements, setAchievements] = useState(() => getInitialState('gina_portfolio_achievements', INITIAL_ACHIEVEMENTS));
+  const [writings, setWritings] = useState(() => getInitialState('gina_portfolio_writings', INITIAL_WRITINGS));
+  const [experiences, setExperiences] = useState(() => getInitialState('gina_portfolio_experiences', INITIAL_EXPERIENCES));
+  const [skills, setSkills] = useState(() => getInitialState('gina_portfolio_skills', INITIAL_SKILLS));
 
   // Sync seed data if version updated
   useEffect(() => {

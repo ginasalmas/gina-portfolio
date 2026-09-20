@@ -449,15 +449,15 @@ const Home = () => {
                 <motion.div
                   key={cert.id}
                   whileHover={{ x: 5, scale: 1.01 }}
-                  className="editorial-card rounded-xl p-4 flex items-center gap-4"
+                  onClick={() => navigate('/certificates')}
+                  className="editorial-card rounded-xl p-4 flex items-center gap-4 cursor-pointer group"
                 >
                   <div className="w-14 h-14 rounded-xl overflow-hidden border border-warm-beige-300 flex-shrink-0 shadow-sm bg-warm-beige-100">
-                    <img src={cert.image} alt={cert.name} className="w-full h-full object-cover" />
+                    <img src={cert.image} alt={cert.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                   </div>
                   <div className="space-y-0.5 min-w-0">
-                    <h4 className="text-sm font-bold text-deep-navy line-clamp-1">{cert.name}</h4>
+                    <h4 className="text-sm font-bold text-deep-navy line-clamp-1 group-hover:text-soft-gold-600 transition-colors">{cert.name}</h4>
                     <p className="text-xs text-soft-gold-600 font-semibold">{cert.issuer} · {cert.date}</p>
-                    <p className="text-xs text-deep-navy/60 line-clamp-1">{cert.description}</p>
                   </div>
                 </motion.div>
               ))}
@@ -483,15 +483,15 @@ const Home = () => {
                 <motion.div
                   key={ach.id}
                   whileHover={{ x: 5, scale: 1.01 }}
-                  className="editorial-card rounded-xl p-4 flex items-center gap-4"
+                  onClick={() => navigate('/achievements')}
+                  className="editorial-card rounded-xl p-4 flex items-center gap-4 cursor-pointer group"
                 >
                   <div className="w-14 h-14 rounded-xl overflow-hidden border border-warm-beige-300 flex-shrink-0 shadow-sm bg-warm-beige-100">
-                    <img src={ach.image} alt={ach.title} className="w-full h-full object-cover" />
+                    <img src={ach.image} alt={ach.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                   </div>
                   <div className="space-y-0.5 min-w-0">
-                    <h4 className="text-sm font-bold text-deep-navy line-clamp-1">{ach.title}</h4>
+                    <h4 className="text-sm font-bold text-deep-navy line-clamp-1 group-hover:text-soft-gold-600 transition-colors">{ach.title}</h4>
                     <p className="text-xs text-soft-gold-600 font-semibold">{ach.issuer} · {ach.date}</p>
-                    <p className="text-xs text-deep-navy/60 line-clamp-2">{ach.description}</p>
                   </div>
                 </motion.div>
               ))}

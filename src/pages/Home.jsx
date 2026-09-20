@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles, Award, Layers, Code, Palette, Smartphone, Compass, Eye, TrendingUp } from 'lucide-react';
 import { useData } from '../context/DataContext';
@@ -46,6 +46,7 @@ const SectionHeader = ({ eyebrow, title, className = '' }) => (
 
 const Home = () => {
   const { settings, projects, blogPosts, certificates, achievements, skills } = useData();
+  const navigate = useNavigate();
 
   const featuredProjects = projects.filter(p => p.isFeatured || p.status === 'published').slice(0, 3);
   const latestPosts = blogPosts.filter(b => b.status === 'published').slice(0, 3);
@@ -212,7 +213,8 @@ const Home = () => {
                   viewport={{ once: true }}
                   transition={{ duration: 0.65, delay: idx * 0.15 }}
                   whileHover={{ y: -10 }}
-                  className="editorial-card card-shine rounded-2xl overflow-hidden flex flex-col group relative"
+                  onClick={() => navigate(`/portfolio/${project.id}`)}
+                  className="editorial-card card-shine rounded-2xl overflow-hidden flex flex-col group relative cursor-pointer"
                 >
                   {/* Image Container with overlay */}
                   <div className="relative h-56 overflow-hidden bg-warm-beige-300">
@@ -531,7 +533,8 @@ const Home = () => {
                   viewport={{ once: true }}
                   transition={{ duration: 0.65, delay: idx * 0.15 }}
                   whileHover={{ y: -8 }}
-                  className="editorial-card card-shine rounded-2xl overflow-hidden flex flex-col group"
+                  onClick={() => navigate(`/blog/${post.id}`)}
+                  className="editorial-card card-shine rounded-2xl overflow-hidden flex flex-col group cursor-pointer"
                 >
                   <div className="relative h-48 overflow-hidden bg-warm-beige-300">
                     <img

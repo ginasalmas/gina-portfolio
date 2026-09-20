@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Search, BookOpen, Clock, Tag, ArrowRight, Sparkles } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { SparkleStar, EditorialFlourish } from '../components/common/BotanicalDecorations';
@@ -7,6 +7,7 @@ import SEO from '../components/SEO';
 
 const JournalPage = () => {
   const { blogPosts } = useData();
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -139,7 +140,11 @@ const JournalPage = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredPosts.map((post) => (
-            <div key={post.id} className="editorial-card rounded-2xl overflow-hidden flex flex-col group">
+            <div 
+              key={post.id} 
+              onClick={() => navigate(`/blog/${post.id}`)}
+              className="editorial-card rounded-2xl overflow-hidden flex flex-col group cursor-pointer"
+            >
               
               <div className="relative h-52 overflow-hidden bg-warm-beige-300">
                 <img

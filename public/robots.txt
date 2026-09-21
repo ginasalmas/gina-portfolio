@@ -1,4 +1,11 @@
 User-agent: *
 Allow: /
 
+# Block CMS admin panel from crawlers
+Disallow: /admin/
+Disallow: /admin/login
+
+# Block API routes
+Disallow: /api/
+
 Sitemap: https://gina-portfolio-delta.vercel.app/sitemap.xml

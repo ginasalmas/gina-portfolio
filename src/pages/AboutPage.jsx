@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
 import { 
   GraduationCap, 
   Award, 
@@ -60,7 +61,33 @@ const AboutPage = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-6 md:px-12 py-12 space-y-32 overflow-hidden">
-      <SEO title="About Me | Gina — UI/UX Designer & Admin" description="With an Informatics degree and a designer's mindset, I thrive at the intersection of technology, administration, and human-centered visuals." />
+      <SEO
+        title="About Gina Salma Sabilla — UI/UX Designer & Informatics Graduate | Jakarta"
+        description="Gina Salma Sabilla adalah Sarjana Informatika (S.Kom) dari Universitas Indraprasta PGRI, berspesialisasi di UI/UX Design, Graphic Design, dan Administrasi. Top 33 IndonesiaNEXT Telkomsel 2025."
+        keywords="Gina Salma Sabilla, UI/UX Designer Jakarta, Informatika Graduate, Graphic Designer, Figma, Web Designer, About Gina, Universitas Indraprasta PGRI"
+        url="https://gina-portfolio-delta.vercel.app/about"
+        type="profile"
+      />
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "ProfilePage",
+          "@id": "https://gina-portfolio-delta.vercel.app/about#profilepage",
+          "url": "https://gina-portfolio-delta.vercel.app/about",
+          "name": "About Gina Salma Sabilla",
+          "description": "Halaman profil Gina Salma Sabilla — UI/UX Designer & Graphic Designer lulusan Informatika dari Jakarta, Indonesia.",
+          "mainEntity": {
+            "@id": "https://gina-portfolio-delta.vercel.app/#person"
+          },
+          "breadcrumb": {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://gina-portfolio-delta.vercel.app/" },
+              { "@type": "ListItem", "position": 2, "name": "About", "item": "https://gina-portfolio-delta.vercel.app/about" }
+            ]
+          }
+        })}</script>
+      </Helmet>
       
       {/* 1. HERO SECTION (Redesigned V2 - Animated & Clean) */}
       <section className="relative min-h-[80vh] flex items-center pt-10 pb-20">

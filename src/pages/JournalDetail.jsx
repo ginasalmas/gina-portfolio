@@ -2,6 +2,7 @@ import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Clock, Calendar, Tag, Share2, Sparkles } from 'lucide-react';
 import { motion, useScroll, useSpring } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
 import { useData } from '../context/DataContext';
 import { SparkleStar, EditorialFlourish } from '../components/common/BotanicalDecorations';
 import SEO from '../components/SEO';
@@ -34,10 +35,46 @@ const JournalDetail = () => {
   return (
     <article className="min-h-screen bg-paper-cream relative overflow-hidden pb-24">
       <SEO 
-        title={`${post.title} | Journal | Gina — UI/UX Designer`} 
-        description={post.excerpt || post.title} 
-        image={post.coverImage} 
+        title={`${post.title} | Journal — Gina Salma Sabilla`} 
+        description={post.excerpt || post.title}
+        keywords={post.tags ? post.tags.join(', ') + ', Gina Salma Sabilla, UI/UX Design, Design Journal' : 'Gina Salma Sabilla, Design Journal, UI/UX Design'}
+        image={post.coverImage}
+        url={`https://gina-portfolio-delta.vercel.app/blog/${post.id}`}
+        type="article"
+        publishedTime={post.publishedAt}
+        tags={post.tags || []}
       />
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Article",
+          "@id": `https://gina-portfolio-delta.vercel.app/blog/${post.id}#article`,
+          "url": `https://gina-portfolio-delta.vercel.app/blog/${post.id}`,
+          "headline": post.title,
+          "description": post.excerpt,
+          "image": post.coverImage ? {
+            "@type": "ImageObject",
+            "url": post.coverImage
+          } : undefined,
+          "author": { "@id": "https://gina-portfolio-delta.vercel.app/#person" },
+          "publisher": { "@id": "https://gina-portfolio-delta.vercel.app/#person" },
+          "datePublished": post.publishedAt,
+          "inLanguage": "id",
+          "keywords": post.tags ? post.tags.join(', ') : '',
+          "articleSection": post.category,
+          "isPartOf": {
+            "@id": "https://gina-portfolio-delta.vercel.app/blog#blog"
+          },
+          "breadcrumb": {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://gina-portfolio-delta.vercel.app/" },
+              { "@type": "ListItem", "position": 2, "name": "Journal", "item": "https://gina-portfolio-delta.vercel.app/blog" },
+              { "@type": "ListItem", "position": 3, "name": post.title, "item": `https://gina-portfolio-delta.vercel.app/blog/${post.id}` }
+            ]
+          }
+        })}</script>
+      </Helmet>
       {/* Scroll Progress Bar */}
       <motion.div style={{ scaleX, transformOrigin: "0%" }} className="fixed top-0 left-0 right-0 h-1 bg-soft-gold z-50 rounded-r-full" />
 

@@ -1,33 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+
+  <!-- Home -->
   <url>
     <loc>https://gina-portfolio-delta.vercel.app/</loc>
-    <lastmod>2025-01-01</lastmod>
+    <lastmod>2025-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://gina-portfolio-delta.vercel.app/gina-profile.jpg</image:loc>
+      <image:title>Gina Salma Sabilla — UI/UX Designer & Graphic Designer</image:title>
+      <image:caption>Portfolio Gina Salma Sabilla, UI/UX Designer & Graphic Designer dari Jakarta, Indonesia</image:caption>
+    </image:image>
   </url>
+
+  <!-- Portfolio -->
   <url>
     <loc>https://gina-portfolio-delta.vercel.app/portfolio</loc>
-    <lastmod>2025-01-01</lastmod>
+    <lastmod>2025-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
+
+  <!-- About -->
+  <url>
+    <loc>https://gina-portfolio-delta.vercel.app/about</loc>
+    <lastmod>2025-09-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://gina-portfolio-delta.vercel.app/gina-about.jpg</image:loc>
+      <image:title>About Gina Salma Sabilla</image:title>
+      <image:caption>Gina Salma Sabilla — Sarjana Informatika, UI/UX Designer, Graphic Designer</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Journal / Blog -->
   <url>
     <loc>https://gina-portfolio-delta.vercel.app/blog</loc>
-    <lastmod>2025-01-01</lastmod>
+    <lastmod>2025-09-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+
+  <!-- Certificates -->
   <url>
-    <loc>https://gina-portfolio-delta.vercel.app/about</loc>
-    <lastmod>2025-01-01</lastmod>
+    <loc>https://gina-portfolio-delta.vercel.app/certificates</loc>
+    <lastmod>2025-09-01</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.6</priority>
   </url>
+
+  <!-- Achievements -->
   <url>
-    <loc>https://gina-portfolio-delta.vercel.app/resume</loc>
-    <lastmod>2025-01-01</lastmod>
+    <loc>https://gina-portfolio-delta.vercel.app/achievements</loc>
+    <lastmod>2025-09-01</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.6</priority>
   </url>
+
 </urlset>

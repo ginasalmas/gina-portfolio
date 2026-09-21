@@ -1,40 +1,184 @@
 <!doctype html>
-<html lang="en">
+<html lang="id">
   <head>
     <meta charset="UTF-8" />
+
+    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>" />
+
+    <!-- Viewport -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Author & Site-level meta -->
     <meta name="author" content="Gina Salma Sabilla" />
+    <meta name="copyright" content="Gina Salma Sabilla" />
+    <meta name="theme-color" content="#0d1b2a" />
+
+    <!-- Google Search Console Verification -->
     <meta name="google-site-verification" content="42c98ead77c77147" />
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 
-    <!-- Canonical tag will be injected by React Helmet -->
+    <!-- Preload LCP hero image for better Core Web Vitals -->
+    <link rel="preload" as="image" href="/gina-profile.jpg" fetchpriority="high" />
 
-    <!-- Robots -->
-    <meta name="robots" content="index, follow" />
+    <!-- Robots (page-level overrides via react-helmet-async per route) -->
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
 
-    <!-- JSON-LD Structured Data -->
+    <!-- ═══════════════════════════════════════════════════════════
+         JSON-LD Structured Data — Site-wide (GEO / AEO)
+         ═══════════════════════════════════════════════════════════ -->
+
+    <!-- 1. Person Schema — who Gina is (rich entity for Google Knowledge Panel) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "Person",
+      "@id": "https://gina-portfolio-delta.vercel.app/#person",
       "name": "Gina Salma Sabilla",
-      "alternateName": "Gina",
+      "alternateName": ["Gina", "Gina Salma"],
       "url": "https://gina-portfolio-delta.vercel.app/",
-      "image": "https://gina-portfolio-delta.vercel.app/og-image.jpg",
-      "jobTitle": "UI/UX Designer & Graphic Designer",
-      "description": "Gina Salma Sabilla adalah Informatics Graduate yang spesialis di UI/UX Design, Graphic Design, Web Design, dan Administrasi. Open to work opportunities.",
-      "knowsAbout": ["UI/UX Design", "Graphic Design", "Web Design", "Front-End Development", "Figma", "Administration", "Informatics"],
-      "alumniOf": {
-        "@type": "Organization",
-        "name": "Informatics"
+      "image": {
+        "@type": "ImageObject",
+        "url": "https://gina-portfolio-delta.vercel.app/gina-profile.jpg",
+        "width": 800,
+        "height": 800
       },
-      "sameAs": []
+      "jobTitle": "UI/UX Designer & Graphic Designer",
+      "description": "Gina Salma Sabilla adalah Sarjana Informatika (S.Kom) lulusan Universitas Indraprasta PGRI yang spesialis di UI/UX Design, Graphic Design, Web Design, dan Front-End Development. Open to work opportunities.",
+      "knowsAbout": [
+        "UI/UX Design",
+        "Graphic Design",
+        "Web Design",
+        "Front-End Development",
+        "Figma",
+        "Adobe Illustrator",
+        "Adobe Photoshop",
+        "Canva",
+        "HTML",
+        "CSS",
+        "JavaScript",
+        "React",
+        "Administration",
+        "Informatics",
+        "Human-Computer Interaction"
+      ],
+      "knowsLanguage": ["id", "en"],
+      "nationality": {
+        "@type": "Country",
+        "name": "Indonesia"
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Jakarta",
+        "addressRegion": "DKI Jakarta",
+        "addressCountry": "ID"
+      },
+      "alumniOf": {
+        "@type": "EducationalOrganization",
+        "name": "Universitas Indraprasta PGRI",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Jakarta",
+          "addressCountry": "ID"
+        }
+      },
+      "hasOccupation": {
+        "@type": "Occupation",
+        "name": "UI/UX Designer",
+        "occupationLocation": {
+          "@type": "Country",
+          "name": "Indonesia"
+        },
+        "skills": "UI/UX Design, Graphic Design, Figma, Web Design, Front-End Development"
+      },
+      "award": [
+        "Top 33 Hipster/Designer Talent — IndonesiaNEXT Telkomsel 2025",
+        "Best Merge Product Awardee — MSIB Android Mobile App Dev, Infinite Learning 2023"
+      ],
+      "sameAs": [
+        "https://www.linkedin.com/in/ginasalmas",
+        "https://github.com/ginasalmas"
+      ]
     }
     </script>
+
+    <!-- 2. WebSite Schema — enables Sitelinks Search Box in Google -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "@id": "https://gina-portfolio-delta.vercel.app/#website",
+      "url": "https://gina-portfolio-delta.vercel.app/",
+      "name": "Gina Salma Sabilla — Portfolio",
+      "description": "Portfolio UI/UX Designer & Graphic Designer Gina Salma Sabilla. Menampilkan proyek desain, artikel jurnal, sertifikasi, dan pengalaman profesional.",
+      "publisher": {
+        "@id": "https://gina-portfolio-delta.vercel.app/#person"
+      },
+      "inLanguage": ["id", "en"],
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://gina-portfolio-delta.vercel.app/portfolio?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+
+    <!-- 3. ProfessionalService Schema — helps AI understand Gina's services (AEO) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ProfessionalService",
+      "@id": "https://gina-portfolio-delta.vercel.app/#service",
+      "name": "Gina Salma Sabilla — Design Services",
+      "url": "https://gina-portfolio-delta.vercel.app/",
+      "description": "Layanan UI/UX Design, Graphic Design, Web Design, dan Front-End Development oleh Gina Salma Sabilla, Informatika Graduate dari Jakarta, Indonesia.",
+      "provider": {
+        "@id": "https://gina-portfolio-delta.vercel.app/#person"
+      },
+      "areaServed": {
+        "@type": "Country",
+        "name": "Indonesia"
+      },
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Design Services",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "UI/UX Design",
+              "description": "Perancangan antarmuka pengguna yang intuitif dan berpusat pada pengguna menggunakan Figma, termasuk wireframing, prototyping, dan user testing."
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Graphic Design",
+              "description": "Desain grafis untuk branding, konten media sosial, poster, infografis, dan materi pemasaran menggunakan Adobe Illustrator, Photoshop, dan Canva."
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Web Design & Front-End Development",
+              "description": "Desain website modern yang responsif dan implementasi front-end menggunakan HTML, CSS, JavaScript, dan React."
+            }
+          }
+        ]
+      }
+    }
+    </script>
+
   </head>
   <body class="bg-warm-beige text-deep-navy font-sans antialiased selection:bg-soft-gold/30 selection:text-deep-navy">
     <div id="root"></div>

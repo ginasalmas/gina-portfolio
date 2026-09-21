@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ArrowRight, X } from 'lucide-react';
+import { Helmet } from 'react-helmet-async';
 import { useData } from '../context/DataContext';
 import { SparkleStar, EditorialFlourish } from '../components/common/BotanicalDecorations';
 import SEO from '../components/SEO';
@@ -141,7 +142,31 @@ const PortfolioPage = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-6 md:px-12 py-12 space-y-12">
-      <SEO title="Portfolio | Gina — UI/UX Designer" description="Explore my selected case studies, UI/UX design, and graphic design projects." />
+      <SEO
+        title="Portfolio | Gina Salma Sabilla — UI/UX & Graphic Design Case Studies"
+        description="Jelajahi kumpulan karya UI/UX Design, Graphic Design, dan Web Design oleh Gina Salma Sabilla. Case studies mencakup produk digital, brand identity, dan web applications."
+        keywords="UI/UX Design Portfolio, Graphic Design Portfolio, Gina Salma Sabilla, Case Studies, Figma Design, Web Design, Jakarta Designer Portfolio"
+        url="https://gina-portfolio-delta.vercel.app/portfolio"
+        type="website"
+      />
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          "@id": "https://gina-portfolio-delta.vercel.app/portfolio#collectionpage",
+          "url": "https://gina-portfolio-delta.vercel.app/portfolio",
+          "name": "Portfolio — Gina Salma Sabilla",
+          "description": "Koleksi karya UI/UX Design, Graphic Design, dan Web Design oleh Gina Salma Sabilla.",
+          "author": { "@id": "https://gina-portfolio-delta.vercel.app/#person" },
+          "breadcrumb": {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://gina-portfolio-delta.vercel.app/" },
+              { "@type": "ListItem", "position": 2, "name": "Portfolio", "item": "https://gina-portfolio-delta.vercel.app/portfolio" }
+            ]
+          }
+        })}</script>
+      </Helmet>
       
       {/* Header */}
       <motion.div 

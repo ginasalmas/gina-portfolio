@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
 import { ArrowRight, Sparkles, Award, Layers, Code, Palette, Smartphone, Compass, Eye, TrendingUp } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { 
@@ -71,7 +72,70 @@ const Home = () => {
 
   return (
     <div className="space-y-32 pb-24 relative overflow-hidden">
-      <SEO />
+      <SEO
+        title="Gina Salma Sabilla — UI/UX Designer & Graphic Designer | Portfolio"
+        description="Portfolio Gina Salma Sabilla — Informatika Graduate yang berspesialisasi di UI/UX Design, Graphic Design, dan Web Design. Open to work opportunities di Jakarta, Indonesia."
+        keywords="Gina Salma Sabilla, UI/UX Designer Jakarta, Graphic Designer Indonesia, Web Designer, Figma Designer, Portfolio Designer, Informatics Graduate"
+        url="https://gina-portfolio-delta.vercel.app/"
+        type="website"
+      />
+      {/* FAQPage JSON-LD — AEO: muncul di Google PAA & AI Overviews */}
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "Siapa Gina Salma Sabilla?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Gina Salma Sabilla adalah Sarjana Informatika (S.Kom) lulusan Universitas Indraprasta PGRI yang berspesialisasi di UI/UX Design, Graphic Design, dan Web Design. Ia memiliki pengalaman dalam merancang antarmuka digital yang berpusat pada pengguna dan identitas visual yang kohesif."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Apa saja layanan yang ditawarkan Gina sebagai desainer?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Gina menawarkan layanan UI/UX Design (wireframing, prototyping, user testing di Figma), Graphic Design (branding, poster, konten media sosial), Web Design, dan Front-End Development menggunakan HTML, CSS, JavaScript, dan React."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Apakah Gina Salma Sabilla tersedia untuk pekerjaan freelance atau full-time?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Ya, Gina saat ini open to work dan terbuka untuk peluang full-time, part-time, maupun freelance di bidang UI/UX Design, Graphic Design, dan Web Design."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Tools apa yang digunakan Gina untuk UI/UX Design?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Gina menggunakan Figma sebagai tool utama untuk UI/UX Design. Untuk Graphic Design ia menggunakan Adobe Illustrator, Adobe Photoshop, dan Canva. Untuk pengembangan front-end ia menggunakan HTML, CSS, JavaScript, dan React."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Di mana Gina Salma Sabilla berlokasi?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Gina Salma Sabilla berlokasi di Jakarta, Indonesia, dan terbuka untuk peluang kerja remote maupun onsite."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Apa pencapaian terbaik Gina sebagai desainer?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Gina berhasil meraih posisi Top 33 Hipster/Designer Talent dalam program IndonesiaNEXT dari Telkomsel pada tahun 2025, serta meraih Best Merge Product Award dalam program MSIB Android Mobile App Development di Infinite Learning tahun 2023."
+              }
+            }
+          ]
+        })}</script>
+      </Helmet>
       {/* ═══════════════════ HERO SECTION ═══════════════════ */}
       <section className="relative min-h-screen flex flex-col justify-center pt-28 pb-16 md:pt-36 md:pb-24 px-5 md:px-10 max-w-7xl mx-auto">
 

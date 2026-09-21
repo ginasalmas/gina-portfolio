@@ -8,6 +8,7 @@ import {
   Image as ImageIcon, List
 } from 'lucide-react';
 import { motion, useScroll, useSpring } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
 import SEO from '../components/SEO';
 
 // ─── Animation Wrappers ───
@@ -416,10 +417,38 @@ const PortfolioDetail = () => {
   return (
     <main className="bg-paper-cream min-h-screen selection:bg-soft-gold selection:text-deep-navy">
       <SEO 
-        title={`${project.title} | Gina — UI/UX Designer`} 
-        description={project.shortDescription || project.overview} 
+        title={`${project.title} | Portfolio — Gina Salma Sabilla`} 
+        description={project.shortDescription || project.overview || `Lihat case study ${project.title} oleh Gina Salma Sabilla — UI/UX Designer & Graphic Designer.`}
+        keywords={`${project.title}, ${project.category || 'UI/UX Design'}, Gina Salma Sabilla, ${(project.tools || []).slice(0, 3).join(', ')}, Portfolio`}
         image={project.heroImage || project.thumbnail} 
+        url={`https://gina-portfolio-delta.vercel.app/portfolio/${project.id}`}
+        type="website"
       />
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "CreativeWork",
+          "@id": `https://gina-portfolio-delta.vercel.app/portfolio/${project.id}#creativeWork`,
+          "url": `https://gina-portfolio-delta.vercel.app/portfolio/${project.id}`,
+          "name": project.title,
+          "description": project.shortDescription || project.overview,
+          "image": project.heroImage || project.thumbnail,
+          "author": { "@id": "https://gina-portfolio-delta.vercel.app/#person" },
+          "creator": { "@id": "https://gina-portfolio-delta.vercel.app/#person" },
+          "genre": project.category || "UI/UX Design",
+          "keywords": (project.tools || []).join(', '),
+          "dateCreated": project.date || project.timeline,
+          "inLanguage": "id",
+          "breadcrumb": {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://gina-portfolio-delta.vercel.app/" },
+              { "@type": "ListItem", "position": 2, "name": "Portfolio", "item": "https://gina-portfolio-delta.vercel.app/portfolio" },
+              { "@type": "ListItem", "position": 3, "name": project.title, "item": `https://gina-portfolio-delta.vercel.app/portfolio/${project.id}` }
+            ]
+          }
+        })}</script>
+      </Helmet>
       {/* Scroll Progress Bar */}
       <motion.div style={{ scaleX, transformOrigin: "0%" }} className="fixed top-0 left-0 right-0 h-1 bg-soft-gold z-50 rounded-r-full" />
 

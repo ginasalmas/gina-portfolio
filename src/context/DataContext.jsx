@@ -95,11 +95,23 @@ export const DataProvider = ({ children }) => {
     setSettings(updated);
   };
 
+  // Helper for generating SEO-friendly slugs
+  const generateSlug = (title, prefix = '') => {
+    if (!title) return `${prefix}${Date.now()}`;
+    const slug = title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-') // Replace non-alphanumeric chars with hyphens
+      .replace(/(^-|-$)+/g, ''); // Remove leading/trailing hyphens
+    // Append a short random string or timestamp to ensure uniqueness
+    const shortId = Date.now().toString().slice(-4);
+    return `${slug}-${shortId}`;
+  };
+
   // Projects Actions
   const addProject = async (project) => {
     const newProject = {
       ...project,
-      id: project.id || `project-${Date.now()}`,
+      id: project.id || generateSlug(project.title, 'project-'),
       status: project.status || 'published'
     };
     const updated = [newProject, ...projects];
@@ -123,7 +135,7 @@ export const DataProvider = ({ children }) => {
   const addBlogPost = async (post) => {
     const newPost = {
       ...post,
-      id: post.id || `post-${Date.now()}`,
+      id: post.id || generateSlug(post.title, 'post-'),
       publishedAt: post.publishedAt || new Date().toISOString().split('T')[0],
       status: post.status || 'published'
     };

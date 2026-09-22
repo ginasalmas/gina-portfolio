@@ -44,31 +44,28 @@ const CustomCursor = () => {
   if (!isVisible) return null;
 
   return (
-    <>
-      {/* Small Precision Dot */}
-      <motion.div
-        className="fixed top-0 left-0 w-2.5 h-2.5 bg-soft-gold rounded-full pointer-events-none z-[9999] mix-blend-difference"
-        animate={{
-          x: mousePosition.x - 5,
-          y: mousePosition.y - 5,
-          scale: isClicking ? 0.5 : isHovered ? 1.5 : 1,
-        }}
-        transition={{ type: 'spring', damping: 28, stiffness: 450, mass: 0.2 }}
-      />
-
-      {/* Lagging Trailing Ring */}
-      <motion.div
-        className="fixed top-0 left-0 w-8 h-8 rounded-full border border-soft-gold/60 pointer-events-none z-[9998]"
-        animate={{
-          x: mousePosition.x - 16,
-          y: mousePosition.y - 16,
-          scale: isClicking ? 1.4 : isHovered ? 2.2 : 1,
-          backgroundColor: isHovered ? 'rgba(197, 155, 78, 0.12)' : 'rgba(0,0,0,0)',
-          borderColor: isHovered ? 'rgba(197, 155, 78, 0.9)' : 'rgba(197, 155, 78, 0.4)',
-        }}
-        transition={{ type: 'spring', damping: 24, stiffness: 250, mass: 0.5 }}
-      />
-    </>
+    <motion.div
+      className="fixed top-0 left-0 flex items-center justify-center pointer-events-none z-[9999]"
+      animate={{
+        x: mousePosition.x - 16,
+        y: mousePosition.y - 16,
+        scale: isClicking ? 0.8 : isHovered ? 1.3 : 1,
+      }}
+      transition={{ type: 'tween', ease: 'easeOut', duration: 0.05 }}
+      style={{ width: '32px', height: '32px' }}
+    >
+      {/* Outer Ring */}
+      <div className={`absolute inset-0 rounded-full transition-colors duration-200 ${
+        isHovered 
+          ? 'bg-soft-gold/15 border-2 border-soft-gold/60' 
+          : 'bg-transparent border border-deep-navy/40'
+      }`} />
+      
+      {/* Inner Precision Dot */}
+      <div className={`w-2 h-2 rounded-full transition-colors duration-200 ${
+        isHovered ? 'bg-soft-gold' : 'bg-deep-navy'
+      }`} />
+    </motion.div>
   );
 };
 

@@ -12,7 +12,6 @@ const Layout = () => {
   return (
     <div className="min-h-screen flex flex-col bg-warm-beige text-deep-navy font-sans relative overflow-x-clip">
       <AestheticBackground />
-      <CustomCursor />
       <Navbar />
       
       <AnimatePresence mode="wait">

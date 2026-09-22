@@ -34,14 +34,13 @@ const AestheticBackground = () => {
     window.addEventListener('mousemove', handleMouseMove);
 
     // Particle system (Golden Dust & Botanical Petals)
-    const particlesCount = Math.min(60, Math.floor((width * height) / 20000));
+    const particlesCount = Math.min(15, Math.floor((width * height) / 40000));
     const particles = [];
 
     const colors = [
-      'rgba(197, 155, 78, 0.4)', // Soft Gold
-      'rgba(122, 139, 123, 0.35)', // Botanical Sage
-      'rgba(196, 131, 119, 0.35)', // Muted Rose
-      'rgba(240, 232, 220, 0.6)', // Warm Beige Highlight
+      'rgba(197, 155, 78, 0.2)', // Soft Gold
+      'rgba(122, 139, 123, 0.15)', // Botanical Sage
+      'rgba(196, 131, 119, 0.15)', // Muted Rose
     ];
 
     for (let i = 0; i < particlesCount; i++) {
@@ -49,37 +48,30 @@ const AestheticBackground = () => {
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        radius: isPetal ? Math.random() * 4 + 2 : Math.random() * 2 + 1,
+        radius: isPetal ? Math.random() * 3 + 1.5 : Math.random() * 1.5 + 0.5,
         color: colors[Math.floor(Math.random() * colors.length)],
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: -Math.random() * 0.3 - 0.1, // Gently float upwards
+        vx: (Math.random() - 0.5) * 0.1, // Much slower
+        vy: -Math.random() * 0.1 - 0.05, // Very gently float upwards
         rotation: Math.random() * Math.PI * 2,
-        rotationSpeed: (Math.random() - 0.5) * 0.02,
+        rotationSpeed: (Math.random() - 0.5) * 0.005,
         isPetal,
-        opacity: Math.random() * 0.6 + 0.2,
+        opacity: Math.random() * 0.3 + 0.1, // Softer opacity
       });
     }
 
     const animate = () => {
-      // Smooth interpolation for ambient glow movement
-      mouseX += (targetMouseX - mouseX) * 0.05;
-      mouseY += (targetMouseY - mouseY) * 0.05;
+      // Smooth interpolation for ambient glow movement (slower)
+      mouseX += (targetMouseX - mouseX) * 0.03;
+      mouseY += (targetMouseY - mouseY) * 0.03;
 
       ctx.clearRect(0, 0, width, height);
 
-      // 1. Ambient Background Meshes
-      const radGrad1 = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, Math.max(width, height) * 0.4);
-      radGrad1.addColorStop(0, 'rgba(197, 155, 78, 0.06)');
-      radGrad1.addColorStop(0.5, 'rgba(122, 139, 123, 0.03)');
+      // 1. Ambient Background Meshes (Softer)
+      const radGrad1 = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, Math.max(width, height) * 0.5);
+      radGrad1.addColorStop(0, 'rgba(197, 155, 78, 0.03)');
+      radGrad1.addColorStop(0.5, 'rgba(122, 139, 123, 0.01)');
       radGrad1.addColorStop(1, 'rgba(240, 232, 220, 0)');
       ctx.fillStyle = radGrad1;
-      ctx.fillRect(0, 0, width, height);
-
-      // Top corner botanical accent glow
-      const cornerGrad = ctx.createRadialGradient(width * 0.85, height * 0.15, 0, width * 0.85, height * 0.15, 400);
-      cornerGrad.addColorStop(0, 'rgba(196, 131, 119, 0.07)');
-      cornerGrad.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.fillStyle = cornerGrad;
       ctx.fillRect(0, 0, width, height);
 
       // 2. Draw Floating Dust & Petals

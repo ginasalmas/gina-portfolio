@@ -141,7 +141,7 @@ const PortfolioPage = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-6 md:px-12 py-12 space-y-12">
+    <>
       <SEO
         title="Portfolio | Gina Salma Sabilla — UI/UX & Graphic Design Case Studies"
         description="Jelajahi kumpulan karya UI/UX Design, Graphic Design, dan Web Design oleh Gina Salma Sabilla. Case studies mencakup produk digital, brand identity, dan web applications."
@@ -168,6 +168,7 @@ const PortfolioPage = () => {
         })}</script>
       </Helmet>
       
+      <div className="max-w-7xl mx-auto px-6 md:px-12 py-12 space-y-12">
       {/* Header */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }} 
@@ -327,6 +328,7 @@ const PortfolioPage = () => {
       </AnimatePresence>
 
     </div>
+    </>
   );
 };
 

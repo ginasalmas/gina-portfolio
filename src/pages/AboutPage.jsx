@@ -60,7 +60,7 @@ const AboutPage = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-6 md:px-12 py-12 space-y-32 overflow-hidden">
+    <>
       <SEO
         title="About Gina Salma Sabilla — UI/UX Designer & Informatics Graduate | Jakarta"
         description="Gina Salma Sabilla adalah Sarjana Informatika (S.Kom) dari Universitas Indraprasta PGRI, berspesialisasi di UI/UX Design, Graphic Design, dan Administrasi. Top 33 IndonesiaNEXT Telkomsel 2025."
@@ -89,8 +89,10 @@ const AboutPage = () => {
         })}</script>
       </Helmet>
       
+      <div className="max-w-7xl mx-auto px-6 md:px-12 py-12 space-y-32 overflow-hidden">
+      
       {/* 1. HERO SECTION (Redesigned V2 - Animated & Clean) */}
-      <section className="relative min-h-[80vh] flex items-center pt-10 pb-20">
+      <section className="relative min-h-[calc(100svh-128px)] flex items-center pt-2 pb-10">
         
         {/* Animated Background Ornaments */}
         <motion.div 
@@ -109,25 +111,25 @@ const AboutPage = () => {
           <SparkleStar className="w-16 h-16 text-deep-navy" />
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-8 items-center w-full z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center w-full z-10">
           
           {/* Left: Animated Text */}
-          <div className="space-y-8 order-2 lg:order-1">
+          <div className="space-y-6 order-2 lg:order-1">
             <motion.div 
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
-              className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-soft-gold/10 border border-soft-gold/30 text-xs font-bold uppercase tracking-widest text-soft-gold-700"
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-soft-gold/10 border border-soft-gold/30 text-[10px] font-bold uppercase tracking-widest text-soft-gold-700"
             >
-              <Sparkles className="w-4 h-4" /> Get To Know Me
+              <Sparkles className="w-3.5 h-3.5" /> Get To Know Me
             </motion.div>
 
-            <div className="space-y-4">
+            <div className="space-y-3">
               <motion.h1 
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
-                className="text-5xl md:text-6xl lg:text-7xl font-display font-bold text-deep-navy leading-[1.1]"
+                className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-deep-navy leading-[1.15]"
               >
                 Blending <br/>
                 <span className="text-soft-gold italic font-serif">Technology</span>,<br/>
@@ -138,7 +140,7 @@ const AboutPage = () => {
                     initial={{ scaleX: 0 }}
                     animate={{ scaleX: 1 }}
                     transition={{ duration: 0.8, delay: 1 }}
-                    className="absolute -bottom-2 left-0 w-full h-1.5 bg-botanical-sage-dark/30 origin-left"
+                    className="absolute -bottom-1 left-0 w-full h-1 bg-botanical-sage-dark/30 origin-left"
                   />
                 </span>
               </motion.h1>
@@ -148,7 +150,7 @@ const AboutPage = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="text-lg md:text-xl text-deep-navy/80 font-light leading-relaxed max-w-lg"
+              className="text-base md:text-lg text-deep-navy/80 font-light leading-relaxed max-w-md"
             >
               I am {settings.fullName}, a professional who integrates analytical logic, interface aesthetics, and operational management precision.
             </motion.p>
@@ -181,10 +183,10 @@ const AboutPage = () => {
               initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
               animate={{ opacity: 1, scale: 1, rotate: 0 }}
               transition={{ duration: 1, type: "spring", bounce: 0.4 }}
-              className="relative w-[280px] sm:w-[360px] lg:w-[420px]"
+              className="relative w-[240px] sm:w-[280px] lg:w-[340px]"
             >
               {/* Arch Image Frame */}
-              <div className="aspect-[3/4] rounded-t-full rounded-b-3xl overflow-hidden border-8 border-white shadow-2xl bg-paper-cream relative z-10">
+              <div className="aspect-[3/4] rounded-t-full rounded-b-3xl overflow-hidden border-[6px] border-white shadow-xl bg-paper-cream relative z-10">
                 <motion.img
                   whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.8, ease: "easeOut" }}
@@ -195,11 +197,11 @@ const AboutPage = () => {
               </div>
 
               {/* Decorative Backdrop */}
-              <div className="absolute -inset-4 bg-soft-gold/20 rounded-t-full rounded-b-3xl -z-10 blur-xl" />
+              <div className="absolute -inset-3 bg-soft-gold/20 rounded-t-full rounded-b-3xl -z-10 blur-lg" />
               <motion.div 
                 animate={{ rotate: [0, 5, 0] }}
                 transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute -inset-2 border-2 border-deep-navy/10 rounded-t-full rounded-b-3xl -z-10" 
+                className="absolute -inset-1.5 border border-deep-navy/10 rounded-t-full rounded-b-3xl -z-10" 
               />
 
               {/* Safe Floating Badge (No Overlap) */}
@@ -207,14 +209,14 @@ const AboutPage = () => {
                 initial={{ opacity: 0, x: 30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, delay: 0.8 }}
-                className="absolute -bottom-8 -left-4 sm:-left-12 bg-white/90 backdrop-blur-md p-4 sm:p-5 rounded-2xl shadow-xl border border-warm-beige-300 flex items-center gap-3 sm:gap-4 z-20"
+                className="absolute -bottom-6 -left-4 sm:-left-8 bg-white/90 backdrop-blur-md p-3 sm:p-4 rounded-xl shadow-lg border border-warm-beige-300 flex items-center gap-2 sm:gap-3 z-20"
               >
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-soft-gold text-white flex items-center justify-center shrink-0 shadow-inner">
-                  <Award className="w-5 h-5 sm:w-6 sm:h-6" />
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-soft-gold text-white flex items-center justify-center shrink-0 shadow-inner">
+                  <Award className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
                 <div>
-                  <p className="text-[9px] sm:text-[10px] uppercase tracking-widest text-deep-navy/60 font-bold mb-0.5">Top Graduate</p>
-                  <p className="text-sm sm:text-base font-display font-bold text-deep-navy">GPA 3.64</p>
+                  <p className="text-[8px] sm:text-[9px] uppercase tracking-widest text-deep-navy/60 font-bold mb-0.5">Top Graduate</p>
+                  <p className="text-xs sm:text-sm font-display font-bold text-deep-navy">GPA 3.64</p>
                 </div>
               </motion.div>
 
@@ -421,6 +423,7 @@ const AboutPage = () => {
       </motion.section>
 
     </div>
+    </>
   );
 };
 

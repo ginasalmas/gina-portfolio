@@ -71,7 +71,7 @@ const Home = () => {
   ];
 
   return (
-    <div className="space-y-32 pb-24 relative overflow-hidden">
+    <>
       <SEO
         title="Gina Salma Sabilla — UI/UX Designer & Graphic Designer | Portfolio"
         description="Portfolio Gina Salma Sabilla — Informatika Graduate yang berspesialisasi di UI/UX Design, Graphic Design, dan Web Design. Open to work opportunities di Jakarta, Indonesia."
@@ -136,8 +136,10 @@ const Home = () => {
           ]
         })}</script>
       </Helmet>
-      {/* ═══════════════════ HERO SECTION ═══════════════════ */}
-      <section className="relative min-h-screen flex flex-col justify-center pt-28 pb-16 md:pt-36 md:pb-24 px-5 md:px-10 max-w-7xl mx-auto">
+      
+      <div className="space-y-32 pb-24 relative overflow-hidden">
+        {/* ═══════════════════ HERO SECTION ═══════════════════ */}
+        <section className="relative min-h-[calc(100svh-5rem)] flex flex-col justify-center pt-6 pb-10 md:pt-10 md:pb-12 px-5 md:px-10 max-w-7xl mx-auto">
 
         {/* Decorative background blobs */}
         <div className="absolute -top-20 -left-20 w-96 h-96 rounded-full bg-soft-gold/10 blur-3xl pointer-events-none" />
@@ -149,9 +151,9 @@ const Home = () => {
           initial={{ opacity: 0, scale: 0.75, rotate: -10 }} 
           animate={{ opacity: 0.65, scale: 1, rotate: 0 }} 
           transition={{ duration: 1.4, ease: 'backOut' }} 
-          className="absolute -top-4 left-0 pointer-events-none"
+          className="absolute top-4 left-0 pointer-events-none"
         >
-          <WildflowerCorner className="w-52 h-52 text-botanical-sage/50 animate-sway" />
+          <WildflowerCorner className="w-40 h-40 text-botanical-sage/50 animate-sway" />
         </motion.div>
         <motion.div 
           initial={{ opacity: 0, x: 30 }} 
@@ -234,11 +236,11 @@ const Home = () => {
             </motion.div>
 
             {/* Stats row */}
-            <motion.div variants={itemVariants} className="grid grid-cols-4 gap-3 pt-4 border-t border-warm-beige-300">
+            <motion.div variants={itemVariants} className="grid grid-cols-4 gap-4 pt-6 mt-10 border-t border-deep-navy/10 relative z-20">
               {stats.map((s, i) => (
-                <div key={i} className="text-center">
-                  <p className="text-2xl font-display font-extrabold text-deep-navy">{s.value}</p>
-                  <p className="text-[10px] font-semibold text-deep-navy/50 uppercase tracking-wider">{s.label}</p>
+                <div key={i} className="text-center group">
+                  <p className="text-3xl font-display font-extrabold text-deep-navy group-hover:text-soft-gold-600 transition-colors">{s.value}</p>
+                  <p className="text-[10px] font-bold text-deep-navy/50 uppercase tracking-widest mt-1">{s.label}</p>
                 </div>
               ))}
             </motion.div>
@@ -639,8 +641,8 @@ const Home = () => {
           </motion.div>
         </section>
       )}
-
     </div>
+    </>
   );
 };
 

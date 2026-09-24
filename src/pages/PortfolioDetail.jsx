@@ -11,6 +11,48 @@ import { motion, useScroll, useSpring } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import SEO from '../components/SEO';
 
+// ─── Helpers ───
+const getFigmaEmbedUrl = (url) => {
+  if (!url) return null;
+  if (url.includes('figma.com/embed')) return url;
+  return `https://www.figma.com/embed?embed_host=share&url=${encodeURIComponent(url)}`;
+};
+
+const getVideoEmbedData = (url) => {
+  if (!url) return null;
+  const ytMatch = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+  if (ytMatch) return { type: 'iframe', src: `https://www.youtube.com/embed/${ytMatch[1]}` };
+  
+  const vimeoMatch = url.match(/(?:vimeo\.com\/)(\d+)/);
+  if (vimeoMatch) return { type: 'iframe', src: `https://player.vimeo.com/video/${vimeoMatch[1]}` };
+
+  return { type: 'video', src: url };
+};
+
+const getCanvaEmbedUrl = (url) => {
+  if (!url) return null;
+  try {
+    // If user pasted the whole HTML embed code, extract the src URL
+    const iframeMatch = url.match(/src=["']([^"']+)["']/);
+    if (iframeMatch) {
+      url = iframeMatch[1];
+    }
+    
+    // Decode HTML entities if any (like &#x2F;)
+    url = url.replace(/&#x2F;/g, '/');
+
+    const urlObj = new URL(url);
+    if (urlObj.hostname.includes('canva.com') && urlObj.pathname.includes('/design/')) {
+      let pathname = urlObj.pathname;
+      if (!pathname.endsWith('/view')) {
+        pathname = pathname.replace(/\/edit.*$/, '/view');
+      }
+      return `https://www.canva.com${pathname}?embed`;
+    }
+  } catch(e) { }
+  return url;
+};
+
 // ─── Animation Wrappers ───
 const FadeIn = ({ children, delay = 0, className = "" }) => (
   <motion.div
@@ -569,6 +611,58 @@ const PortfolioDetail = () => {
                     
                     {section.images && section.images.length > 1 && (
                       <ImageGrid images={section.images} captions={section.captions} cols={section.images.length === 2 ? 2 : 2} />
+                    )}
+
+                    {section.figmaUrl && (
+                      <div className="my-16 w-full rounded-[2rem] overflow-hidden bg-warm-beige-100 shadow-2xl border border-warm-beige-200">
+                        <iframe 
+                          style={{ border: 'none' }} 
+                          width="100%" 
+                          height="700" 
+                          src={getFigmaEmbedUrl(section.figmaUrl)} 
+                          allowFullScreen
+                          title="Figma Prototype"
+                        ></iframe>
+                      </div>
+                    )}
+                    
+                    {section.videoUrl && (() => {
+                      const videoData = getVideoEmbedData(section.videoUrl);
+                      if (!videoData) return null;
+                      
+                      return (
+                        <div className="my-16 w-full rounded-[2rem] overflow-hidden bg-warm-beige-100 shadow-2xl border border-warm-beige-200 aspect-video">
+                          {videoData.type === 'iframe' ? (
+                            <iframe 
+                              className="w-full h-full border-none"
+                              src={videoData.src} 
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                              allowFullScreen
+                              title="Video Player"
+                            ></iframe>
+                          ) : (
+                            <video 
+                              controls 
+                              className="w-full h-full object-cover" 
+                              src={videoData.src}
+                              playsInline
+                            ></video>
+                          )}
+                        </div>
+                      );
+                    })()}
+                    
+                    {section.canvaUrl && (
+                      <div className="my-16 w-full rounded-[2rem] overflow-hidden bg-warm-beige-100 shadow-2xl border border-warm-beige-200 aspect-video">
+                        <iframe 
+                          style={{ border: 'none' }} 
+                          width="100%" 
+                          height="100%" 
+                          src={getCanvaEmbedUrl(section.canvaUrl)} 
+                          allowFullScreen
+                          title="Canva Presentation"
+                        ></iframe>
+                      </div>
                     )}
                   </div>
                 </FadeIn>

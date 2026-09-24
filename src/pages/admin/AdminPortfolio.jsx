@@ -91,7 +91,10 @@ const DEFAULT_SECTION = {
   highlightColor: 'white',
   content: '',
   imagesString: '',
-  captionsString: ''
+  captionsString: '',
+  figmaUrl: '',
+  videoUrl: '',
+  canvaUrl: ''
 };
 
 // ─────────────────────────────────────────────────────────────
@@ -579,6 +582,19 @@ const AdminPortfolio = () => {
                                     
                                     <Field label="Text Content">
                                       <Textarea rows={4} value={section.content} onChange={e => updateSection(idx, 'content', e.target.value)} placeholder="Write the content for this section..." />
+                                    </Field>
+
+                                    <Row2>
+                                      <Field label="Figma Prototype URL" hint="Embed link (e.g., https://www.figma.com/embed?...)">
+                                        <TextInput value={section.figmaUrl || ''} onChange={e => updateSection(idx, 'figmaUrl', e.target.value)} placeholder="https://www.figma.com/embed?..." />
+                                      </Field>
+                                      <Field label="Video URL" hint="URL ke Video MP4 atau YouTube">
+                                        <TextInput value={section.videoUrl || ''} onChange={e => updateSection(idx, 'videoUrl', e.target.value)} placeholder="https://..." />
+                                      </Field>
+                                    </Row2>
+
+                                    <Field label="Canva Presentation URL" hint="Link desain Canva (e.g., https://www.canva.com/design/...)">
+                                      <TextInput value={section.canvaUrl || ''} onChange={e => updateSection(idx, 'canvaUrl', e.target.value)} placeholder="https://www.canva.com/design/..." />
                                     </Field>
 
                                     <MultiImageField label="Images (1 per line)" hint="If 1 image, full width. If >1, renders as a grid."

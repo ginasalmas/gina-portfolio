@@ -316,9 +316,17 @@ const AdminSettings = () => {
           <button type="button" onClick={handleReset} className="px-4 py-2.5 rounded-full border border-rose-200 text-rose-700 text-xs font-semibold hover:bg-rose-50 flex items-center gap-1.5">
             <RefreshCw className="w-3.5 h-3.5" /> Restore Default Seed Content
           </button>
-          <button type="submit" className="px-7 py-3 rounded-full bg-deep-navy text-warm-beige text-xs font-semibold uppercase tracking-wider hover:bg-deep-navy-800 flex items-center gap-2 shadow-md">
-            <Save className="w-4 h-4 text-soft-gold" /> Save All Settings
-          </button>
+          
+          <div className="flex items-center gap-4">
+            {saved && (
+              <span className="text-emerald-600 text-xs font-bold flex items-center gap-1 animate-pulse">
+                <Check className="w-4 h-4" /> Saved!
+              </span>
+            )}
+            <button type="submit" className="px-7 py-3 rounded-full bg-deep-navy text-warm-beige text-xs font-semibold uppercase tracking-wider hover:bg-deep-navy-800 flex items-center gap-2 shadow-md transition-all">
+              <Save className="w-4 h-4 text-soft-gold" /> Save All Settings
+            </button>
+          </div>
         </div>
 
       </form>

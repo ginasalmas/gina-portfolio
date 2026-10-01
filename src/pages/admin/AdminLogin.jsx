@@ -5,8 +5,8 @@ import { useAuth } from '../../context/AuthContext';
 import { SparkleStar, EditorialFlourish } from '../../components/common/BotanicalDecorations';
 
 const AdminLogin = () => {
-  const [username, setUsername] = useState('kyumakuma');
-  const [password, setPassword] = useState('2003Ginaaa18%');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();

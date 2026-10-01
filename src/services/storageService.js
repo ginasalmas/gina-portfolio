@@ -16,9 +16,13 @@ const STORAGE_KEYS = {
 export const INITIAL_SETTINGS = {
   name: "Gina",
   fullName: "Gina Salma Sabilla, S.Kom.",
-  heroTitle: "UI/UX Designer & Operational Specialist",
+  heroTitle: "UI/UX Designer &\nOperational Specialist",
+  heroHighlight: "Crafting clear, useful digital experiences.",
+  heroAvailabilityText: "Open to UI/UX Opportunities ✦",
+  heroPrimaryBtn: "View My Work",
+  heroSecondaryBtn: "About Me",
   subtitle: "Lulusan Teknik Informatika dengan pengalaman di bidang administrasi, operasional, pelayanan pelanggan, serta desain produk digital.",
-  intro: "Memadukan kemampuan analitis, pemahaman teknologi, dan ketelitian tinggi untuk meningkatkan efisiensi kerja dan kualitas pengalaman pengguna.",
+  intro: "I turn user needs and complex problems into intuitive interfaces through research, structured thinking, and thoughtful design.",
   aboutTitle: "Memadukan Teknologi, Administrasi & Desain Produk Digital.",
   aboutText: "Lulusan Teknik Informatika yang memiliki pengalaman di bidang administrasi, operasional, pelayanan pelanggan, serta desain produk digital. Memadukan kemampuan analitis, pemahaman teknologi, dan ketelitian tinggi untuk meningkatkan efisiensi kerja dan kualitas pengalaman pengguna. Terbiasa mengelola administrasi, menyusun laporan, mengoordinasikan kegiatan operasional, serta merancang solusi berbasis desain antarmuka dan pengalaman pengguna. Cepat beradaptasi, mampu bekerja mandiri maupun dalam tim, serta berkomitmen memberikan hasil kerja yang rapi, tepat waktu, dan berkualitas.",
   email: "gina.s.sabilla18@gmail.com",
@@ -33,6 +37,42 @@ export const INITIAL_SETTINGS = {
   profileImage: "/gina-profile.jpg",
   heroImage: "/gina-about.jpg",
   themeAccent: "#C59B4E",
+  // Hero Showcase Carousel
+  heroCarouselInterval: 30,
+  heroCarouselAutoRotate: true,
+  heroCarouselAnimation: true,
+  heroShowcase: [
+    {
+      id: "showcase-rutan",
+      title: "Rutan Visitor System",
+      category: "UI/UX Design",
+      mobileImage: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=400&q=80",
+      desktopImage: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80",
+      projectUrl: "",
+      order: 1,
+      active: true
+    },
+    {
+      id: "showcase-hrdbacot",
+      title: "HRD Bacot Platform",
+      category: "UX Research",
+      mobileImage: "https://images.unsplash.com/photo-1611532736597-de2d4265fba3?auto=format&fit=crop&w=400&q=80",
+      desktopImage: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=800&q=80",
+      projectUrl: "",
+      order: 2,
+      active: true
+    },
+    {
+      id: "showcase-branding",
+      title: "Rumah Teras Baca",
+      category: "Graphic Design",
+      mobileImage: "https://images.unsplash.com/photo-1522542550221-31fd19575a2d?auto=format&fit=crop&w=400&q=80",
+      desktopImage: "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=800&q=80",
+      projectUrl: "",
+      order: 3,
+      active: true
+    }
+  ],
 };
 
 export const INITIAL_PROJECTS = [

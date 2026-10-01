@@ -13,7 +13,7 @@ import {
   BotanicalHeaderFlourish, 
   FloatingPetal 
 } from '../components/common/BotanicalDecorations';
-import HeroOrbitPhoto from '../components/HeroOrbitPhoto';
+import HeroShowcase from '../components/HeroShowcase';
 import SEO from '../components/SEO';
 
 const containerVariants = {
@@ -64,11 +64,16 @@ const Home = () => {
   };
 
   const stats = [
-    { value: `${projects.filter(p => p.status === 'published').length || 12}+`, label: 'Projects' },
-    { value: `${certificates.length || 8}+`, label: 'Certificates' },
+    { value: `${projects.filter(p => p.status === 'published').length || 8}`, label: 'Projects' },
+    { value: `${certificates.length || 11}`, label: 'Certificates' },
     { value: '3.64', label: 'GPA' },
-    { value: `${achievements.length || 5}+`, label: 'Awards' },
+    { value: `${achievements.length || 2}`, label: 'Awards' },
   ];
+
+  const heroShowcaseItems = settings.heroShowcase || [];
+  const heroInterval = settings.heroCarouselInterval ?? 30;
+  const heroAutoRotate = settings.heroCarouselAutoRotate ?? true;
+  const heroAnimation = settings.heroCarouselAnimation ?? true;
 
   return (
     <>
@@ -139,119 +144,174 @@ const Home = () => {
       
       <div className="space-y-32 pb-24 relative overflow-hidden">
         {/* ═══════════════════ HERO SECTION ═══════════════════ */}
-        <section className="relative min-h-[calc(100svh-5rem)] flex flex-col justify-center pt-6 pb-10 md:pt-10 md:pb-12 px-5 md:px-10 max-w-7xl mx-auto">
-
-        {/* Decorative background blobs */}
-        <div className="absolute -top-20 -left-20 w-96 h-96 rounded-full bg-soft-gold/10 blur-3xl pointer-events-none" />
-        <div className="absolute top-40 -right-20 w-72 h-72 rounded-full bg-botanical-sage/10 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/3 w-64 h-64 rounded-full bg-muted-rose/8 blur-3xl pointer-events-none" />
-
-        {/* Botanical illustrations */}
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.75, rotate: -10 }} 
-          animate={{ opacity: 0.65, scale: 1, rotate: 0 }} 
-          transition={{ duration: 1.4, ease: 'backOut' }} 
-          className="absolute top-4 left-0 pointer-events-none"
+        <section
+          id="hero-section"
+          className="relative min-h-[calc(100svh-5rem)] flex flex-col justify-center pt-4 pb-12 md:pt-8 md:pb-16 px-5 md:px-10 max-w-7xl mx-auto overflow-visible"
         >
-          <WildflowerCorner className="w-40 h-40 text-botanical-sage/50 animate-sway" />
-        </motion.div>
-        <motion.div 
-          initial={{ opacity: 0, x: 30 }} 
-          animate={{ opacity: 0.6, x: 0 }} 
-          transition={{ duration: 1.3, delay: 0.4 }} 
-          className="absolute top-16 right-4 pointer-events-none"
-        >
-          <FloralBranch className="w-40 h-40 text-soft-gold-400" />
-        </motion.div>
-        <div className="absolute top-1/2 left-8 opacity-30 pointer-events-none">
-          <FloatingPetal className="w-5 h-5 text-muted-rose animate-float-slow" style={{ animationDelay: '1s' }} />
-        </div>
-        <div className="absolute top-1/3 right-1/4 opacity-25 pointer-events-none">
-          <FloatingPetal className="w-6 h-6 text-soft-gold animate-float-slow" style={{ animationDelay: '3.5s' }} />
-        </div>
-
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="grid grid-cols-1 lg:grid-cols-12 gap-14 items-center relative z-10"
-        >
-          {/* ── Left: Text Content ── */}
-          <div className="lg:col-span-7 space-y-7">
-
-            {/* Availability badge */}
-            <motion.div variants={itemVariants} className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-paper-cream border border-warm-beige-300 shadow-editorial text-xs font-semibold text-botanical-sage-dark">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-              </span>
-              Open for Opportunities
-              <span className="w-px h-3 bg-warm-beige-400" />
-              <TinyFlower className="w-3.5 h-3.5 text-soft-gold animate-spin-slow" />
-              Informatics Graduate & Digital Creator
-            </motion.div>
-
-            {/* Headline */}
-            <motion.div variants={itemVariants} className="space-y-2">
-              <p className="text-xl md:text-2xl font-serif italic text-soft-gold-600 flex items-center gap-2">
-                Hi, I'm {settings.name || 'Gina'}.
-                <SparkleStar className="w-5 h-5 text-soft-gold animate-pulse-subtle" />
-              </p>
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-display font-bold text-deep-navy leading-[1.08] tracking-tight">
-                <span className="shimmer-text">
-                  {settings.heroTitle || 'UI/UX Designer & Graphic Designer'}
-                </span>
-              </h1>
-            </motion.div>
-
-            <motion.p variants={itemVariants} className="text-base md:text-lg text-deep-navy/75 font-light leading-relaxed max-w-xl">
-              {settings.intro || "I blend human-centered design, visual aesthetics, and informatics logic to create thoughtful digital products, elegant brand identities, and delightful interactive web experiences."}
-            </motion.p>
-
-            {/* CTAs */}
-            <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-3 pt-2">
-              <motion.div whileHover={{ scale: 1.04, y: -1 }} whileTap={{ scale: 0.97 }}>
-                <Link
-                  to="/portfolio"
-                  className="px-7 py-3.5 rounded-full bg-deep-navy text-warm-beige font-bold text-sm hover:bg-deep-navy-800 transition-all shadow-editorial hover:shadow-glow-gold flex items-center gap-2 group"
-                >
-                  View My Work
-                  <ArrowRight className="w-4 h-4 text-soft-gold transition-transform group-hover:translate-x-1.5" />
-                </Link>
-              </motion.div>
-              <motion.div whileHover={{ scale: 1.04, y: -1 }} whileTap={{ scale: 0.97 }}>
-                <Link
-                  to="/about"
-                  className="px-7 py-3.5 rounded-full border-2 border-deep-navy/20 text-deep-navy font-semibold text-sm hover:border-soft-gold/50 hover:bg-soft-gold/5 transition-all"
-                >
-                  About Me
-                </Link>
-              </motion.div>
-              <Link
-                to="/blog"
-                className="px-5 py-3.5 rounded-full text-deep-navy/60 hover:text-soft-gold-600 font-medium text-sm transition-all animated-underline"
-              >
-                Read Journal →
-              </Link>
-            </motion.div>
-
-            {/* Stats row */}
-            <motion.div variants={itemVariants} className="grid grid-cols-4 gap-4 pt-6 mt-10 border-t border-deep-navy/10 relative z-20">
-              {stats.map((s, i) => (
-                <div key={i} className="text-center group">
-                  <p className="text-3xl font-display font-extrabold text-deep-navy group-hover:text-soft-gold-600 transition-colors">{s.value}</p>
-                  <p className="text-[10px] font-bold text-deep-navy/50 uppercase tracking-widest mt-1">{s.label}</p>
-                </div>
-              ))}
-            </motion.div>
+          {/* Warm Atmospheric Background Gradients & Blobs matching reference */}
+          <div className="absolute inset-0 pointer-events-none -z-10 overflow-hidden" aria-hidden="true">
+            {/* Large Central Warm Amber/Ivory Radial Glow behind Showcase */}
+            <div 
+              className="absolute right-[-5%] top-[10%] w-[800px] h-[600px] rounded-[50%] blur-3xl opacity-80"
+              style={{
+                background: 'radial-gradient(ellipse at center, rgba(240, 226, 204, 0.7) 0%, rgba(246, 237, 222, 0.45) 45%, transparent 70%)',
+              }}
+            />
+            {/* Soft Warm Ivory Glow behind Left Headline */}
+            <div 
+              className="absolute -top-24 -left-20 w-[550px] h-[550px] rounded-full blur-3xl opacity-60"
+              style={{
+                background: 'radial-gradient(circle at center, rgba(236, 228, 212, 0.6) 0%, rgba(244, 238, 226, 0.35) 50%, transparent 70%)',
+              }}
+            />
+            {/* Subtle Ambient Depth in Center */}
+            <div 
+              className="absolute bottom-6 left-[25%] w-[550px] h-[350px] rounded-full blur-3xl opacity-45"
+              style={{
+                background: 'radial-gradient(circle at center, rgba(230, 216, 192, 0.5) 0%, transparent 65%)',
+              }}
+            />
           </div>
 
-          {/* ── Right: Orbit Photo ── */}
-          <motion.div variants={itemVariants} className="lg:col-span-5 relative">
-            <HeroOrbitPhoto profileImage={settings.profileImage} heroImage={settings.heroImage} />
+          {/* Botanical illustration – Top Left Corner (Dark Navy & Gold leaves + star) */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 0.95, scale: 1 }}
+            transition={{ duration: 1.2, ease: 'easeOut' }}
+            className="absolute top-0 left-0 md:top-2 md:left-2 pointer-events-none z-0"
+            aria-hidden="true"
+          >
+            <svg width="150" height="150" viewBox="0 0 160 160" fill="none">
+              {/* Dark navy main stem */}
+              <path d="M12 18 C28 42 46 72 58 112" stroke="#131F2E" strokeWidth="2.5" strokeLinecap="round" />
+              {/* Dark navy main large leaf */}
+              <path d="M24 32 C44 38 48 62 26 75 C18 58 20 42 24 32 Z" fill="#131F2E" />
+              {/* Dark navy upper leaf */}
+              <path d="M42 62 C58 68 62 88 44 98 C36 84 38 72 42 62 Z" fill="#131F2E" />
+              {/* Warm gold / ochre leaves */}
+              <path d="M16 48 C8 54 6 68 18 70 C24 62 22 52 16 48 Z" fill="#C69B51" />
+              <path d="M32 82 C22 88 20 102 34 104 C40 96 38 86 32 82 Z" fill="#C69B51" />
+              {/* 4-pointed golden sparkle star */}
+              <g transform="translate(46, 122)">
+                <path d="M0 -9 L2 -2 L9 0 L2 2 L0 9 L-2 2 L-9 0 L-2 -2 Z" fill="#C69B51" />
+              </g>
+            </svg>
           </motion.div>
-        </motion.div>
-      </section>
+
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center relative z-10"
+          >
+            {/* ─────────────── LEFT: Text Content ─────────────── */}
+            <div className="lg:col-span-6 space-y-5 lg:pr-4">
+
+              {/* Availability badge */}
+              <motion.div
+                variants={itemVariants}
+                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#EDF3EC] border border-[#CADBC9] text-[11px] font-semibold text-[#27532B] shadow-2xs"
+              >
+                <span className="w-2 h-2 rounded-full bg-[#34A853]" />
+                <span>{settings.heroAvailabilityText?.replace(' ✦', '') || 'Open to UI/UX Opportunities'}</span>
+                <span className="text-[#C59B4E] text-xs font-serif">✦</span>
+              </motion.div>
+
+              {/* Global Style for the shine animation */}
+              <style>{`
+                @keyframes shineGold {
+                  0% { background-position: 200% center; }
+                  100% { background-position: -200% center; }
+                }
+              `}</style>
+
+              {/* Headline */}
+              <motion.div variants={itemVariants} className="space-y-3 pt-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl lg:text-[1.75rem] font-display italic text-[#6B5A3A]">
+                    Hi, I'm {settings.name || 'Gina'}.
+                  </span>
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-[#C59B4E]" aria-hidden="true">
+                    <path d="M12 0 L14.2 9.8 L24 12 L14.2 14.2 L12 24 L9.8 14.2 L0 12 L9.8 9.8 Z" />
+                  </svg>
+                </div>
+                
+                <h1 
+                  className="text-4xl sm:text-5xl lg:text-[3.5rem] font-display font-bold leading-[1.1] tracking-tight pb-2"
+                  style={{
+                    background: 'linear-gradient(to right, #3D2E18 0%, #3D2E18 30%, #C9A25C 50%, #3D2E18 70%, #3D2E18 100%)',
+                    backgroundSize: '300% auto',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    animation: 'shineGold 8s linear infinite',
+                  }}
+                  dangerouslySetInnerHTML={{
+                    __html: (settings.heroTitle || 'UI/UX Designer &<br/>Operational Specialist').replace(/\n/g, '<br/>')
+                  }}
+                />
+              </motion.div>
+
+              {/* Description */}
+              <motion.p
+                variants={itemVariants}
+                className="text-base md:text-[17px] text-deep-navy/75 font-medium leading-[1.65] max-w-md pt-2"
+              >
+                {settings.intro && !settings.intro.startsWith('Memadukan')
+                  ? settings.intro
+                  : 'I turn user needs and complex problems into intuitive interfaces through research, structured thinking, and thoughtful design.'}
+              </motion.p>
+
+              {/* Action Buttons */}
+              <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-4 pt-2">
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Link
+                    to="/portfolio"
+                    id="hero-cta-primary"
+                    className="px-6 py-3 rounded-full bg-deep-navy text-warm-beige font-semibold text-sm hover:bg-deep-navy-800 transition-all flex items-center gap-2"
+                  >
+                    View My Work
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Link
+                    to="/about"
+                    id="hero-cta-secondary"
+                    className="px-6 py-3 rounded-full border border-deep-navy text-deep-navy font-semibold text-sm hover:bg-deep-navy/5 transition-all"
+                  >
+                    About Me
+                  </Link>
+                </motion.div>
+              </motion.div>
+
+              {/* Stats Row placed directly under CTAs */}
+              <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-x-6 gap-y-4 pt-6 mt-4 border-t border-deep-navy/10">
+                {stats.map((s, i) => (
+                  <div key={i} className={`flex flex-col ${i !== 0 ? 'sm:pl-6 sm:border-l sm:border-deep-navy/10' : ''}`}>
+                    <span className="text-2xl font-bold text-deep-navy">{s.value}</span>
+                    <span className="text-[10px] uppercase tracking-wider text-deep-navy/60 font-semibold mt-0.5">{s.label}</span>
+                  </div>
+                ))}
+              </motion.div>
+            </div>
+
+            {/* ─────────────── RIGHT: Product UI Showcase ─────────────── */}
+            <motion.div
+              variants={itemVariants}
+              className="lg:col-span-6 relative flex justify-center lg:justify-end"
+              aria-label="UI/UX project showcase"
+            >
+              <HeroShowcase
+                showcaseItems={heroShowcaseItems}
+                interval={heroInterval}
+                autoRotate={heroAutoRotate}
+                animationEnabled={heroAnimation}
+              />
+            </motion.div>
+          </motion.div>
+
+          {/* Removed FULL-WIDTH STATS ROW here, it is now placed under the CTA buttons on the left */}
+        </section>
 
       {/* ═══════════════════ FEATURED PORTFOLIO ═══════════════════ */}
       <section className="px-5 md:px-10 max-w-7xl mx-auto">

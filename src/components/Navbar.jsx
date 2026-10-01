@@ -58,21 +58,21 @@ const Navbar = () => {
         <div className="max-w-7xl mx-auto px-5 md:px-10 flex items-center justify-between gap-4">
 
           {/* ── Brand Logo ── */}
-          <Link to="/" className="group flex items-center gap-2 text-deep-navy shrink-0">
-            {/* Monogram Circle */}
+          <Link to="/" className="group flex items-center gap-2.5 text-deep-navy shrink-0">
+            {/* Monogram Circle with 8-pointed Gold Star */}
             <motion.div
-              whileHover={{ rotate: 15, scale: 1.08 }}
+              whileHover={{ rotate: 45, scale: 1.08 }}
               transition={{ duration: 0.35 }}
-              className="w-9 h-9 rounded-full bg-deep-navy flex items-center justify-center shadow-md group-hover:shadow-glow-gold transition-shadow"
+              className="w-10 h-10 rounded-full bg-deep-navy flex items-center justify-center shadow-md group-hover:shadow-glow-gold transition-shadow"
             >
-              <span className="text-soft-gold font-display font-bold text-sm leading-none">G</span>
+              <SparkleStar className="w-5 h-5 text-soft-gold" />
             </motion.div>
             <div className="flex flex-col leading-none">
-              <span className="font-display font-bold text-[15px] text-deep-navy tracking-tight">
+              <span className="font-display font-bold text-lg text-deep-navy tracking-tight">
                 {settings.name || 'Gina'}.
               </span>
-              <span className="text-[9px] font-semibold uppercase tracking-[0.15em] text-soft-gold-600 hidden sm:block">
-                Portfolio
+              <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#C59B4E] mt-0.5">
+                PORTFOLIO
               </span>
             </div>
           </Link>

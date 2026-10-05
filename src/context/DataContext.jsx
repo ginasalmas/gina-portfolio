@@ -114,13 +114,23 @@ export const DataProvider = ({ children }) => {
       id: project.id || generateSlug(project.title, 'project-'),
       status: project.status || 'published'
     };
-    const updated = [newProject, ...projects];
+    
+    let currentProjects = projects;
+    if (newProject.isFeatured) {
+      currentProjects = projects.map(p => ({ ...p, isFeatured: false }));
+    }
+    
+    const updated = [newProject, ...currentProjects];
     await StorageService.saveProjects(updated);
     setProjects(updated);
   };
 
   const updateProject = async (id, updatedProject) => {
-    const updated = projects.map(p => p.id === id ? { ...p, ...updatedProject } : p);
+    let currentProjects = projects;
+    if (updatedProject.isFeatured) {
+      currentProjects = projects.map(p => ({ ...p, isFeatured: false }));
+    }
+    const updated = currentProjects.map(p => p.id === id ? { ...p, ...updatedProject } : p);
     await StorageService.saveProjects(updated);
     setProjects(updated);
   };

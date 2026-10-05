@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, ArrowRight, X } from 'lucide-react';
+import { Search, ArrowRight, X, Sparkles } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { useData } from '../context/DataContext';
 import { SparkleStar, EditorialFlourish } from '../components/common/BotanicalDecorations';
@@ -126,6 +126,10 @@ const PortfolioPage = () => {
       return hasSelectedTag && matchesSearch;
     })
     .sort((a, b) => {
+      // Pin featured project to the top
+      if (a.isFeatured && !b.isFeatured) return -1;
+      if (!a.isFeatured && b.isFeatured) return 1;
+
       // Sort by date (newest first)
       const dateA = new Date(a.date || 0).getTime();
       const dateB = new Date(b.date || 0).getTime();
@@ -265,6 +269,29 @@ const PortfolioPage = () => {
                     alt={project.title}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
+
+                  {project.isFeatured && (
+                    <motion.div 
+                      initial={{ rotate: -3 }}
+                      animate={{ 
+                        rotate: [-3, 3, -3],
+                        y: [0, -3, 0]
+                      }}
+                      transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                      className="absolute bottom-4 right-4 z-20"
+                    >
+                      <div className="flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-gradient-to-br from-amber-200 via-yellow-300 to-orange-300 text-orange-950 text-[11px] font-black uppercase tracking-widest shadow-xl shadow-orange-500/20 border-2 border-white">
+                        <motion.div
+                          animate={{ scale: [1, 1.2, 1], rotate: [0, 15, -15, 0] }}
+                          transition={{ duration: 2, repeat: Infinity }}
+                        >
+                          <Sparkles className="w-4 h-4 text-orange-700" fill="currentColor" />
+                        </motion.div>
+                        <span className="drop-shadow-sm">Top Pick!</span>
+                      </div>
+                    </motion.div>
+                  )}
+
                   <div className="absolute top-4 left-4 flex gap-2 flex-wrap max-w-[80%]">
                     {project.tags && project.tags.slice(0, 2).map((tag, idx) => (
                       <span key={idx} className={`px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-md ${idx === 0 ? 'badge-navy' : 'badge-gold'}`}>

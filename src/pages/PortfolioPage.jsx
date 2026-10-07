@@ -35,56 +35,72 @@ const GalleryModal = ({ project, onClose }) => {
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="relative w-full max-w-5xl max-h-[90vh] bg-paper-cream rounded-[2rem] shadow-2xl flex flex-col overflow-hidden border border-warm-beige-300"
+        className="relative w-full max-w-6xl max-h-[90vh] bg-paper-cream rounded-[2rem] shadow-2xl flex flex-col md:flex-row overflow-hidden border border-warm-beige-300"
       >
-        {/* Header */}
-        <div className="flex items-start justify-between p-6 md:p-8 border-b border-warm-beige-200 bg-white/50 backdrop-blur-sm z-10 flex-shrink-0">
-          <div>
-            <h2 className="text-2xl md:text-3xl font-display font-bold text-deep-navy mb-1">{project.title}</h2>
-            <p className="text-xs text-deep-navy/60 uppercase tracking-widest font-bold">{project.category}</p>
-          </div>
-          <button 
-            onClick={onClose}
-            className="p-3 bg-warm-beige-100 hover:bg-rose-100 text-deep-navy hover:text-rose-600 rounded-full transition-colors flex-shrink-0"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
+        <button 
+          onClick={onClose}
+          className="absolute top-4 right-4 p-2 bg-white/30 hover:bg-rose-100 text-deep-navy hover:text-rose-600 rounded-full transition-colors z-20 backdrop-blur-md shadow-sm"
+        >
+          <X className="w-5 h-5" />
+        </button>
 
-        {/* Scrollable Content */}
-        <div className="overflow-y-auto p-6 md:p-10 space-y-10">
-          {(project.overview || project.shortDescription) && (
-            <div className="max-w-3xl mx-auto text-center space-y-4">
-              <div className="w-12 h-1 bg-soft-gold/40 mx-auto rounded-full"></div>
-              <p className="text-base md:text-xl text-deep-navy/80 font-light leading-relaxed">
-                {project.overview || project.shortDescription}
-              </p>
-            </div>
-          )}
-
+        {/* Left side: Images */}
+        <div className="w-full md:w-3/5 bg-warm-beige-200 relative overflow-y-auto flex flex-col items-center p-6 md:p-8 border-b md:border-b-0 md:border-r border-warm-beige-300">
           {images.length > 0 ? (
-            <div className="space-y-8">
-              {/* Featured First Image */}
-              <div className="rounded-2xl overflow-hidden bg-deep-navy/5 shadow-inner border border-warm-beige-200 relative group flex justify-center items-center">
-                <img src={images[0].trim()} alt={`${project.title} - Main`} className="w-full h-auto max-h-[75vh] object-contain object-center transition-transform duration-700 group-hover:scale-[1.02]" loading="lazy" />
-              </div>
-
-              {/* Remaining Images in Columns */}
-              {images.length > 1 && (
-                <div className="columns-1 sm:columns-2 lg:columns-2 gap-8 space-y-8">
-                  {images.slice(1).map((url, idx) => (
-                    <div key={idx} className="break-inside-avoid rounded-2xl overflow-hidden bg-deep-navy/5 shadow-sm border border-warm-beige-200 group flex justify-center items-center">
-                      <img src={url.trim()} alt={`${project.title} - ${idx + 2}`} className="w-full h-auto object-contain transition-transform duration-500 group-hover:scale-[1.02]" loading="lazy" />
-                    </div>
-                  ))}
+            <div className="space-y-6 w-full max-w-3xl mx-auto">
+              {images.map((url, idx) => (
+                <div key={idx} className="rounded-xl overflow-hidden bg-white shadow-sm border border-warm-beige-300 w-full flex justify-center items-center">
+                   <img src={url.trim()} alt={`${project.title} - Image ${idx + 1}`} className="w-full h-auto object-contain" loading="lazy" />
                 </div>
-              )}
+              ))}
             </div>
           ) : (
-            <div className="text-center py-20 text-deep-navy/40">
+            <div className="h-full w-full flex items-center justify-center text-deep-navy/40 py-20">
               <p className="text-sm font-light">No images available for this project yet.</p>
             </div>
           )}
+        </div>
+
+        {/* Right side: Details */}
+        <div className="w-full md:w-2/5 p-6 sm:p-8 flex flex-col overflow-y-auto bg-paper-cream">
+          <div className="mb-6 border-b border-warm-beige-300 pb-6 pr-8">
+            <p className="text-xs text-deep-navy/60 uppercase tracking-widest font-bold mb-1">{project.category}</p>
+            <h2 className="text-2xl sm:text-3xl font-display font-bold text-deep-navy leading-tight">
+              {project.title}
+            </h2>
+          </div>
+
+          <div className="flex-grow space-y-6">
+            {(project.overview || project.shortDescription) && (
+              <div>
+                <h4 className="text-xs uppercase tracking-widest text-soft-gold-700 font-bold mb-3">Deskripsi Proyek</h4>
+                <p className="text-sm sm:text-base text-deep-navy/80 font-light leading-relaxed">
+                  {project.overview || project.shortDescription}
+                </p>
+              </div>
+            )}
+            
+            {project.tools && project.tools.length > 0 && (
+              <div className="pt-6 border-t border-warm-beige-300">
+                <h4 className="text-xs uppercase tracking-widest text-soft-gold-700 font-bold mb-3">Tools & Technologies</h4>
+                <div className="flex flex-wrap gap-2">
+                  {project.tools.map((tool, i) => (
+                    <span key={i} className="text-xs px-3 py-1.5 rounded-full bg-warm-beige-200 text-deep-navy border border-warm-beige-300 shadow-sm font-medium">
+                      {tool}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {project.link && (
+               <div className="pt-6 border-t border-warm-beige-300">
+                 <a href={project.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-deep-navy text-warm-beige hover:bg-soft-gold hover:text-deep-navy transition-colors text-sm font-semibold shadow-md">
+                    Visit Live Project <ArrowRight className="w-4 h-4" />
+                 </a>
+               </div>
+            )}
+          </div>
         </div>
       </motion.div>
     </div>

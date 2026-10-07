@@ -15,7 +15,7 @@ const CertificateModal = ({ item, onClose }) => {
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="relative w-full max-w-2xl bg-paper-cream rounded-[2rem] shadow-2xl flex flex-col overflow-hidden border border-warm-beige-300"
+        className="relative w-full max-w-5xl bg-paper-cream rounded-[2rem] shadow-2xl flex flex-col md:flex-row overflow-hidden border border-warm-beige-300 max-h-[90vh]"
       >
         <button 
           onClick={onClose}
@@ -24,36 +24,38 @@ const CertificateModal = ({ item, onClose }) => {
           <X className="w-5 h-5" />
         </button>
 
-        <div className="h-64 sm:h-80 bg-warm-beige-200 relative overflow-hidden flex-shrink-0">
-          <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-t from-deep-navy/80 via-deep-navy/30 to-transparent" />
-          <div className="absolute bottom-6 left-6 right-6">
-            <h2 className="text-2xl sm:text-3xl font-display font-bold text-white mb-2 leading-tight drop-shadow-md">
-              {item.name}
-            </h2>
-            <div className="flex flex-wrap items-center gap-4 text-warm-beige/90 text-sm font-medium drop-shadow-sm">
-              <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4 text-soft-gold" /> {item.issuer}</span>
-              <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4 text-soft-gold" /> {item.date}</span>
-            </div>
-          </div>
+        <div className="w-full md:w-1/2 bg-warm-beige-200 relative flex items-center justify-center p-6 md:p-8 flex-shrink-0">
+          <img src={item.image} alt={item.name} className="w-full h-auto max-h-[40vh] md:max-h-[80vh] object-contain rounded-lg shadow-sm" />
         </div>
 
-        <div className="p-6 sm:p-8 space-y-6 overflow-y-auto max-h-[50vh]">
-          <div>
-            <h4 className="text-xs uppercase tracking-widest text-soft-gold-700 font-bold mb-3">Deskripsi Sertifikat</h4>
-            <p className="text-sm sm:text-base text-deep-navy/80 font-light leading-relaxed">
-              {item.description || "Tidak ada deskripsi tersedia."}
-            </p>
+        <div className="w-full md:w-1/2 p-6 sm:p-8 flex flex-col overflow-y-auto">
+          <div className="mb-8 border-b border-warm-beige-300 pb-6">
+            <h2 className="text-2xl sm:text-3xl font-display font-bold text-deep-navy mb-4 leading-tight">
+              {item.name}
+            </h2>
+            <div className="flex flex-col gap-3 text-deep-navy/80 text-sm font-medium">
+              <span className="flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-soft-gold" /> {item.issuer}</span>
+              <span className="flex items-center gap-2"><Calendar className="w-4 h-4 text-soft-gold" /> {item.date}</span>
+            </div>
           </div>
 
-          {item.credentialId && (
-            <div className="pt-6 border-t border-warm-beige-300">
-              <h4 className="text-xs uppercase tracking-widest text-soft-gold-700 font-bold mb-2">Credential ID</h4>
-              <p className="text-sm font-mono text-deep-navy bg-warm-beige-200 px-3 py-2 rounded-lg inline-block border border-warm-beige-300 shadow-inner">
-                {item.credentialId}
+          <div className="flex-grow space-y-6">
+            <div>
+              <h4 className="text-xs uppercase tracking-widest text-soft-gold-700 font-bold mb-3">Deskripsi Sertifikat</h4>
+              <p className="text-sm sm:text-base text-deep-navy/80 font-light leading-relaxed">
+                {item.description || "Tidak ada deskripsi tersedia."}
               </p>
             </div>
-          )}
+
+            {item.credentialId && (
+              <div className="pt-6 border-t border-warm-beige-300">
+                <h4 className="text-xs uppercase tracking-widest text-soft-gold-700 font-bold mb-2">Credential ID</h4>
+                <p className="text-sm font-mono text-deep-navy bg-warm-beige-200 px-3 py-2 rounded-lg inline-block border border-warm-beige-300 shadow-inner">
+                  {item.credentialId}
+                </p>
+              </div>
+            )}
+          </div>
         </div>
       </motion.div>
     </div>
@@ -150,7 +152,7 @@ const CertificatesPage = () => {
           <p className="text-xs text-deep-navy/60">Try searching for a different keyword or switching categories.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="columns-1 md:columns-2 lg:columns-3 gap-8">
           {filteredCertificates.map((cert, index) => (
             <motion.div 
               key={cert.id}
@@ -159,13 +161,13 @@ const CertificatesPage = () => {
               transition={{ duration: 0.5, delay: index * 0.06 }}
               whileHover={{ y: -6 }}
               onClick={() => setSelectedCert(cert)}
-              className="editorial-card rounded-2xl overflow-hidden flex flex-col justify-between p-6 space-y-6 cursor-pointer group"
+              className="editorial-card rounded-2xl overflow-hidden flex flex-col justify-between p-6 space-y-6 cursor-pointer group break-inside-avoid mb-8 inline-block w-full"
             >
               
               <div className="space-y-4">
                 {/* Image Frame */}
-                <div className="relative h-48 rounded-xl overflow-hidden bg-warm-beige-200 border border-warm-beige-300">
-                  <img src={cert.image} alt={cert.name} className="w-full h-full object-cover transition-transform duration-700 hover:scale-105" />
+                <div className="relative rounded-xl overflow-hidden bg-warm-beige-200 border border-warm-beige-300">
+                  <img src={cert.image} alt={cert.name} className="w-full h-auto object-contain transition-transform duration-700 hover:scale-105" />
                   <div className="absolute top-3 right-3 bg-paper-cream/90 backdrop-blur-md px-2.5 py-1 rounded-full text-[11px] font-bold text-soft-gold-600 flex items-center gap-1 shadow-sm">
                     <ShieldCheck className="w-3.5 h-3.5" /> Terverifikasi
                   </div>
